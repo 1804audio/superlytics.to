@@ -231,3 +231,123 @@ export async function deleteWebsite(
     return data;
   });
 }
+
+export interface CleanupOptions {
+  urlPath: string;
+  deleteType: 'exact' | 'prefix' | 'pattern';
+  startDate?: Date;
+  endDate?: Date;
+}
+
+export async function deleteWebsiteDataByUrl(websiteId: string, options: CleanupOptions) {
+  const { client, transaction } = prisma;
+  const { urlPath, deleteType, startDate, endDate } = options;
+
+  // Build URL filter condition based on delete type
+  let urlCondition: Prisma.StringFilter;
+
+  switch (deleteType) {
+    case 'exact':
+      urlCondition = { equals: urlPath };
+      break;
+    case 'prefix':
+      urlCondition = { startsWith: urlPath };
+      break;
+    case 'pattern':
+      urlCondition = { contains: urlPath };
+      break;
+    default:
+      urlCondition = { equals: urlPath };
+  }
+
+  // Build date filter if provided
+  const dateFilter: Prisma.DateTimeFilter = {};
+  if (startDate) {
+    dateFilter.gte = startDate;
+  }
+  if (endDate) {
+    dateFilter.lte = endDate;
+  }
+
+  const eventWhereCondition = {
+    websiteId,
+    urlPath: urlCondition,
+    ...(startDate || endDate ? { createdAt: dateFilter } : {}),
+  };
+
+  // Get event IDs that match the criteria for cascade deletion
+  const eventsToDelete = await client.websiteEvent.findMany({
+    where: eventWhereCondition,
+    select: { id: true, sessionId: true },
+  });
+
+  const eventIds = eventsToDelete.map(event => event.id);
+  const sessionIds = [...new Set(eventsToDelete.map(event => event.sessionId))];
+
+  if (eventIds.length === 0) {
+    return {
+      deletedEvents: 0,
+      deletedEventData: 0,
+      deletedSessions: 0,
+      deletedSessionData: 0,
+    };
+  }
+
+  const result = await transaction([
+    // Delete event data for matching events
+    client.eventData.deleteMany({
+      where: {
+        websiteEventId: { in: eventIds },
+      },
+    }),
+    // Delete website events
+    client.websiteEvent.deleteMany({
+      where: eventWhereCondition,
+    }),
+  ]);
+
+  // Clean up orphaned sessions (sessions with no remaining events)
+  const orphanedSessions = await client.session.findMany({
+    where: {
+      id: { in: sessionIds },
+      websiteId,
+    },
+    select: {
+      id: true,
+      _count: {
+        select: {
+          websiteEvent: true,
+        },
+      },
+    },
+  });
+
+  const orphanedSessionIds = orphanedSessions
+    .filter(session => session._count.websiteEvent === 0)
+    .map(session => session.id);
+
+  let sessionDeletions: Prisma.BatchPayload[] = [];
+  if (orphanedSessionIds.length > 0) {
+    sessionDeletions = await transaction([
+      // Delete session data for orphaned sessions
+      client.sessionData.deleteMany({
+        where: {
+          sessionId: { in: orphanedSessionIds },
+        },
+      }),
+      // Delete orphaned sessions
+      client.session.deleteMany({
+        where: {
+          id: { in: orphanedSessionIds },
+        },
+      }),
+    ]);
+  }
+
+  return {
+    deletedEvents: result[1].count,
+    deletedEventData: result[0].count,
+    deletedSessions: sessionDeletions[1]?.count || 0,
+    deletedSessionData: sessionDeletions[0]?.count || 0,
+  };
+}

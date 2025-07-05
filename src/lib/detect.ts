@@ -129,7 +129,7 @@ export async function getLocation(ip: string = '', headers: Headers, hasPayloadI
 
   // When the client IP is extracted from headers, sometimes the value includes a port
   const cleanIp = ip?.split(':')[0];
-  const result = global[MAXMIND].get(cleanIp);  
+  const result = global[MAXMIND].get(cleanIp);
 
   if (result) {
     const country = result.country?.iso_code ?? result?.registered_country?.iso_code;
