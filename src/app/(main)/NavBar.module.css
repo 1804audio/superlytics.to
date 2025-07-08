@@ -1,6 +1,6 @@
 .navbar {
   display: grid;
-  grid-template-columns: max-content 1fr 1fr;
+  grid-template-columns: 1fr max-content 1fr;
   position: relative;
   align-items: center;
   height: 60px;
@@ -24,10 +24,10 @@
   display: flex;
   flex-direction: row;
   gap: 30px;
-  padding: 0 40px;
   font-weight: 700;
   max-height: 60px;
   align-items: center;
+  justify-content: center;
 }
 
 .links a,
