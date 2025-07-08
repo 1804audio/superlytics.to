@@ -666,7 +666,7 @@ await fetch(`/api/websites/${websiteId}/cleanup`, {
 
 ### JavaScript/Node.js
 ```javascript
-class UmamiAPI {
+class SuperlyticsAPI {
   constructor(baseURL, token) {
     this.baseURL = baseURL;
     this.token = token;
@@ -719,7 +719,7 @@ import requests
 import json
 from datetime import datetime
 
-class UmamiAPI:
+class SuperlyticsAPI:
     def __init__(self, base_url, token):
         self.base_url = base_url
         self.headers = {
@@ -786,4 +786,4 @@ Use this to verify authentication and get current user info.
 
 ---
 
-This documentation covers all major Umami API endpoints including the new custom URL cleanup feature. The cleanup endpoint is particularly useful for SaaS platforms where users create and delete individual pages or links, allowing precise analytics data management without affecting other website data.
+This documentation covers all major Superlytics API endpoints including the new custom URL cleanup feature. The cleanup endpoint is particularly useful for SaaS platforms where users create and delete individual pages or links, allowing precise analytics data management without affecting other website data.

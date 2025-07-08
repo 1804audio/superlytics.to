@@ -11,8 +11,8 @@ ALTER TABLE "event_data" ADD COLUMN "job_id" UUID AFTER "created_at";
 -- update event_data string
 alter table superlytics.event_data
 update string_value = number_value
-where data_type = 2
+where data_type = 2;
 
 alter table superlytics.event_data
 update string_value = replaceOne(concat(CAST(toDateTime(date_value, 'UTC'), 'String'),'Z'), ' ', 'T')
-where data_type = 4
+where data_type = 4;

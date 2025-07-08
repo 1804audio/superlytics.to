@@ -1,9 +1,8 @@
 {
-  "name": "@umami/components",
+  "name": "@superlytics/components",
   "version": "0.1.0",
-  "description": "Umami React components.",
-  "author": "Mike Cao <mike@mikecao.com>",
-  "license": "MIT",
+  "description": "Superlytics React components.",
+  "author": "1804 Audio",
   "type": "module",
   "main": "./index.js",
   "types": "./index.d.ts",
