@@ -40,7 +40,12 @@ export function LoginForm() {
         <Logo />
       </Icon>
       <div className={styles.title}>superlytics</div>
-      <Form className={styles.form} onSubmit={handleSubmit} error={getMessage(error)}>
+      <Form
+        className={styles.form}
+        onSubmit={handleSubmit}
+        error={getMessage(error)}
+        values={{ username: '', password: '' }}
+      >
         <FormRow label={formatMessage(labels.username)}>
           <FormInput
             data-test="input-username"

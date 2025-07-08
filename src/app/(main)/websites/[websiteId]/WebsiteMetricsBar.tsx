@@ -57,19 +57,25 @@ export function WebsiteMetricsBar({
         },
         {
           label: formatMessage(labels.bounceRate),
-          value: (Math.min(visits.value, bounces.value) / visits.value) * 100,
-          prev: (Math.min(visits.prev, bounces.prev) / visits.prev) * 100,
+          value:
+            visits.value > 0 ? (Math.min(visits.value, bounces.value) / visits.value) * 100 : 0,
+          prev: visits.prev > 0 ? (Math.min(visits.prev, bounces.prev) / visits.prev) * 100 : 0,
           change:
-            (Math.min(visits.value, bounces.value) / visits.value) * 100 -
-            (Math.min(visits.prev, bounces.prev) / visits.prev) * 100,
+            visits.value > 0 && visits.prev > 0
+              ? (Math.min(visits.value, bounces.value) / visits.value) * 100 -
+                (Math.min(visits.prev, bounces.prev) / visits.prev) * 100
+              : 0,
           formatValue: n => Math.round(+n) + '%',
           reverseColors: true,
         },
         {
           label: formatMessage(labels.visitDuration),
-          value: totaltime.value / visits.value,
-          prev: totaltime.prev / visits.prev,
-          change: totaltime.value / visits.value - totaltime.prev / visits.prev,
+          value: visits.value > 0 ? totaltime.value / visits.value : 0,
+          prev: visits.prev > 0 ? totaltime.prev / visits.prev : 0,
+          change:
+            visits.value > 0 && visits.prev > 0
+              ? totaltime.value / visits.value - totaltime.prev / visits.prev
+              : 0,
           formatValue: n =>
             `${+n < 0 ? '-' : ''}${formatShortTime(Math.abs(~~n), ['m', 's'], ' ')}`,
         },

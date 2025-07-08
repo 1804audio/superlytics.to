@@ -27,7 +27,12 @@ export function PasswordEditForm({ onSave, onClose }) {
   };
 
   return (
-    <Form ref={ref} onSubmit={handleSubmit} error={error}>
+    <Form
+      ref={ref}
+      onSubmit={handleSubmit}
+      error={error}
+      values={{ currentPassword: '', newPassword: '', confirmPassword: '' }}
+    >
       <FormRow label={formatMessage(labels.currentPassword)}>
         <FormInput name="currentPassword" rules={{ required: 'Required' }}>
           <PasswordField autoComplete="current-password" />

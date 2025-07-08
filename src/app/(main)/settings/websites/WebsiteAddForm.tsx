@@ -36,7 +36,7 @@ export function WebsiteAddForm({
   };
 
   return (
-    <Form onSubmit={handleSubmit} error={error}>
+    <Form onSubmit={handleSubmit} error={error} values={{ name: '', domain: '' }}>
       <FormRow label={formatMessage(labels.name)}>
         <FormInput
           data-test="input-name"

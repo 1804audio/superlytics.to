@@ -26,7 +26,7 @@ export function TeamAddForm({ onSave, onClose }: { onSave: () => void; onClose: 
   };
 
   return (
-    <Form onSubmit={handleSubmit} error={error}>
+    <Form onSubmit={handleSubmit} error={error} values={{ name: '' }}>
       <FormRow label={formatMessage(labels.name)}>
         <FormInput name="name" rules={{ required: formatMessage(labels.required) }}>
           <TextField autoComplete="off" />

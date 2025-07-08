@@ -28,7 +28,7 @@ export function TeamJoinForm({ onSave, onClose }: { onSave: () => void; onClose:
   };
 
   return (
-    <Form ref={ref} onSubmit={handleSubmit} error={error}>
+    <Form ref={ref} onSubmit={handleSubmit} error={error} values={{ accessCode: '' }}>
       <FormRow label={formatMessage(labels.accessCode)}>
         <FormInput name="accessCode" rules={{ required: formatMessage(labels.required) }}>
           <TextField autoComplete="off" />

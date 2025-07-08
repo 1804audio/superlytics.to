@@ -25,7 +25,8 @@ const contentSecurityPolicy = [
   `default-src 'self'`,
   `img-src * data:`,
   `script-src 'self' 'unsafe-eval' 'unsafe-inline'`,
-  `style-src 'self' 'unsafe-inline'`,
+  `style-src 'self' 'unsafe-inline' fonts.googleapis.com`,
+  `font-src 'self' fonts.gstatic.com`,
   `connect-src 'self' api.superlytics.to cloud.superlytics.to`,
   `frame-ancestors 'self' ${frameAncestors}`,
 ];

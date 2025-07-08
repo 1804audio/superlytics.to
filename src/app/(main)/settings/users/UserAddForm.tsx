@@ -43,7 +43,7 @@ export function UserAddForm({ onSave, onClose }) {
   };
 
   return (
-    <Form onSubmit={handleSubmit} error={error}>
+    <Form onSubmit={handleSubmit} error={error} values={{ username: '', password: '', role: '' }}>
       <FormRow label={formatMessage(labels.username)}>
         <FormInput
           data-test="input-username"
