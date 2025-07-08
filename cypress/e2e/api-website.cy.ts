@@ -5,7 +5,7 @@ describe('Website API tests', () => {
   let teamId;
 
   before(() => {
-    cy.login(Cypress.env('umami_user'), Cypress.env('umami_password'));
+    cy.login(Cypress.env('superlytics_user'), Cypress.env('superlytics_password'));
     cy.fixture('teams').then(data => {
       const teamCreate = data.teamCreate;
       cy.request({

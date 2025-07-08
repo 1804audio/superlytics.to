@@ -1,10 +1,10 @@
-# Umami Analytics API Documentation
+# Superlytics Analytics API Documentation
 
 ## Overview
 
-This document provides comprehensive API documentation for the Umami analytics platform, including all endpoints, authentication, request/response formats, and usage examples.
+This document provides comprehensive API documentation for the Superlytics analytics platform, including all endpoints, authentication, request/response formats, and usage examples.
 
-**Base URL**: `https://your-umami-domain.com/api`
+**Base URL**: `https://your-superlytics-domain.com/api`
 
 ## Table of Contents
 

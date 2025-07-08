@@ -21,7 +21,7 @@ export default async function ({ children }) {
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Umami',
-    default: 'Umami',
+    template: '%s | Superlytics',
+    default: 'Superlytics',
   },
 };

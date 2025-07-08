@@ -1,4 +1,4 @@
-# Umami Coding Style Guide
+# Superlytics Coding Style Guide
 
 ## File Naming & Structure
 

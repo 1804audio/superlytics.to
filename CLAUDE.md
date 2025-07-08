@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Umami is a privacy-focused, open-source web analytics platform built with Next.js 15, React 19, and TypeScript. It supports multiple databases (PostgreSQL, MySQL, ClickHouse) and provides comprehensive analytics through a modern dashboard interface.
+Superlytics is a privacy-focused web analytics SaaS platform built with Next.js 15, React 19, and TypeScript. It supports multiple databases (PostgreSQL, MySQL, ClickHouse) and provides comprehensive analytics through a modern dashboard interface.
 
 ## Development Commands
 
@@ -121,7 +121,7 @@ The platform supports multiple analytics report types:
 - ClickHouse (for high-scale deployments)
 
 ### Development Database
-The build process will create database tables automatically on first run and create a default admin user (username: `admin`, password: `umami`).
+The build process will create database tables automatically on first run and create a default admin user (username: `admin`, password: `superlytics`).
 
 ## Key Files and Directories
 

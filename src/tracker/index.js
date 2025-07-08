@@ -32,8 +32,8 @@
     hostUrl || '__COLLECT_API_HOST__' || currentScript.src.split('/').slice(0, -1).join('/');
   const endpoint = `${host.replace(/\/$/, '')}__COLLECT_API_ENDPOINT__`;
   const screen = `${width}x${height}`;
-  const eventRegex = /data-umami-event-([\w-_]+)/;
-  const eventNameAttribute = _data + 'umami-event';
+  const eventRegex = /data-superlytics-event-([\w-_]+)/;
+  const eventNameAttribute = _data + 'superlytics-event';
   const delayDuration = 300;
 
   /* Helper functions */
@@ -133,7 +133,7 @@
   const trackingDisabled = () =>
     disabled ||
     !website ||
-    (localStorage && localStorage.getItem('umami.disabled')) ||
+    (localStorage && localStorage.getItem('superlytics.disabled')) ||
     (domain && !domains.includes(hostname)) ||
     (dnt && hasDoNotTrack());
 
@@ -155,7 +155,7 @@
         body: JSON.stringify({ type, payload }),
         headers: {
           'Content-Type': 'application/json',
-          ...(typeof cache !== 'undefined' && { 'x-umami-cache': cache }),
+          ...(typeof cache !== 'undefined' && { 'x-superlytics-cache': cache }),
         },
         credentials: 'omit',
       });
@@ -203,8 +203,8 @@
 
   /* Start */
 
-  if (!window.umami) {
-    window.umami = {
+  if (!window.superlytics) {
+    window.superlytics = {
       track,
       identify,
     };

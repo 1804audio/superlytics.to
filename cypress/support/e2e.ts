@@ -23,7 +23,7 @@ Cypress.Commands.add('login', (username: string, password: string) => {
     })
       .then(response => {
         Cypress.env('authorization', `bearer ${response.body.token}`);
-        window.localStorage.setItem('umami.auth', JSON.stringify(response.body.token));
+        window.localStorage.setItem('superlytics.auth', JSON.stringify(response.body.token));
       })
       .its('status')
       .should('eq', 200);

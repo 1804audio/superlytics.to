@@ -1,11 +1,11 @@
 ---
 services:
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
+  superlytics:
+    image: ghcr.io/1804-audio/superlytics:postgresql-latest
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://umami:umami@db:5432/umami
+      DATABASE_URL: postgresql://superlytics:superlytics@db:5432/superlytics
       DATABASE_TYPE: postgresql
       APP_SECRET: replace-me-with-a-random-string
     depends_on:
@@ -23,11 +23,11 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: umami
-      POSTGRES_USER: umami
-      POSTGRES_PASSWORD: umami
+      POSTGRES_DB: superlytics
+      POSTGRES_USER: superlytics
+      POSTGRES_PASSWORD: superlytics
     volumes:
-      - umami-db-data:/var/lib/postgresql/data
+      - superlytics-db-data:/var/lib/postgresql/data
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
@@ -35,4 +35,4 @@ services:
       timeout: 5s
       retries: 5
 volumes:
-  umami-db-data:
+  superlytics-db-data:
