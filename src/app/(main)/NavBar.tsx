@@ -3,6 +3,16 @@ import { useEffect } from 'react';
 import { Icon, Text } from 'react-basics';
 import Link from 'next/link';
 import classNames from 'classnames';
+import {
+  RiDashboardLine,
+  RiGlobalLine,
+  RiBarChartLine,
+  RiSettings3Line,
+  RiTeamLine,
+  RiUserLine,
+  RiGroupLine,
+  RiLogoutCircleLine,
+} from 'react-icons/ri';
 import HamburgerButton from '@/components/common/HamburgerButton';
 import ThemeButton from '@/components/input/ThemeButton';
 import LanguageButton from '@/components/input/LanguageButton';
@@ -21,48 +31,71 @@ export function NavBar() {
   const cloudMode = !!process.env.cloudMode;
 
   const links = [
-    { label: formatMessage(labels.dashboard), url: renderTeamUrl('/dashboard') },
-    { label: formatMessage(labels.websites), url: renderTeamUrl('/websites') },
-    { label: formatMessage(labels.reports), url: renderTeamUrl('/reports') },
-    { label: formatMessage(labels.settings), url: renderTeamUrl('/settings') },
+    {
+      label: formatMessage(labels.dashboard),
+      url: renderTeamUrl('/dashboard'),
+      icon: <RiDashboardLine />,
+    },
+    {
+      label: formatMessage(labels.websites),
+      url: renderTeamUrl('/websites'),
+      icon: <RiGlobalLine />,
+    },
+    {
+      label: formatMessage(labels.reports),
+      url: renderTeamUrl('/reports'),
+      icon: <RiBarChartLine />,
+    },
+    {
+      label: formatMessage(labels.settings),
+      url: renderTeamUrl('/settings'),
+      icon: <RiSettings3Line />,
+    },
   ].filter(n => n);
 
   const menuItems = [
     {
       label: formatMessage(labels.dashboard),
       url: renderTeamUrl('/dashboard'),
+      icon: <RiDashboardLine />,
     },
     !cloudMode && {
       label: formatMessage(labels.settings),
       url: renderTeamUrl('/settings'),
+      icon: <RiSettings3Line />,
       children: [
         ...(teamId
           ? [
               {
                 label: formatMessage(labels.team),
                 url: renderTeamUrl('/settings/team'),
+                icon: <RiTeamLine />,
               },
             ]
           : []),
         {
           label: formatMessage(labels.websites),
           url: renderTeamUrl('/settings/websites'),
+          icon: <RiGlobalLine />,
         },
         ...(!teamId
           ? [
               {
                 label: formatMessage(labels.teams),
                 url: renderTeamUrl('/settings/teams'),
+                icon: <RiTeamLine />,
               },
               {
                 label: formatMessage(labels.users),
                 url: '/settings/users',
+                icon: <RiGroupLine />,
               },
             ]
           : [
               {
                 label: formatMessage(labels.members),
                 url: renderTeamUrl('/settings/members'),
+                icon: <RiGroupLine />,
               },
             ]),
       ],
@@ -70,8 +103,13 @@ export function NavBar() {
     {
       label: formatMessage(labels.profile),
       url: '/profile',
+      icon: <RiUserLine />,
     },
-    !cloudMode && { label: formatMessage(labels.logout), url: '/logout' },
+    !cloudMode && {
+      label: formatMessage(labels.logout),
+      url: '/logout',
+      icon: <RiLogoutCircleLine />,
+    },
   ].filter(n => n);
 
   const handleTeamChange = (teamId: string) => {
@@ -103,7 +141,7 @@ export function NavBar() {
         <Text>superlytics</Text>
       </div>
       <div className={styles.links}>
-        {links.map(({ url, label }) => {
+        {links.map(({ url, label, icon }) => {
           return (
             <Link
               key={url}
@@ -111,6 +149,7 @@ export function NavBar() {
               className={classNames({ [styles.selected]: pathname.startsWith(url) })}
               prefetch={url !== '/settings'}
             >
+              <Icon size="md">{icon}</Icon>
               <Text>{label}</Text>
             </Link>
           );

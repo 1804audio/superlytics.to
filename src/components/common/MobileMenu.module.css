@@ -18,6 +18,9 @@
 }
 
 .item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: var(--font-size-lg);
   font-weight: 700;
   line-height: 80px;
