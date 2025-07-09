@@ -195,11 +195,11 @@ export const ROLE_PERMISSIONS = {
 
 export const THEME_COLORS = {
   light: {
-    primary: '#064663',
-    secondary: '#FCFCFC',
-    gray50: '#FCFCFC',
-    gray75: '#F8F8F8',
-    gray100: '#F4F4F4',
+    primary: '#f06449',
+    secondary: '#ede6e3',
+    gray50: '#ede6e3',
+    gray75: '#E8E0DC',
+    gray100: '#E3DAD5',
     gray200: '#eaeaea',
     gray300: '#e1e1e1',
     gray400: '#cacaca',
@@ -210,11 +210,11 @@ export const THEME_COLORS = {
     gray900: '#2c2c2c',
   },
   dark: {
-    primary: '#0a5a7a',
-    secondary: '#101829',
-    gray50: '#101829',
-    gray75: '#1A2132',
-    gray100: '#242B3B',
+    primary: '#f87d64',
+    secondary: '#232E2F',
+    gray50: '#232E2F',
+    gray75: '#2C3738',
+    gray100: '#353F41',
     gray200: '#3e3e3e',
     gray300: '#4a4a4a',
     gray400: '#5a5a5a',
@@ -227,7 +227,7 @@ export const THEME_COLORS = {
 };
 
 export const CHART_COLORS = [
-  '#064663',
+  '#f06449',
   '#9256d9',
   '#44b556',
   '#e68619',

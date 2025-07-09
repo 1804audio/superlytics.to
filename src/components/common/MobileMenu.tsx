@@ -1,3 +1,4 @@
+import React from 'react';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
@@ -32,9 +33,8 @@ export function MobileMenu({
           const selected = pathname.startsWith(url);
 
           return (
-            <>
+            <React.Fragment key={url}>
               <Link
-                key={url}
                 href={url}
                 className={classNames(styles.item, { [styles.selected]: selected })}
                 onClick={onClose}
@@ -43,7 +43,7 @@ export function MobileMenu({
                 {label}
               </Link>
               {children && <Items items={children} className={styles.submenu} />}
-            </>
+            </React.Fragment>
           );
         },
       )}

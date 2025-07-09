@@ -111,13 +111,13 @@ main::-webkit-scrollbar-track {
   --dark900: #eeeeee;
 
   /* Custom brand colors */
-  --superlytics-primary: #064663;
-  --superlytics-primary-light: #0a5a7a;
-  --superlytics-primary-lighter: #b3d9e6;
-  --superlytics-primary-dark: #042f3d;
-  --superlytics-primary-darker: #021c20;
+  --superlytics-primary: #f06449;
+  --superlytics-primary-light: #f87d64;
+  --superlytics-primary-lighter: #f8c5ba;
+  --superlytics-primary-dark: #e04a30;
+  --superlytics-primary-darker: #c93e26;
 
-  --superlytics-secondary: #fcfcfc;
-  --superlytics-background-light: #fcfcfc;
-  --superlytics-background-dark: #101829;
+  --superlytics-secondary: #ede6e3;
+  --superlytics-background-light: #ede6e3;
+  --superlytics-background-dark: #232e2f;
 }

@@ -1,27 +1,51 @@
 html body {
-  --primary200: #e6f2f7;
-  --primary300: #b3d9e6;
-  --primary400: #064663;
-  --primary500: #053a50;
-  --primary600: #042f3d;
-  --primary700: #032329;
-  --primary800: #021c20;
-  --primary900: #011417;
+  --primary200: #fce8e4;
+  --primary300: #f8c5ba;
+  --primary400: #f06449;
+  --primary500: #e04a30;
+  --primary600: #c93e26;
+  --primary700: #b2331c;
+  --primary800: #9b2912;
+  --primary900: #841f08;
 
-  --secondary: #fcfcfc;
-  --background: #fcfcfc;
+  --secondary: #ede6e3;
+  --background: #ede6e3;
+  --base50: #ede6e3;
+  --base75: #e8e0dc;
+  --base100: #e3dad5;
+
+  /* Override green colors for percentage indicators */
+  --green700: #8dcdff;
+  --green100: #e8f4ff;
+  --green600: #8dcdff;
+
+  /* Update disabled button colors */
+  --disabled-background: #e3dad5;
+  --disabled-color: #b3b3b3;
 }
 
 [data-theme='dark'] {
-  --primary200: #e6f2f7;
-  --primary300: #b3d9e6;
-  --primary400: #0a5a7a;
-  --primary500: #064663;
-  --primary600: #053a50;
-  --primary700: #042f3d;
-  --primary800: #032329;
-  --primary900: #021c20;
+  --primary200: #fce8e4;
+  --primary300: #f8c5ba;
+  --primary400: #f87d64;
+  --primary500: #f06449;
+  --primary600: #e04a30;
+  --primary700: #c93e26;
+  --primary800: #b2331c;
+  --primary900: #9b2912;
 
-  --secondary: #101829;
-  --background: #101829;
+  --secondary: #232e2f;
+  --background: #232e2f;
+  --base50: #232e2f;
+  --base75: #2c3738;
+  --base100: #353f41;
+
+  /* Override green colors for percentage indicators in dark mode */
+  --green700: #8dcdff;
+  --green100: #1a3a5c;
+  --green600: #8dcdff;
+
+  /* Update disabled button colors for dark mode */
+  --disabled-background: #353f41;
+  --disabled-color: #6e6e6e;
 }
