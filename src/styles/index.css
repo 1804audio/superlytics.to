@@ -109,4 +109,11 @@ main::-webkit-scrollbar-track {
   --dark700: #7b7b7b;
   --dark800: #b4b4b4;
   --dark900: #eeeeee;
+
+  /* Custom primary color variants */
+  --superlytics-primary: #064663;
+  --superlytics-primary-light: #0a5a7a;
+  --superlytics-primary-lighter: #b3d9e6;
+  --superlytics-primary-dark: #042f3d;
+  --superlytics-primary-darker: #021c20;
 }
