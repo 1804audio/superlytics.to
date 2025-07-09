@@ -196,9 +196,10 @@ export const ROLE_PERMISSIONS = {
 export const THEME_COLORS = {
   light: {
     primary: '#064663',
-    gray50: '#ffffff',
-    gray75: '#fafafa',
-    gray100: '#f5f5f5',
+    secondary: '#FCFCFC',
+    gray50: '#FCFCFC',
+    gray75: '#F8F8F8',
+    gray100: '#F4F4F4',
     gray200: '#eaeaea',
     gray300: '#e1e1e1',
     gray400: '#cacaca',
@@ -210,9 +211,10 @@ export const THEME_COLORS = {
   },
   dark: {
     primary: '#0a5a7a',
-    gray50: '#252525',
-    gray75: '#2f2f2f',
-    gray100: '#323232',
+    secondary: '#101829',
+    gray50: '#101829',
+    gray75: '#1A2132',
+    gray100: '#242B3B',
     gray200: '#3e3e3e',
     gray300: '#4a4a4a',
     gray400: '#5a5a5a',

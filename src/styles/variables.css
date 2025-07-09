@@ -7,6 +7,9 @@ html body {
   --primary700: #032329;
   --primary800: #021c20;
   --primary900: #011417;
+
+  --secondary: #fcfcfc;
+  --background: #fcfcfc;
 }
 
 [data-theme='dark'] {
@@ -18,4 +21,7 @@ html body {
   --primary700: #042f3d;
   --primary800: #032329;
   --primary900: #021c20;
+
+  --secondary: #101829;
+  --background: #101829;
 }
