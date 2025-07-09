@@ -261,7 +261,7 @@ export async function deleteWebsiteDataByUrl(websiteId: string, options: Cleanup
   }
 
   // Build date filter if provided
-  const dateFilter: Prisma.DateTimeFilter = {};
+  const dateFilter: any = {};
   if (startDate) {
     dateFilter.gte = startDate;
   }

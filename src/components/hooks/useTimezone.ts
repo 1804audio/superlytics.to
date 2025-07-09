@@ -1,6 +1,6 @@
 import { setItem } from '@/lib/storage';
 import { TIMEZONE_CONFIG } from '@/lib/constants';
-import { formatInTimeZone, zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz';
 import useStore, { setTimezone } from '@/store/app';
 import useLocale from './useLocale';
 
@@ -27,11 +27,11 @@ export function useTimezone() {
   };
 
   const toUtc = (date: Date | string | number) => {
-    return zonedTimeToUtc(date, timezone);
+    return fromZonedTime(date, timezone);
   };
 
   const fromUtc = (date: Date | string | number) => {
-    return utcToZonedTime(date, timezone);
+    return toZonedTime(date, timezone);
   };
 
   return { timezone, saveTimezone, formatTimezoneDate, toUtc, fromUtc };

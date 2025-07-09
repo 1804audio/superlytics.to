@@ -7,7 +7,7 @@ export default async function ({
   params,
 }: {
   children: any;
-  params: { teamId: string };
+  params: Promise<{ teamId: string }>;
 }) {
   const { teamId } = await params;
 

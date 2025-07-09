@@ -1,8 +1,6 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
-import semver from 'semver';
-import { CURRENT_VERSION, VERSION_CHECK, UPDATES_URL } from '@/lib/constants';
-import { getItem } from '@/lib/storage';
+import { CURRENT_VERSION } from '@/lib/constants';
 
 const initialState = {
   current: CURRENT_VERSION,
@@ -15,37 +13,16 @@ const initialState = {
 const store = create(() => ({ ...initialState }));
 
 export async function checkVersion() {
+  // Disable update check for self-hosted Superlytics
   const { current } = store.getState();
-
-  const data = await fetch(`${UPDATES_URL}?v=${current}`, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-    },
-  }).then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    return null;
-  });
-
-  if (!data) {
-    return;
-  }
 
   store.setState(
     produce(state => {
-      const { latest, url } = data;
-      const lastCheck = getItem(VERSION_CHECK);
-
-      const hasUpdate = !!(latest && lastCheck?.version !== latest && semver.gt(latest, current));
-
       state.current = current;
-      state.latest = latest;
-      state.hasUpdate = hasUpdate;
+      state.latest = current;
+      state.hasUpdate = false;
       state.checked = true;
-      state.releaseUrl = url;
+      state.releaseUrl = null;
 
       return state;
     }),

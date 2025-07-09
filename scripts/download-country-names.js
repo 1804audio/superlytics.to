@@ -2,7 +2,10 @@
 const fs = require('fs-extra');
 const path = require('path');
 const https = require('https');
-const chalk = require('chalk');
+// Chalk v5 is ES modules only, use simple colors
+const chalk = {
+  greenBright: text => `\x1b[92m${text}\x1b[0m`,
+};
 
 const src = path.resolve(__dirname, '../src/lang');
 const dest = path.resolve(__dirname, '../public/intl/country');

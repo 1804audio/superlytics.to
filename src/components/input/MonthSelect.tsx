@@ -18,7 +18,7 @@ export function MonthSelect({ date = new Date(), onChange }) {
   const { locale, dateLocale } = useLocale();
   const month = formatDate(date, 'MMMM', locale);
   const year = date.getFullYear();
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
 
   const handleChange = (close: () => void, date: Date) => {
     onChange(`range:${startOfMonth(date).getTime()}:${endOfMonth(date).getTime()}`);

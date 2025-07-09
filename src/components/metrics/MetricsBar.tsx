@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, ReactElement } from 'react';
 import { Loading, cloneChildren } from 'react-basics';
 import ErrorMessage from '@/components/common/ErrorMessage';
 import { formatLongNumber } from '@/lib/format';
@@ -21,7 +21,7 @@ export function MetricsBar({ children, isLoading, isFetched, error }: MetricsBar
       {!isLoading &&
         !error &&
         isFetched &&
-        cloneChildren(children, child => {
+        cloneChildren(children, (child: ReactElement<any>) => {
           return { format: child.props.format || formatFunc };
         })}
     </div>

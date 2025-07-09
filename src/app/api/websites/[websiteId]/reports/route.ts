@@ -28,7 +28,7 @@ export async function GET(
 
   const data = await getWebsiteReports(websiteId, {
     page: +page,
-    pageSize: +pageSize,
+    pageSize,
     search,
   });
 

@@ -1,7 +1,11 @@
 /* eslint-disable no-console */
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
-const chalk = require('chalk');
+// Chalk v5 is ES modules only, use simple colors
+const chalk = {
+  greenBright: text => `\x1b[92m${text}\x1b[0m`,
+  redBright: text => `\x1b[91m${text}\x1b[0m`,
+};
 const { execSync } = require('child_process');
 const semver = require('semver');
 

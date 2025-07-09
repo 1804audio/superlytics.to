@@ -1,11 +1,10 @@
 {
-  "extends": [
-    "stylelint-config-recommended",
-    "stylelint-config-css-modules",
-    "stylelint-config-prettier"
-  ],
+  "extends": ["stylelint-config-recommended", "stylelint-config-css-modules"],
+  "plugins": ["@stylistic/stylelint-plugin"],
   "rules": {
-    "no-descending-specificity": null
+    "no-descending-specificity": null,
+    "@stylistic/indentation": 2,
+    "@stylistic/color-hex-case": "lower"
   },
   "ignoreFiles": ["**/*.js", "**/*.md"]
 }

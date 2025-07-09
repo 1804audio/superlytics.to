@@ -22,7 +22,6 @@
     "plugin:import/errors",
     "plugin:import/typescript",
     "plugin:css-modules/recommended",
-    "plugin:cypress/recommended",
     "prettier",
     "next"
   ],
@@ -46,5 +45,29 @@
   },
   "globals": {
     "React": "writable"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["cypress/**/*.ts", "cypress/**/*.js"],
+      "extends": ["plugin:cypress/recommended"],
+      "env": {
+        "cypress/globals": true
+      }
+    },
+    {
+      "files": ["scripts/**/*.js"],
+      "env": {
+        "node": true
+      },
+      "parser": "espree",
+      "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "script"
+      },
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off",
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ]
 }

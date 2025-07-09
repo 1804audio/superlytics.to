@@ -39,7 +39,7 @@ export async function DELETE(
     });
 
     return json(result);
-  } catch (err) {
+  } catch {
     return badRequest('Failed to delete website data');
   }
 }

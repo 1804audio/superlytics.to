@@ -165,7 +165,7 @@
         disabled = !!data.disabled;
         cache = data.cache;
       }
-    } catch (e) {
+    } catch {
       /* no-op */
     }
   };

@@ -1,7 +1,12 @@
 /* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk');
+// Chalk v5 is ES modules only, use simple colors
+const chalk = {
+  yellowBright: text => `\x1b[93m${text}\x1b[0m`,
+  redBright: text => `\x1b[91m${text}\x1b[0m`,
+  greenBright: text => `\x1b[92m${text}\x1b[0m`,
+};
 const messages = require('../src/lang/en-US.json');
 const ignore = require('../lang-ignore.json');
 
