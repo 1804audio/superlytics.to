@@ -22,11 +22,13 @@ This document provides comprehensive API documentation for the Superlytics analy
 ## Authentication
 
 ### Login
+
 ```http
 POST /api/auth/login
 ```
 
 **Request Body:**
+
 ```json
 {
   "username": "admin",
@@ -35,6 +37,7 @@ POST /api/auth/login
 ```
 
 **Response:**
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -47,6 +50,7 @@ POST /api/auth/login
 ```
 
 ### Using the Token
+
 Include the JWT token in all authenticated requests:
 
 ```http
@@ -54,6 +58,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ### Logout
+
 ```http
 POST /api/auth/logout
 ```
@@ -63,17 +68,20 @@ POST /api/auth/logout
 ## Core Analytics Endpoints
 
 ### Send Analytics Event
+
 ```http
 POST /api/send
 ```
 
 **Headers:**
+
 ```
 Content-Type: application/json
 User-Agent: <browser_user_agent>
 ```
 
 **Request Body:**
+
 ```json
 {
   "website": "website_id",
@@ -88,10 +96,12 @@ User-Agent: <browser_user_agent>
 ```
 
 **Event Types:**
+
 - `pageview` - Page view tracking
 - Custom events with additional data
 
 **Response:**
+
 ```json
 {
   "success": true
@@ -99,6 +109,7 @@ User-Agent: <browser_user_agent>
 ```
 
 ### Batch Analytics
+
 ```http
 POST /api/batch
 ```
@@ -115,7 +126,7 @@ Send multiple events in a single request:
     },
     {
       "website": "website_id",
-      "url": "/page2", 
+      "url": "/page2",
       "name": "pageview"
     }
   ]
@@ -127,11 +138,13 @@ Send multiple events in a single request:
 ## Website Management
 
 ### Create Website
+
 ```http
 POST /api/websites
 ```
 
 **Request Body:**
+
 ```json
 {
   "name": "My Website",
@@ -141,6 +154,7 @@ POST /api/websites
 ```
 
 **Response:**
+
 ```json
 {
   "id": "website_id",
@@ -152,11 +166,13 @@ POST /api/websites
 ```
 
 ### Get Website Details
+
 ```http
 GET /api/websites/{websiteId}
 ```
 
 **Response:**
+
 ```json
 {
   "id": "website_id",
@@ -170,11 +186,13 @@ GET /api/websites/{websiteId}
 ```
 
 ### Update Website
+
 ```http
 PUT /api/websites/{websiteId}
 ```
 
 **Request Body:**
+
 ```json
 {
   "name": "Updated Name",
@@ -183,11 +201,13 @@ PUT /api/websites/{websiteId}
 ```
 
 ### Delete Website
+
 ```http
 DELETE /api/websites/{websiteId}
 ```
 
 ### Reset Website Data
+
 ```http
 POST /api/websites/{websiteId}/reset
 ```
@@ -199,6 +219,7 @@ Removes all analytics data but keeps website configuration.
 ## Custom Features
 
 ### 🆕 URL-Specific Data Cleanup
+
 ```http
 DELETE /api/websites/{websiteId}/cleanup
 ```
@@ -208,6 +229,7 @@ DELETE /api/websites/{websiteId}/cleanup
 **Use Case**: Perfect for SaaS platforms where users create and delete individual pages/links.
 
 **Request Body:**
+
 ```json
 {
   "urlPath": "/user/page-to-delete",
@@ -219,14 +241,15 @@ DELETE /api/websites/{websiteId}/cleanup
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `urlPath` | string | ✅ | The URL path to delete data for |
-| `deleteType` | enum | ❌ | `exact`, `prefix`, `pattern` (default: `exact`) |
-| `startDate` | ISO 8601 | ❌ | Delete data from this date |
-| `endDate` | ISO 8601 | ❌ | Delete data until this date |
+| Parameter    | Type     | Required | Description                                     |
+| ------------ | -------- | -------- | ----------------------------------------------- |
+| `urlPath`    | string   | ✅       | The URL path to delete data for                 |
+| `deleteType` | enum     | ❌       | `exact`, `prefix`, `pattern` (default: `exact`) |
+| `startDate`  | ISO 8601 | ❌       | Delete data from this date                      |
+| `endDate`    | ISO 8601 | ❌       | Delete data until this date                     |
 
 **Delete Types:**
+
 - `exact`: Matches the exact URL path
 - `prefix`: Matches URLs starting with the path
 - `pattern`: Matches URLs containing the path
@@ -234,6 +257,7 @@ DELETE /api/websites/{websiteId}/cleanup
 **Examples:**
 
 1. **Delete specific page:**
+
 ```json
 {
   "urlPath": "/user/john/page1",
@@ -242,6 +266,7 @@ DELETE /api/websites/{websiteId}/cleanup
 ```
 
 2. **Delete all user pages:**
+
 ```json
 {
   "urlPath": "/user/john/",
@@ -250,6 +275,7 @@ DELETE /api/websites/{websiteId}/cleanup
 ```
 
 3. **Delete with date range:**
+
 ```json
 {
   "urlPath": "/campaign/summer2024",
@@ -260,6 +286,7 @@ DELETE /api/websites/{websiteId}/cleanup
 ```
 
 **Response:**
+
 ```json
 {
   "deletedEvents": 150,
@@ -270,6 +297,7 @@ DELETE /api/websites/{websiteId}/cleanup
 ```
 
 **Error Responses:**
+
 ```json
 {
   "error": "Website not found"
@@ -281,11 +309,13 @@ DELETE /api/websites/{websiteId}/cleanup
 ## Website Analytics Data
 
 ### Get Website Stats
+
 ```http
 GET /api/websites/{websiteId}/stats?startAt=timestamp&endAt=timestamp
 ```
 
 **Query Parameters:**
+
 - `startAt`: Start timestamp (Unix)
 - `endAt`: End timestamp (Unix)
 - `url`: Filter by URL path
@@ -295,6 +325,7 @@ GET /api/websites/{websiteId}/stats?startAt=timestamp&endAt=timestamp
 - `event`: Filter by event name
 
 **Response:**
+
 ```json
 {
   "pageviews": {
@@ -321,11 +352,13 @@ GET /api/websites/{websiteId}/stats?startAt=timestamp&endAt=timestamp
 ```
 
 ### Get Page Views
+
 ```http
 GET /api/websites/{websiteId}/pageviews?startAt=timestamp&endAt=timestamp
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -333,18 +366,20 @@ GET /api/websites/{websiteId}/pageviews?startAt=timestamp&endAt=timestamp
     "y": 450
   },
   {
-    "x": "/about", 
+    "x": "/about",
     "y": 200
   }
 ]
 ```
 
 ### Get Website Metrics
+
 ```http
 GET /api/websites/{websiteId}/metrics?startAt=timestamp&endAt=timestamp&type=url
 ```
 
 **Metric Types:**
+
 - `url` - Page URLs
 - `referrer` - Referrer sites
 - `browser` - Browser types
@@ -354,11 +389,13 @@ GET /api/websites/{websiteId}/metrics?startAt=timestamp&endAt=timestamp&type=url
 - `event` - Custom events
 
 ### Get Sessions
+
 ```http
 GET /api/websites/{websiteId}/sessions?startAt=timestamp&endAt=timestamp
 ```
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -382,16 +419,19 @@ GET /api/websites/{websiteId}/sessions?startAt=timestamp&endAt=timestamp
 ```
 
 ### Get Events
+
 ```http
 GET /api/websites/{websiteId}/events?startAt=timestamp&endAt=timestamp
 ```
 
 ### Get Real-time Data
+
 ```http
 GET /api/websites/{websiteId}/active
 ```
 
 **Response:**
+
 ```json
 {
   "x": 25
@@ -399,11 +439,13 @@ GET /api/websites/{websiteId}/active
 ```
 
 ### Get Date Range
+
 ```http
 GET /api/websites/{websiteId}/daterange
 ```
 
 **Response:**
+
 ```json
 {
   "startDate": "2024-01-01T00:00:00.000Z",
@@ -416,11 +458,13 @@ GET /api/websites/{websiteId}/daterange
 ## Reports & Analytics
 
 ### Create Report
+
 ```http
 POST /api/reports
 ```
 
 **Request Body:**
+
 ```json
 {
   "websiteId": "website_id",
@@ -432,16 +476,19 @@ POST /api/reports
 ```
 
 ### Get Reports
+
 ```http
 GET /api/reports
 ```
 
 ### Funnel Analysis
+
 ```http
 GET /api/reports/funnel?websiteId=id&startAt=timestamp&endAt=timestamp
 ```
 
 **Query Parameters:**
+
 ```
 websiteId=website_id
 startAt=1704067200000
@@ -453,26 +500,31 @@ urls[]=/step3
 ```
 
 ### Retention Analysis
+
 ```http
 GET /api/reports/retention?websiteId=id&startAt=timestamp&endAt=timestamp
 ```
 
 ### UTM Campaign Analysis
+
 ```http
 GET /api/reports/utm?websiteId=id&startAt=timestamp&endAt=timestamp
 ```
 
 ### Revenue Analysis
+
 ```http
 GET /api/reports/revenue?websiteId=id&startAt=timestamp&endAt=timestamp
 ```
 
 ### Journey Analysis
+
 ```http
 GET /api/reports/journey?websiteId=id&startAt=timestamp&endAt=timestamp
 ```
 
 ### Insights
+
 ```http
 GET /api/reports/insights?websiteId=id&startAt=timestamp&endAt=timestamp
 ```
@@ -482,16 +534,19 @@ GET /api/reports/insights?websiteId=id&startAt=timestamp&endAt=timestamp
 ## User & Team Management
 
 ### Get Current User
+
 ```http
 GET /api/me
 ```
 
 ### Update Password
+
 ```http
 POST /api/me/password
 ```
 
 **Request Body:**
+
 ```json
 {
   "currentPassword": "current_password",
@@ -500,16 +555,19 @@ POST /api/me/password
 ```
 
 ### Get User Websites
+
 ```http
 GET /api/me/websites
 ```
 
 ### Create User (Admin Only)
+
 ```http
 POST /api/users
 ```
 
 **Request Body:**
+
 ```json
 {
   "username": "newuser",
@@ -519,11 +577,13 @@ POST /api/users
 ```
 
 ### Get Users (Admin Only)
+
 ```http
 GET /api/users
 ```
 
 ### Teams
+
 ```http
 GET /api/teams
 POST /api/teams
@@ -537,6 +597,7 @@ DELETE /api/teams/{teamId}
 ## Share URLs
 
 ### Get Shared Website Data
+
 ```http
 GET /api/share/{shareId}
 ```
@@ -549,17 +610,18 @@ Access website analytics via public share URL without authentication.
 
 ### HTTP Status Codes
 
-| Code | Meaning |
-|------|---------|
-| 200 | Success |
-| 400 | Bad Request - Invalid parameters |
-| 401 | Unauthorized - Missing or invalid token |
-| 403 | Forbidden - Insufficient permissions |
-| 404 | Not Found - Resource doesn't exist |
-| 429 | Too Many Requests - Rate limit exceeded |
-| 500 | Internal Server Error |
+| Code | Meaning                                 |
+| ---- | --------------------------------------- |
+| 200  | Success                                 |
+| 400  | Bad Request - Invalid parameters        |
+| 401  | Unauthorized - Missing or invalid token |
+| 403  | Forbidden - Insufficient permissions    |
+| 404  | Not Found - Resource doesn't exist      |
+| 429  | Too Many Requests - Rate limit exceeded |
+| 500  | Internal Server Error                   |
 
 ### Error Response Format
+
 ```json
 {
   "error": "Detailed error message",
@@ -576,6 +638,7 @@ Access website analytics via public share URL without authentication.
 - **Burst**: Up to 10 requests per second
 
 Rate limit headers:
+
 ```
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -587,6 +650,7 @@ X-RateLimit-Reset: 1704067200
 ## Common Use Cases
 
 ### 1. SaaS Platform Integration
+
 ```javascript
 // Track user page creation
 await fetch('/api/send', {
@@ -595,25 +659,26 @@ await fetch('/api/send', {
   body: JSON.stringify({
     website: 'your_website_id',
     url: `/user/${userId}/new-page`,
-    name: 'pageview'
-  })
+    name: 'pageview',
+  }),
 });
 
 // Delete analytics when user deletes page
 await fetch(`/api/websites/${websiteId}/cleanup`, {
   method: 'DELETE',
   headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
   },
   body: JSON.stringify({
     urlPath: `/user/${userId}/deleted-page`,
-    deleteType: 'exact'
-  })
+    deleteType: 'exact',
+  }),
 });
 ```
 
 ### 2. Multi-tenant Analytics
+
 ```javascript
 // Each user gets their own URL prefix
 const userPrefix = `/user/${userId}/`;
@@ -622,17 +687,18 @@ const userPrefix = `/user/${userId}/`;
 await fetch(`/api/websites/${websiteId}/cleanup`, {
   method: 'DELETE',
   headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
   },
   body: JSON.stringify({
     urlPath: userPrefix,
-    deleteType: 'prefix'
-  })
+    deleteType: 'prefix',
+  }),
 });
 ```
 
 ### 3. Campaign Analytics
+
 ```javascript
 // Track campaign performance
 await fetch('/api/send', {
@@ -641,22 +707,22 @@ await fetch('/api/send', {
     website: websiteId,
     url: '/campaign/black-friday-2024',
     referrer: 'https://facebook.com',
-    name: 'pageview'
-  })
+    name: 'pageview',
+  }),
 });
 
 // Clean up expired campaign data
 await fetch(`/api/websites/${websiteId}/cleanup`, {
   method: 'DELETE',
   headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
   },
   body: JSON.stringify({
     urlPath: '/campaign/black-friday-2024',
     deleteType: 'exact',
-    endDate: '2024-11-30T23:59:59.999Z'
-  })
+    endDate: '2024-11-30T23:59:59.999Z',
+  }),
 });
 ```
 
@@ -665,6 +731,7 @@ await fetch(`/api/websites/${websiteId}/cleanup`, {
 ## SDK Examples
 
 ### JavaScript/Node.js
+
 ```javascript
 class SuperlyticsAPI {
   constructor(baseURL, token) {
@@ -676,10 +743,10 @@ class SuperlyticsAPI {
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       ...options,
       headers: {
-        'Authorization': `Bearer ${this.token}`,
+        Authorization: `Bearer ${this.token}`,
         'Content-Type': 'application/json',
-        ...options.headers
-      }
+        ...options.headers,
+      },
     });
     return response.json();
   }
@@ -691,8 +758,8 @@ class SuperlyticsAPI {
         website: websiteId,
         url,
         title,
-        name: 'pageview'
-      })
+        name: 'pageview',
+      }),
     });
   }
 
@@ -702,8 +769,8 @@ class SuperlyticsAPI {
       body: JSON.stringify({
         urlPath,
         deleteType: 'exact',
-        ...options
-      })
+        ...options,
+      }),
     });
   }
 
@@ -714,6 +781,7 @@ class SuperlyticsAPI {
 ```
 
 ### Python
+
 ```python
 import requests
 import json
@@ -726,7 +794,7 @@ class SuperlyticsAPI:
             'Authorization': f'Bearer {token}',
             'Content-Type': 'application/json'
         }
-    
+
     def track_pageview(self, website_id, url, title=None):
         data = {
             'website': website_id,
@@ -735,14 +803,14 @@ class SuperlyticsAPI:
         }
         if title:
             data['title'] = title
-            
+
         response = requests.post(
             f'{self.base_url}/send',
             headers=self.headers,
             json=data
         )
         return response.json()
-    
+
     def cleanup_url(self, website_id, url_path, delete_type='exact', start_date=None, end_date=None):
         data = {
             'urlPath': url_path,
@@ -752,7 +820,7 @@ class SuperlyticsAPI:
             data['startDate'] = start_date.isoformat()
         if end_date:
             data['endDate'] = end_date.isoformat()
-            
+
         response = requests.delete(
             f'{self.base_url}/websites/{website_id}/cleanup',
             headers=self.headers,
@@ -766,11 +834,13 @@ class SuperlyticsAPI:
 ## Testing
 
 ### Health Check
+
 ```http
 GET /api/heartbeat
 ```
 
 **Response:**
+
 ```json
 {
   "ok": true
@@ -778,6 +848,7 @@ GET /api/heartbeat
 ```
 
 ### Environment Info
+
 ```http
 GET /api/me
 ```
