@@ -200,7 +200,7 @@ export const THEME_COLORS = {
     gray50: '#ede6e3',
     gray75: '#E8E0DC',
     gray100: '#E3DAD5',
-    gray200: '#eaeaea',
+    gray200: '#d1d5db',
     gray300: '#e1e1e1',
     gray400: '#cacaca',
     gray500: '#b3b3b3',
