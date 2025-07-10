@@ -7,7 +7,7 @@ services:
     environment:
       DATABASE_URL: postgresql://superlytics:superlytics@db:5432/superlytics
       DATABASE_TYPE: postgresql
-      APP_SECRET: replace-me-with-a-random-string
+      APP_SECRET: cYC+fxzmKhCAR0SHaQUe2fEW966w5TtUGbNSs6V3/TA=
     depends_on:
       db:
         condition: service_healthy
