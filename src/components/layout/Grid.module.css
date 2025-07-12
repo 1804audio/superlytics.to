@@ -1,11 +1,13 @@
 .grid {
   display: grid;
+  background: var(--base50);
 }
 
 .row {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  border-top: 1px solid var(--base300);
+  gap: 16px;
+  padding: 16px;
 }
 
 .row.compare {
@@ -15,16 +17,22 @@
 .col {
   padding: 20px;
   min-height: 430px;
-  border-inline-start: 1px solid var(--base300);
+  background: var(--background);
+  border: 1px solid var(--base300);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
 }
 
 .col:first-child {
-  border-inline-start: 0;
-  padding-inline-start: 0;
+  border: 1px solid var(--base300);
+  border-radius: 12px;
+  padding: 20px;
 }
 
 .col:last-child {
-  padding-inline-end: 0;
+  border: 1px solid var(--base300);
+  border-radius: 12px;
+  padding: 20px;
 }
 
 .col.one {
@@ -57,14 +65,16 @@
 
 @media only screen and (max-width: 992px) {
   .row {
-    border: 0;
+    gap: 16px;
+    padding: 16px;
   }
 
   .row > .col {
-    border-top: 1px solid var(--base300);
-    border-inline-start: 0;
-    border-inline-end: 0;
-    padding: 20px 0;
+    border: 1px solid var(--base300);
+    border-radius: 12px;
+    padding: 20px;
+    background: var(--background);
+    box-shadow: var(--card-shadow);
   }
 
   .col.two,

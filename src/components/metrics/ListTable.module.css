@@ -39,7 +39,7 @@
   align-items: center;
   margin-bottom: 5px;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 .row:hover {

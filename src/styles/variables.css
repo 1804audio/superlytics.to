@@ -13,6 +13,7 @@ html body {
   --base50: #ede6e3;
   --base75: #e8e0dc;
   --base100: #e3dad5;
+  --base300: #c9beb8;
 
   /* Override green colors for percentage indicators */
   --green700: #8dcdff;
@@ -22,6 +23,12 @@ html body {
   /* Update disabled button colors */
   --disabled-background: #e3dad5;
   --disabled-color: #b3b3b3;
+
+  /* Card shadows for light mode */
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  /* Rounded borders for buttons and components */
+  --border-radius: 8px;
 }
 
 [data-theme='dark'] {
@@ -39,6 +46,7 @@ html body {
   --base50: #232e2f;
   --base75: #2c3738;
   --base100: #353f41;
+  --base300: #4a5556;
 
   /* Override green colors for percentage indicators in dark mode */
   --green700: #8dcdff;
@@ -48,4 +56,10 @@ html body {
   /* Update disabled button colors for dark mode */
   --disabled-background: #353f41;
   --disabled-color: #6e6e6e;
+
+  /* Card shadows for dark mode */
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+  /* Rounded borders for buttons and components */
+  --border-radius: 8px;
 }

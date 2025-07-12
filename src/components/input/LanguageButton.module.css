@@ -4,7 +4,7 @@
   padding: 10px;
   background: var(--base50);
   z-index: var(--z-index-popup);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
   margin-inline-start: 10px;
 }
@@ -14,7 +14,7 @@
   align-items: center;
   justify-content: space-between;
   min-width: 200px;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   padding: 5px 10px;
 }
 
