@@ -40,44 +40,49 @@ export function WebsiteMetricsBar({
         {
           ...pageviews,
           label: formatMessage(labels.views),
-          change: pageviews.value - pageviews.prev,
+          change: (pageviews?.value || 0) - (pageviews?.prev || 0),
           formatValue: formatLongNumber,
         },
         {
           ...visits,
           label: formatMessage(labels.visits),
-          change: visits.value - visits.prev,
+          change: (visits?.value || 0) - (visits?.prev || 0),
           formatValue: formatLongNumber,
         },
         {
           ...visitors,
           label: formatMessage(labels.visitors),
-          change: visitors.value - visitors.prev,
+          change: (visitors?.value || 0) - (visitors?.prev || 0),
           formatValue: formatLongNumber,
         },
         {
           label: formatMessage(labels.bounceRate),
           value:
-            visits.value > 0 ? (Math.min(visits.value, bounces.value) / visits.value) * 100 : 0,
-          prev: visits.prev > 0 ? (Math.min(visits.prev, bounces.prev) / visits.prev) * 100 : 0,
-          change:
-            visits.value > 0 && visits.prev > 0
-              ? (Math.min(visits.value, bounces.value) / visits.value) * 100 -
-                (Math.min(visits.prev, bounces.prev) / visits.prev) * 100
+            (visits?.value || 0) > 0
+              ? (Math.min(visits.value || 0, bounces?.value || 0) / visits.value) * 100
               : 0,
-          formatValue: n => Math.round(+n) + '%',
+          prev:
+            (visits?.prev || 0) > 0
+              ? (Math.min(visits.prev || 0, bounces?.prev || 0) / visits.prev) * 100
+              : 0,
+          change:
+            (visits?.value || 0) > 0 && (visits?.prev || 0) > 0
+              ? (Math.min(visits.value || 0, bounces?.value || 0) / visits.value) * 100 -
+                (Math.min(visits.prev || 0, bounces?.prev || 0) / visits.prev) * 100
+              : 0,
+          formatValue: n => Math.round(+(n || 0)) + '%',
           reverseColors: true,
         },
         {
           label: formatMessage(labels.visitDuration),
-          value: visits.value > 0 ? totaltime.value / visits.value : 0,
-          prev: visits.prev > 0 ? totaltime.prev / visits.prev : 0,
+          value: (visits?.value || 0) > 0 ? (totaltime?.value || 0) / visits.value : 0,
+          prev: (visits?.prev || 0) > 0 ? (totaltime?.prev || 0) / visits.prev : 0,
           change:
-            visits.value > 0 && visits.prev > 0
-              ? totaltime.value / visits.value - totaltime.prev / visits.prev
+            (visits?.value || 0) > 0 && (visits?.prev || 0) > 0
+              ? (totaltime?.value || 0) / visits.value - (totaltime?.prev || 0) / visits.prev
               : 0,
           formatValue: n =>
-            `${+n < 0 ? '-' : ''}${formatShortTime(Math.abs(~~n), ['m', 's'], ' ')}`,
+            `${+(n || 0) < 0 ? '-' : ''}${formatShortTime(Math.abs(~~(n || 0)), ['m', 's'], ' ')}`,
         },
       ]
     : [];
