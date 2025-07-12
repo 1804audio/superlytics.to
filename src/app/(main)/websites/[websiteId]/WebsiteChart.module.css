@@ -8,6 +8,7 @@
 .chart {
   position: relative;
   overflow: hidden;
+  border-radius: var(--border-radius);
 }
 
 .title {

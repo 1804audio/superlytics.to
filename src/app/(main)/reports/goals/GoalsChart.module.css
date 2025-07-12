@@ -68,7 +68,7 @@
   justify-content: flex-end;
   background: var(--base900);
   height: 10px;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   overflow: hidden;
   position: relative;
 }
@@ -91,5 +91,5 @@
 
 .track {
   background-color: var(--base100);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 }
