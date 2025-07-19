@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Superlytics is a privacy-focused web analytics SaaS platform built with Next.js 15, React 19, and TypeScript. It supports multiple databases (PostgreSQL, MySQL, ClickHouse) and provides comprehensive analytics through a modern dashboard interface.
+Superlytics is built with Next.js 15, React 19, and TypeScript. It supports multiple databases (PostgreSQL, MySQL, ClickHouse).
+
+- **Simplicity First**: Choose the simplest solution that works - avoid over-engineering
 
 ## Development Commands
 
@@ -81,17 +83,6 @@ Superlytics is a privacy-focused web analytics SaaS platform built with Next.js 
 - **React Query**: Server state management with `@tanstack/react-query`
 - **Local storage**: Client-side persistence for user preferences
 
-### Report Types
-
-The platform supports multiple analytics report types:
-
-- **Funnel Analysis**: Conversion tracking through user journeys
-- **Retention Analysis**: User return behavior over time
-- **Revenue Tracking**: E-commerce analytics and revenue attribution
-- **UTM Tracking**: Campaign performance analysis
-- **Attribution Analysis**: Multi-touch attribution modeling
-- **Journey Analysis**: User path visualization
-
 ## Development Guidelines
 
 ### Database Queries
@@ -130,13 +121,6 @@ The platform supports multiple analytics report types:
 - `NEXTAUTH_SECRET` - Authentication secret
 - `CLICKHOUSE_URL` - ClickHouse connection (optional)
 - `REDIS_URL` - Redis connection (optional)
-
-### Database Support
-
-- PostgreSQL (minimum v12.14)
-- MySQL (minimum v8.0)
-- MariaDB (minimum v10.5)
-- ClickHouse (for high-scale deployments)
 
 ### Development Database
 
