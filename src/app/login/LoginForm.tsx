@@ -9,6 +9,7 @@ import {
   Icon,
 } from 'react-basics';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useApi, useMessages } from '@/components/hooks';
 import { setUser } from '@/store/app';
 import { setClientAuthToken } from '@/lib/client';
@@ -75,6 +76,9 @@ export function LoginForm() {
           </SubmitButton>
         </FormButtons>
       </Form>
+      <div className={styles.links}>
+        Don&apos;t have an account? <Link href="/signup">Sign up</Link>
+      </div>
     </div>
   );
 }

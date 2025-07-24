@@ -56,6 +56,15 @@ export interface Auth {
     username: string;
     role: string;
     isAdmin: boolean;
+    // Stripe integration fields
+    customerId?: string;
+    subscriptionId?: string;
+    planId?: string;
+    hasAccess?: boolean;
+    isLifetime?: boolean;
+    subscriptionStatus?: string;
+    currentPeriodStart?: Date;
+    currentPeriodEnd?: Date;
   };
   grant?: Permission[];
   shareToken?: {
@@ -69,6 +78,15 @@ export interface User {
   password?: string;
   role: string;
   createdAt?: Date;
+  // Stripe integration fields
+  customerId?: string;
+  subscriptionId?: string;
+  planId?: string;
+  hasAccess?: boolean;
+  isLifetime?: boolean;
+  subscriptionStatus?: string;
+  currentPeriodStart?: Date;
+  currentPeriodEnd?: Date;
 }
 
 export interface Website {
