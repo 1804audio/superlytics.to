@@ -49,6 +49,41 @@ export interface PlanConfiguration {
 }
 
 export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
+  // Free Plan
+  free: {
+    id: 'free',
+    name: 'Free',
+    type: 'subscription',
+    prices: {
+      monthly: 0,
+      yearly: 0,
+    },
+    stripeIds: {
+      monthly: 'price_1RoVxtQAmWLtKTXWZM9N0JvP',
+      yearly: 'price_1RoVxtQAmWLtKTXWZM9N0JvP', // Same price for both since it's free
+    },
+    limits: {
+      eventsPerMonth: 10000, // 10k events
+      websites: 1, // Single website
+      teamMembers: 1, // Solo user
+      dataRetentionMonths: 6,
+    },
+    features: {
+      basicAnalytics: true,
+      reports: true,
+      privacy: true,
+      dataExport: true,
+      dataImport: false,
+      emailReports: false,
+      apiAccess: 'limited',
+      whiteLabel: false,
+      customDomain: false,
+      prioritySLA: false,
+      onboardingSupport: false,
+      supportLevel: 'community',
+    },
+  },
+
   // Regular Subscription Plans
   hobby: {
     id: 'hobby',
@@ -66,7 +101,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       eventsPerMonth: 100000, // 100k
       websites: 5, // Increased from 3
       teamMembers: 3, // Added as requested
-      dataRetentionMonths: 6,
+      dataRetentionMonths: 36, // 3 years as requested
     },
     features: {
       basicAnalytics: true,

@@ -62,8 +62,8 @@ export async function POST(request: Request) {
       where: { id: userId },
       data: {
         customerId: stripeCustomer.id,
-        planId: 'hobby',
-        hasAccess: false, // No access until payment
+        planId: 'free', // Start with free plan
+        hasAccess: true, // Free plan gets access
         isLifetime: false,
       },
     });
@@ -84,8 +84,8 @@ export async function POST(request: Request) {
         username: user.username,
         role: user.role,
         isAdmin: user.role === ROLES.admin,
-        planId: 'hobby',
-        hasAccess: false,
+        planId: 'free',
+        hasAccess: true,
       },
       message: 'Account created successfully! Welcome to Superlytics.',
     });
