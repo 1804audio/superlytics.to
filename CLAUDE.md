@@ -2,7 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+- **Simplicity First**: Choose the simplest solution that works - avoid over-engineering
+- **Excellence**: Production-grade code only - no shortcuts or placeholders
+- **3 Lines Better Than 10**: If you can solve it simply, do it
+- **No Premature Optimization**: Solve the actual problem, not imaginary ones
+  **ZERO tolerance for build issues, errors, problems, or any linting issues. Everything must be fixed perfectly.  
+  Never take shortcuts. Avoid disabling ESLint; don't try to bypass our code quality to getAverage work. Doing so will lead to disaster.**
+
+Ensure the code quality is consistent across the platform. Follow the same standard for perfectly implemented code.## Project Overview
 
 Superlytics is a privacy-focused web analytics SaaS platform built with Next.js. It provides a modern alternative to Google Analytics with support for multiple databases (PostgreSQL, MySQL, ClickHouse) and comprehensive analytics features.
 
@@ -49,6 +56,7 @@ npm run build-lang      # Process internationalization files
 ## Architecture Overview
 
 ### App Structure (Next.js App Router)
+
 - `src/app/` - Next.js App Router pages and API routes
 - `src/app/(main)/` - Main application pages with shared layout
 - `src/app/api/` - API routes for data operations
@@ -58,18 +66,21 @@ npm run build-lang      # Process internationalization files
 - `src/store/` - Zustand state management
 
 ### Key Components Architecture
+
 - **Charts**: Custom Chart.js implementations in `src/components/charts/`
 - **Metrics**: Analytics tables and visualizations in `src/components/metrics/`
 - **Reports**: Advanced analytics reports with parameters and filtering
 - **Hooks**: Custom React hooks for data fetching and state management
 
 ### Database Layer
+
 - **Multi-database support**: Automatic detection via `getDatabaseType()` in `src/lib/db.ts`
 - **Prisma**: Primary ORM for schema management
 - **Raw SQL**: Performance-critical queries in `src/queries/sql/`
 - **Migrations**: Database-specific migrations in `db/` directory
 
 ### Data Collection
+
 - **Tracker**: Custom analytics script built with Rollup (`src/tracker/`)
 - **Events**: Event collection and processing pipeline
 - **Sessions**: Session management and analytics
@@ -85,6 +96,7 @@ npm run build-lang      # Process internationalization files
 ## Database Considerations
 
 The application supports multiple database backends. When working with queries:
+
 - Use `src/lib/db.ts` functions for database-agnostic operations
 - Database-specific queries are organized in `src/queries/sql/`
 - Prisma client is generated via `npm run build-db-client`
@@ -93,6 +105,7 @@ The application supports multiple database backends. When working with queries:
 ## Environment Setup
 
 Essential environment variables (see `scripts/check-env.js` for validation):
+
 - `DATABASE_URL` - Primary database connection
 - Optional: `CLICKHOUSE_URL` for ClickHouse analytics backend
 - Optional: Various feature flags and configuration options
@@ -100,7 +113,8 @@ Essential environment variables (see `scripts/check-env.js` for validation):
 ## Internationalization
 
 The project supports 45+ languages with files in:
-- `src/lang/` - Source translation files  
+
+- `src/lang/` - Source translation files
 - `public/intl/` - Compiled translation files
 - Build process: `npm run build-lang` compiles and formats translations
 
