@@ -3,7 +3,7 @@ import { DASHBOARD_CONFIG, DEFAULT_WEBSITE_LIMIT } from '@/lib/constants';
 import { getItem, setItem } from '@/lib/storage';
 
 export const initialState = {
-  showCharts: true,
+  showCharts: false,
   limit: DEFAULT_WEBSITE_LIMIT,
   websiteOrder: [],
   websiteActive: [],
