@@ -4,8 +4,8 @@ export function ok() {
   return Response.json({ ok: true });
 }
 
-export function json(data: any) {
-  return Response.json(data);
+export function json(data: any, options?: ConstructorParameters<typeof Response>[1]) {
+  return Response.json(data, options);
 }
 
 export function badRequest(error: any = 'Bad request') {

@@ -8,6 +8,8 @@ import { fetchSession } from '@/lib/load';
 import { getClientInfo, hasBlockedIp } from '@/lib/detect';
 import { createToken, parseToken } from '@/lib/jwt';
 import { secret, uuid, hash } from '@/lib/crypto';
+// Initialize server services (schedulers, etc.) - this ensures they start when the API is first called
+import '@/lib/server-init';
 import { COLLECTION_TYPE } from '@/lib/constants';
 import { anyObjectParam, urlOrPathParam } from '@/lib/schema';
 import { safeDecodeURI, safeDecodeURIComponent } from '@/lib/url';
