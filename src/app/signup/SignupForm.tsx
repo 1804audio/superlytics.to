@@ -59,7 +59,7 @@ export function SignupForm() {
               },
             }}
           >
-            <TextField autoComplete="email" type="email" placeholder="you@example.com" />
+            <TextField autoComplete="email" type="text" placeholder="you@example.com" />
           </FormInput>
         </FormRow>
         <FormRow label="Password">

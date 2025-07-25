@@ -4,6 +4,7 @@ import { canAddUserToTeam, canViewTeam } from '@/lib/auth';
 import { parseRequest } from '@/lib/request';
 import { pagingParams, roleParam } from '@/lib/schema';
 import { createTeamUser, getTeamUser, getTeamUsers } from '@/queries';
+import { simpleUsageManager } from '@/lib/services/simple-usage-manager';
 
 export async function GET(request: Request, { params }: { params: Promise<{ teamId: string }> }) {
   const schema = z.object({
@@ -69,6 +70,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ tea
 
   if (teamUser) {
     return badRequest('User is already a member of the Team.');
+  }
+
+  // Check team member limits before adding new user
+  const canAddMember = await simpleUsageManager.checkTeamMemberLimit(teamId);
+  if (!canAddMember) {
+    return Response.json(
+      {
+        error: 'Team member limit exceeded. Please upgrade your plan to add more team members.',
+        code: 'TEAM_MEMBER_LIMIT_EXCEEDED',
+        upgradeRequired: true,
+      },
+      { status: 429 },
+    );
   }
 
   const users = await createTeamUser(userId, teamId, role);

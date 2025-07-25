@@ -38,6 +38,7 @@ export interface UserPlanData {
   id: string;
   planId: string;
   isLifetime: boolean;
+  hasAccess: boolean;
   currentPeriodStart?: Date;
   currentPeriodEnd?: Date;
 }
@@ -280,6 +281,7 @@ export class SimpleUsageManager {
         id: true,
         planId: true,
         isLifetime: true,
+        hasAccess: true,
         currentPeriodStart: true,
         currentPeriodEnd: true,
       },

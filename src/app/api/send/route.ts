@@ -4,14 +4,15 @@ import { startOfHour, startOfMonth } from 'date-fns';
 import clickhouse from '@/lib/clickhouse';
 import { parseRequest } from '@/lib/request';
 import { badRequest, json, forbidden, serverError } from '@/lib/response';
-import { fetchSession, fetchWebsite } from '@/lib/load';
+import { fetchSession } from '@/lib/load';
 import { getClientInfo, hasBlockedIp } from '@/lib/detect';
 import { createToken, parseToken } from '@/lib/jwt';
 import { secret, uuid, hash } from '@/lib/crypto';
 import { COLLECTION_TYPE } from '@/lib/constants';
 import { anyObjectParam, urlOrPathParam } from '@/lib/schema';
 import { safeDecodeURI, safeDecodeURIComponent } from '@/lib/url';
-import { createSession, saveEvent, saveSessionData } from '@/queries';
+import { createSession, saveEvent, saveSessionData, getWebsiteWithUser } from '@/queries';
+import { simpleUsageManager } from '@/lib/services/simple-usage-manager';
 
 const schema = z.object({
   type: z.enum(['event', 'identify']),
@@ -70,12 +71,43 @@ export async function POST(request: Request) {
       }
     }
 
-    // Find website
+    // Find website and check plan limits
+    let website;
+    let websiteOwnerUserId: string | null = null;
+
     if (!cache?.websiteId) {
-      const website = await fetchWebsite(websiteId);
+      website = await getWebsiteWithUser(websiteId);
 
       if (!website) {
         return badRequest('Website not found.');
+      }
+
+      // Determine the owner for plan checking
+      if (website.userId) {
+        websiteOwnerUserId = website.userId;
+      } else if (website.team?.teamUser?.[0]?.user) {
+        websiteOwnerUserId = website.team.teamUser[0].user.id;
+      }
+
+      // Check if the website owner has access and their event limits
+      if (websiteOwnerUserId) {
+        // Check if user has access
+        const ownerUser = website.user || website.team?.teamUser?.[0]?.user;
+        if (!ownerUser?.hasAccess) {
+          return forbidden();
+        }
+
+        // Check event limits before processing
+        const canTrack = await simpleUsageManager.checkEventLimit(websiteOwnerUserId);
+        if (!canTrack) {
+          return Response.json(
+            {
+              error: 'Event tracking limit exceeded',
+              code: 'LIMIT_EXCEEDED',
+            },
+            { status: 429 },
+          );
+        }
       }
     }
 
@@ -230,6 +262,11 @@ export async function POST(request: Request) {
         lifatid,
         twclid,
       });
+
+      // Increment usage counter for the website owner after successful event save
+      if (websiteOwnerUserId) {
+        await simpleUsageManager.incrementEvents(websiteOwnerUserId, 1);
+      }
     }
 
     if (type === COLLECTION_TYPE.identify) {

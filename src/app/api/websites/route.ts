@@ -5,6 +5,7 @@ import { uuid } from '@/lib/crypto';
 import { parseRequest } from '@/lib/request';
 import { createWebsite, getUserWebsites } from '@/queries';
 import { pagingParams } from '@/lib/schema';
+import { simpleUsageManager } from '@/lib/services/simple-usage-manager';
 
 export async function GET(request: Request) {
   const schema = z.object({ ...pagingParams });
@@ -36,8 +37,41 @@ export async function POST(request: Request) {
 
   const { name, domain, shareId, teamId } = body;
 
+  // Check permissions first
   if ((teamId && !(await canCreateTeamWebsite(auth, teamId))) || !(await canCreateWebsite(auth))) {
     return unauthorized();
+  }
+
+  if (teamId) {
+    // For team websites, check the team owner's limits
+    const canCreateTeam = await simpleUsageManager.checkTeamMemberLimit(teamId);
+    if (!canCreateTeam) {
+      return Response.json(
+        {
+          error: 'Team member limit exceeded. Please upgrade your plan to add more team members.',
+          code: 'TEAM_LIMIT_EXCEEDED',
+          upgradeRequired: true,
+        },
+        { status: 429 },
+      );
+    }
+  } else {
+    // For individual websites, check user's website limit
+    const canCreateWebsite = await simpleUsageManager.checkWebsiteLimit(auth.user.id);
+    if (!canCreateWebsite) {
+      const usage = await simpleUsageManager.getUsageSummary(auth.user.id);
+      return Response.json(
+        {
+          error: 'Website limit exceeded. Please upgrade your plan to add more websites.',
+          code: 'WEBSITE_LIMIT_EXCEEDED',
+          currentUsage: usage.websites.current,
+          limit: usage.websites.limit,
+          planName: usage.planName,
+          upgradeRequired: true,
+        },
+        { status: 429 },
+      );
+    }
   }
 
   const data: any = {

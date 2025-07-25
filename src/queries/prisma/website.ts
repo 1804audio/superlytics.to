@@ -17,6 +17,43 @@ export async function getWebsite(websiteId: string) {
   });
 }
 
+export async function getWebsiteWithUser(websiteId: string) {
+  return findWebsite({
+    where: {
+      id: websiteId,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          planId: true,
+          isLifetime: true,
+          hasAccess: true,
+        },
+      },
+      team: {
+        select: {
+          id: true,
+          teamUser: {
+            where: { role: 'team-owner' },
+            select: {
+              user: {
+                select: {
+                  id: true,
+                  planId: true,
+                  isLifetime: true,
+                  hasAccess: true,
+                },
+              },
+            },
+            take: 1,
+          },
+        },
+      },
+    },
+  });
+}
+
 export async function getSharedWebsite(shareId: string) {
   return findWebsite({
     where: {

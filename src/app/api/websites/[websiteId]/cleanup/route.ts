@@ -4,6 +4,7 @@ import { canUpdateWebsite } from '@/lib/auth';
 import { deleteWebsiteDataByUrl } from '@/queries';
 import { json, unauthorized, badRequest } from '@/lib/response';
 import { parseRequest } from '@/lib/request';
+import { usageTracker } from '@/lib/services/usage-tracker';
 
 const cleanupRequestSchema = z.object({
   urlPath: z.string().min(1, 'URL path is required'),
@@ -31,6 +32,9 @@ export async function DELETE(
   const { urlPath, deleteType, startDate, endDate } = body;
 
   try {
+    // Track data modification operation
+    await usageTracker.trackApiCall(auth.user.id, 'website-cleanup');
+
     const result = await deleteWebsiteDataByUrl(websiteId, {
       urlPath,
       deleteType,
