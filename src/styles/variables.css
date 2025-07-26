@@ -13,12 +13,20 @@ html body {
   --base50: #ede6e3;
   --base75: #e8e0dc;
   --base100: #e3dad5;
+  --base200: #d4c9c2;
   --base300: #c9beb8;
 
   /* Override green colors for percentage indicators */
   --green700: #8dcdff;
   --green100: #e8f4ff;
   --green600: #8dcdff;
+  --green-500: #10b981;
+
+  /* Progress bar colors */
+  --yellow-500: #f59e0b;
+  --orange-500: #f97316;
+  --red-500: #ef4444;
+  --blue-500: #3b82f6;
 
   /* Update disabled button colors */
   --disabled-background: #e3dad5;
@@ -46,12 +54,20 @@ html body {
   --base50: #232e2f;
   --base75: #2c3738;
   --base100: #353f41;
+  --base200: #404b4c;
   --base300: #4a5556;
 
   /* Override green colors for percentage indicators in dark mode */
   --green700: #8dcdff;
   --green100: #1a3a5c;
   --green600: #8dcdff;
+  --green-500: #10b981;
+
+  /* Progress bar colors for dark mode */
+  --yellow-500: #f59e0b;
+  --orange-500: #f97316;
+  --red-500: #ef4444;
+  --blue-500: #3b82f6;
 
   /* Update disabled button colors for dark mode */
   --disabled-background: #353f41;

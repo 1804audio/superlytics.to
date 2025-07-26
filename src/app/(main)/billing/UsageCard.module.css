@@ -59,17 +59,18 @@
 .progressBar {
   background: var(--base200);
   border-radius: 4px;
-  height: 6px;
+  height: 8px;
   overflow: hidden;
   margin-bottom: var(--size200);
   border: 1px solid var(--base300);
+  position: relative;
 }
 
 .progress {
   height: 100%;
   border-radius: 3px;
   transition: width 0.3s ease;
-  min-width: 2px;
+  min-width: 4px;
 }
 
 .progress.low {
