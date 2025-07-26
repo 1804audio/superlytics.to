@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { hash } from 'bcryptjs';
 import { createSecureToken } from '@/lib/jwt';
 import redis from '@/lib/redis';
-import { getUserByUsername, createUser } from '@/queries';
+import { getUserByUsername } from '@/queries';
 import { json, badRequest } from '@/lib/response';
 import { parseRequest } from '@/lib/request';
 import { saveAuth } from '@/lib/auth';
@@ -48,24 +48,24 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await hash(password, 10);
 
-    // Create user with Stripe integration
+    // Use transaction to ensure atomicity of user creation and Stripe integration
     const userId = uuid();
-    const user = await createUser({
-      id: userId,
-      username,
-      password: hashedPassword,
-      role: ROLES.user, // Default role
-    });
+    const user = await prisma.transaction(async tx => {
+      // Create user
+      const newUser = await tx.user.create({
+        data: {
+          id: userId,
+          username,
+          password: hashedPassword,
+          role: ROLES.user,
+          customerId: stripeCustomer.id,
+          planId: 'free',
+          hasAccess: true,
+          isLifetime: false,
+        },
+      });
 
-    // Update user with Stripe customer ID (separate update due to createUser interface)
-    await prisma.client.user.update({
-      where: { id: userId },
-      data: {
-        customerId: stripeCustomer.id,
-        planId: 'free', // Start with free plan
-        hasAccess: true, // Free plan gets access
-        isLifetime: false,
-      },
+      return newUser;
     });
 
     // Create JWT token and log user in

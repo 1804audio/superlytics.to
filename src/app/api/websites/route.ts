@@ -43,13 +43,29 @@ export async function POST(request: Request) {
   }
 
   if (teamId) {
-    // For team websites, check the team owner's limits
-    const canCreateTeam = await simpleUsageManager.checkTeamMemberLimit(teamId);
-    if (!canCreateTeam) {
+    // For team websites, check the team owner's website limits
+    const teamOwnerUserId = await simpleUsageManager.getTeamOwnerId(teamId);
+    if (!teamOwnerUserId) {
       return Response.json(
         {
-          error: 'Team member limit exceeded. Please upgrade your plan to add more team members.',
-          code: 'TEAM_LIMIT_EXCEEDED',
+          error: 'Team not found or has no owner.',
+          code: 'TEAM_NOT_FOUND',
+        },
+        { status: 404 },
+      );
+    }
+
+    const canCreateWebsite = await simpleUsageManager.checkWebsiteLimit(teamOwnerUserId);
+    if (!canCreateWebsite) {
+      const usage = await simpleUsageManager.getUsageSummary(teamOwnerUserId);
+      return Response.json(
+        {
+          error:
+            'Website limit exceeded for team owner. Please upgrade your plan to add more websites.',
+          code: 'WEBSITE_LIMIT_EXCEEDED',
+          currentUsage: usage.websites.current,
+          limit: usage.websites.limit,
+          planName: usage.planName,
           upgradeRequired: true,
         },
         { status: 429 },

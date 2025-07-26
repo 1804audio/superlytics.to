@@ -40,7 +40,32 @@ export async function checkAuth(request: Request) {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    log('checkAuth:', { token, shareToken, payload, user, grant });
+    // Sanitize sensitive data for logging
+    const sanitizedPayload = payload
+      ? {
+          userId: payload.userId,
+          authKey: payload.authKey ? '[REDACTED]' : undefined,
+          grant: payload.grant,
+        }
+      : null;
+
+    const sanitizedUser = user
+      ? {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+          isAdmin: user.isAdmin,
+          // Exclude sensitive fields like password, tokens, etc.
+        }
+      : null;
+
+    log('checkAuth:', {
+      token: token ? '[REDACTED]' : null,
+      shareToken: shareToken ? '[REDACTED]' : null,
+      payload: sanitizedPayload,
+      user: sanitizedUser,
+      grant,
+    });
   }
 
   if (!user?.id && !shareToken) {

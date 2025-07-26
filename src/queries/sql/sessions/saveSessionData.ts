@@ -29,7 +29,7 @@ export async function relationalQuery({
   distinctId,
   createdAt,
 }: SaveSessionDataArgs) {
-  const { client } = prisma;
+  const { transaction } = prisma;
 
   const jsonKeys = flattenJSON(sessionData);
 
@@ -46,36 +46,50 @@ export async function relationalQuery({
     createdAt,
   }));
 
-  const existing = await client.sessionData.findMany({
-    where: {
-      sessionId,
-    },
-    select: {
-      id: true,
-      sessionId: true,
-      dataKey: true,
-    },
-  });
+  // Use transaction to prevent race conditions
+  await transaction(async tx => {
+    // First, get existing records within the transaction
+    const existing = await tx.sessionData.findMany({
+      where: {
+        sessionId,
+      },
+      select: {
+        id: true,
+        sessionId: true,
+        dataKey: true,
+      },
+    });
 
-  for (const data of flattenedData) {
-    const { sessionId, dataKey, ...props } = data;
-    const record = existing.find(e => e.sessionId === sessionId && e.dataKey === dataKey);
+    // Process all upserts within the same transaction
+    const operations = [];
 
-    if (record) {
-      await client.sessionData.update({
-        where: {
-          id: record.id,
-        },
-        data: {
-          ...props,
-        },
-      });
-    } else {
-      await client.sessionData.create({
-        data,
-      });
+    for (const data of flattenedData) {
+      const { sessionId, dataKey, ...props } = data;
+      const record = existing.find(e => e.sessionId === sessionId && e.dataKey === dataKey);
+
+      if (record) {
+        operations.push(
+          tx.sessionData.update({
+            where: {
+              id: record.id,
+            },
+            data: {
+              ...props,
+            },
+          }),
+        );
+      } else {
+        operations.push(
+          tx.sessionData.create({
+            data,
+          }),
+        );
+      }
     }
-  }
+
+    // Execute all operations within the transaction
+    await Promise.all(operations);
+  });
 }
 
 async function clickhouseQuery({

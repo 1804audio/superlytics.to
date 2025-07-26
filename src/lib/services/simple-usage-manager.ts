@@ -193,6 +193,24 @@ export class SimpleUsageManager {
     };
   }
 
+  // Get team owner's user ID
+  async getTeamOwnerId(teamId: string): Promise<string | null> {
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      select: {
+        teamUser: {
+          where: { role: 'team-owner' },
+          select: {
+            userId: true,
+          },
+          take: 1,
+        },
+      },
+    });
+
+    return team?.teamUser?.[0]?.userId || null;
+  }
+
   // Check website limit
   async checkWebsiteLimit(userId: string): Promise<boolean> {
     const user = await this.getUser(userId);
