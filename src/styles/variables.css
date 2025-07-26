@@ -13,8 +13,14 @@ html body {
   --base50: #ede6e3;
   --base75: #e8e0dc;
   --base100: #e3dad5;
+  --base150: #ded5cf;
   --base200: #d4c9c2;
   --base300: #c9beb8;
+  --base500: #a9968a;
+  --base600: #8a7d71;
+  --base700: #6b6459;
+  --base800: #4c4b40;
+  --base900: #2d3228;
 
   /* Override green colors for percentage indicators */
   --green700: #8dcdff;
@@ -27,6 +33,34 @@ html body {
   --orange-500: #f97316;
   --red-500: #ef4444;
   --blue-500: #3b82f6;
+
+  /* Font colors */
+  --font-color050: var(--base900);
+  --font-color100: var(--base800);
+  --font-color200: var(--base700);
+  --font-color300: var(--base600);
+  --font-color400: var(--base500);
+
+  /* Font sizes */
+  --font-size050: 10px;
+  --font-size100: 11px;
+  --font-size150: 12px;
+  --font-size200: 13px;
+  --font-size250: 14px;
+  --font-size300: 15px;
+
+  /* Z-index levels */
+  --z-index-popup: 1000;
+
+  /* Shadows */
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+
+  /* Border colors */
+  --border-color: var(--base300);
+  --border-color-light: var(--base200);
+
+  /* Font family */
+  --font-family-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 
   /* Update disabled button colors */
   --disabled-background: #e3dad5;
@@ -54,8 +88,14 @@ html body {
   --base50: #232e2f;
   --base75: #2c3738;
   --base100: #353f41;
+  --base150: #3a4647;
   --base200: #404b4c;
   --base300: #4a5556;
+  --base500: #6a7576;
+  --base600: #8a9596;
+  --base700: #aab5b6;
+  --base800: #cad5d6;
+  --base900: #eaf5f6;
 
   /* Override green colors for percentage indicators in dark mode */
   --green700: #8dcdff;
@@ -68,6 +108,35 @@ html body {
   --orange-500: #f97316;
   --red-500: #ef4444;
   --blue-500: #3b82f6;
+
+  /* Font colors for dark mode */
+  --font-color050: var(--base900);
+  --font-color100: var(--base800);
+  --font-color200: var(--base700);
+  --font-color300: var(--base600);
+  --font-color400: var(--base500);
+
+  /* Font sizes (same for dark mode) */
+  --font-size050: 10px;
+  --font-size100: 11px;
+  --font-size150: 12px;
+  --font-size200: 13px;
+  --font-size250: 14px;
+  --font-size300: 15px;
+
+  /* Z-index levels (same for dark mode) */
+  --z-index-popup: 1000;
+
+  /* Shadows for dark mode */
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+  --shadow-dark-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+  /* Border colors for dark mode */
+  --border-color: var(--base300);
+  --border-color-light: var(--base200);
+
+  /* Font family (same for dark mode) */
+  --font-family-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 
   /* Update disabled button colors for dark mode */
   --disabled-background: #353f41;
