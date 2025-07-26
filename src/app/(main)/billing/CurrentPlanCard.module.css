@@ -1,0 +1,161 @@
+.card {
+  background: var(--base50);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing4);
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing4);
+}
+
+.planInfo {
+  flex: 1;
+}
+
+.planName {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--base900);
+  margin-bottom: var(--spacing1);
+}
+
+.badges {
+  display: flex;
+  gap: var(--spacing1);
+}
+
+.badgeLifetime {
+  background: linear-gradient(135deg, #ffd700, #ffed4a);
+  color: #000;
+  padding: var(--spacing1) var(--spacing2);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.badgeEnterprise {
+  background: linear-gradient(135deg, #9333ea, #a855f7);
+  color: white;
+  padding: var(--spacing1) var(--spacing2);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.badgePro {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  padding: var(--spacing1) var(--spacing2);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.badgeHobby {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: white;
+  padding: var(--spacing1) var(--spacing2);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.badgeFree {
+  background: var(--base200);
+  color: var(--base700);
+  padding: var(--spacing1) var(--spacing2);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.planIcon {
+  font-size: var(--font-size-xl);
+  color: var(--primary-500);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing4);
+}
+
+.priceInfo {
+  margin-bottom: var(--spacing4);
+}
+
+.customPrice {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-600);
+}
+
+.lifetimePrice {
+  font-size: var(--font-size-md);
+  color: var(--base700);
+}
+
+.priceDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing1);
+}
+
+.price {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--base900);
+}
+
+.yearlyPrice {
+  font-size: var(--font-size-sm);
+  color: var(--base600);
+}
+
+.usageOverview {
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing4);
+  margin-bottom: var(--spacing4);
+}
+
+.usageTitle {
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing3);
+  color: var(--base800);
+}
+
+.usageItems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing2);
+}
+
+.usageItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing2);
+  font-size: var(--font-size-sm);
+  color: var(--base700);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing2);
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: var(--spacing2);
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}

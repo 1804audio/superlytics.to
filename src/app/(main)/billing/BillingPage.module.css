@@ -1,0 +1,35 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing4);
+}
+
+.content {
+  margin-top: var(--spacing4);
+}
+
+.section {
+  margin-top: var(--spacing6);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing2);
+  color: var(--base900);
+}
+
+.sectionDescription {
+  color: var(--base600);
+  margin-bottom: var(--spacing4);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing2);
+  }
+
+  .section {
+    margin-top: var(--spacing4);
+  }
+}

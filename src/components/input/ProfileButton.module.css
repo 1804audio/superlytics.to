@@ -1,3 +1,7 @@
+.popup {
+  margin-top: var(--size200); /* Consistent spacing with design system */
+}
+
 .menu {
   width: 200px;
   z-index: var(--z-index-popup);

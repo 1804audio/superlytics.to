@@ -1,0 +1,117 @@
+.card {
+  background: var(--base50);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing4);
+  height: fit-content;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--base900);
+  margin-bottom: var(--spacing3);
+}
+
+.loading {
+  text-align: center;
+  color: var(--base600);
+  padding: var(--spacing4);
+}
+
+.usageItems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing4);
+}
+
+.usageItem {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing3);
+}
+
+.usageItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.usageHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing2);
+  margin-bottom: var(--spacing2);
+}
+
+.usageLabel {
+  font-weight: var(--font-weight-medium);
+  color: var(--base800);
+}
+
+.usageValue {
+  font-size: var(--font-size-sm);
+  color: var(--base700);
+  margin-bottom: var(--spacing2);
+}
+
+.progressBar {
+  background: var(--base200);
+  border-radius: var(--border-radius-sm);
+  height: 6px;
+  overflow: hidden;
+  margin-bottom: var(--spacing1);
+}
+
+.progress {
+  height: 100%;
+  border-radius: var(--border-radius-sm);
+  transition: width 0.3s ease;
+}
+
+.progress.low {
+  background: var(--green-500);
+}
+
+.progress.medium {
+  background: var(--yellow-500);
+}
+
+.progress.high {
+  background: var(--orange-500);
+}
+
+.progress.over {
+  background: var(--red-500);
+}
+
+.progress.unlimited {
+  background: var(--blue-500);
+}
+
+.warningText {
+  font-size: var(--font-size-xs);
+  color: var(--red-600);
+  font-weight: var(--font-weight-medium);
+}
+
+.planInfo {
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing3);
+  margin-top: var(--spacing4);
+}
+
+.planName {
+  font-weight: var(--font-weight-medium);
+  color: var(--base800);
+  margin-bottom: var(--spacing1);
+}
+
+.planType {
+  font-size: var(--font-size-sm);
+  color: var(--base600);
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin-top: var(--spacing4);
+  }
+}
