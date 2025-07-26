@@ -46,11 +46,29 @@ export function SignupForm() {
         className={styles.form}
         onSubmit={handleSubmit}
         error={getMessage(error)}
-        values={{ username: '', password: '', confirmPassword: '' }}
+        values={{ username: '', email: '', password: '', confirmPassword: '' }}
       >
-        <FormRow label="Email">
+        <FormRow label="Username">
           <FormInput
             name="username"
+            rules={{
+              required: formatMessage(labels.required),
+              minLength: {
+                value: 3,
+                message: 'Username must be at least 3 characters',
+              },
+              maxLength: {
+                value: 50,
+                message: 'Username must be less than 50 characters',
+              },
+            }}
+          >
+            <TextField autoComplete="username" type="text" placeholder="your_username" />
+          </FormInput>
+        </FormRow>
+        <FormRow label="Email">
+          <FormInput
+            name="email"
             rules={{
               required: formatMessage(labels.required),
               pattern: {

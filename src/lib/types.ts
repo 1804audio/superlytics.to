@@ -54,6 +54,7 @@ export interface Auth {
   user?: {
     id: string;
     username: string;
+    email: string;
     role: string;
     isAdmin: boolean;
     // Stripe integration fields

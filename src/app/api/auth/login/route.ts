@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { checkPassword } from '@/lib/auth';
 import { createSecureToken } from '@/lib/jwt';
 import redis from '@/lib/redis';
-import { getUserByUsername } from '@/queries';
+import { getUserByUsernameOrEmail } from '@/queries';
 import { json, unauthorized } from '@/lib/response';
 import { parseRequest } from '@/lib/request';
 import { saveAuth } from '@/lib/auth';
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
   const { username, password } = body;
 
-  const user = await getUserByUsername(username, { includePassword: true });
+  const user = await getUserByUsernameOrEmail(username, { includePassword: true });
 
   if (!user || !checkPassword(password, user.password)) {
     return unauthorized('message.incorrect-username-password');
@@ -41,6 +41,6 @@ export async function POST(request: Request) {
 
   return json({
     token,
-    user: { id, username, role, createdAt, isAdmin: role === ROLES.admin },
+    user: { id, username, email: user.email, role, createdAt, isAdmin: role === ROLES.admin },
   });
 }

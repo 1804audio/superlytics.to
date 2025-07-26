@@ -15,7 +15,11 @@ import prisma from '@/lib/prisma';
 export async function POST(request: Request) {
   const schema = z
     .object({
-      username: z.string().email('Invalid email address'),
+      username: z
+        .string()
+        .min(3, 'Username must be at least 3 characters')
+        .max(50, 'Username must be less than 50 characters'),
+      email: z.string().email('Invalid email address'),
       password: z.string().min(8, 'Password must be at least 8 characters'),
       confirmPassword: z.string(),
     })
@@ -30,19 +34,26 @@ export async function POST(request: Request) {
     return error();
   }
 
-  const { username, password } = body;
+  const { username, email, password } = body;
 
-  // Check if user already exists
-  const existingUser = await getUserByUsername(username);
-  if (existingUser) {
+  // Check if user already exists by username or email
+  const existingUserByUsername = await getUserByUsername(username);
+  if (existingUserByUsername) {
+    return badRequest('User with this username already exists');
+  }
+
+  const existingUserByEmail = await prisma.client.user.findUnique({
+    where: { email },
+  });
+  if (existingUserByEmail) {
     return badRequest('User with this email already exists');
   }
 
   try {
     // Create Stripe customer first
     const stripeCustomer = await createStripeCustomer({
-      email: username,
-      name: username.split('@')[0], // Use email prefix as name
+      email: email,
+      name: username, // Use username as display name
     });
 
     // Hash password
@@ -56,6 +67,7 @@ export async function POST(request: Request) {
         data: {
           id: userId,
           username,
+          email,
           password: hashedPassword,
           role: ROLES.user,
           customerId: stripeCustomer.id,
@@ -82,6 +94,7 @@ export async function POST(request: Request) {
       user: {
         id: user.id,
         username: user.username,
+        email: user.email,
         role: user.role,
         isAdmin: user.role === ROLES.admin,
         planId: 'free',
