@@ -74,42 +74,41 @@ export async function POST(request: Request) {
     }
 
     // Find website and check plan limits
-    let website;
     let websiteOwnerUserId: string | null = null;
 
-    if (!cache?.websiteId) {
-      website = await getWebsiteWithUser(websiteId);
+    // Always get website info for plan checking and usage counting
+    // Cache is only used for session/visit data, not for billing validation
+    const website = await getWebsiteWithUser(websiteId);
 
-      if (!website) {
-        return badRequest('Website not found.');
+    if (!website) {
+      return badRequest('Website not found.');
+    }
+
+    // Determine the owner for plan checking
+    if (website.userId) {
+      websiteOwnerUserId = website.userId;
+    } else if (website.team?.teamUser?.[0]?.user) {
+      websiteOwnerUserId = website.team.teamUser[0].user.id;
+    }
+
+    // Check if the website owner has access and their event limits
+    if (websiteOwnerUserId) {
+      // Check if user has access
+      const ownerUser = website.user || website.team?.teamUser?.[0]?.user;
+      if (!ownerUser?.hasAccess) {
+        return forbidden();
       }
 
-      // Determine the owner for plan checking
-      if (website.userId) {
-        websiteOwnerUserId = website.userId;
-      } else if (website.team?.teamUser?.[0]?.user) {
-        websiteOwnerUserId = website.team.teamUser[0].user.id;
-      }
-
-      // Check if the website owner has access and their event limits
-      if (websiteOwnerUserId) {
-        // Check if user has access
-        const ownerUser = website.user || website.team?.teamUser?.[0]?.user;
-        if (!ownerUser?.hasAccess) {
-          return forbidden();
-        }
-
-        // Check event limits before processing
-        const canTrack = await simpleUsageManager.checkEventLimit(websiteOwnerUserId);
-        if (!canTrack) {
-          return Response.json(
-            {
-              error: 'Event tracking limit exceeded',
-              code: 'LIMIT_EXCEEDED',
-            },
-            { status: 429 },
-          );
-        }
+      // Check event limits before processing
+      const canTrack = await simpleUsageManager.checkEventLimit(websiteOwnerUserId);
+      if (!canTrack) {
+        return Response.json(
+          {
+            error: 'Event tracking limit exceeded',
+            code: 'LIMIT_EXCEEDED',
+          },
+          { status: 429 },
+        );
       }
     }
 
@@ -266,8 +265,9 @@ export async function POST(request: Request) {
       });
 
       // Increment usage counter for the website owner after successful event save
+      // Use the same date as the event to ensure consistency
       if (websiteOwnerUserId) {
-        await simpleUsageManager.incrementEvents(websiteOwnerUserId, 1);
+        await simpleUsageManager.incrementEvents(websiteOwnerUserId, 1, createdAt);
       }
     }
 

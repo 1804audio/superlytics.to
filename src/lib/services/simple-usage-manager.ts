@@ -47,11 +47,11 @@ const prisma = new PrismaClient();
 
 export class SimpleUsageManager {
   // Track an event (super simple)
-  async trackEvent(userId: string): Promise<boolean> {
+  async trackEvent(userId: string, eventDate?: Date): Promise<boolean> {
     const canTrack = await this.checkEventLimit(userId);
 
     if (canTrack) {
-      await this.incrementEvents(userId);
+      await this.incrementEvents(userId, 1, eventDate);
       return true;
     }
 
@@ -106,9 +106,10 @@ export class SimpleUsageManager {
   }
 
   // Increment event count
-  async incrementEvents(userId: string, increment: number = 1): Promise<void> {
-    const month = format(new Date(), 'yyyy-MM');
-    const year = new Date().getFullYear();
+  async incrementEvents(userId: string, increment: number = 1, eventDate?: Date): Promise<void> {
+    const date = eventDate || new Date();
+    const month = format(date, 'yyyy-MM');
+    const year = date.getFullYear();
 
     await prisma.usageRecord.upsert({
       where: {
@@ -135,6 +136,61 @@ export class SimpleUsageManager {
       const cacheKey = `events:${userId}:${month}`;
       await redis.client.del(cacheKey);
     }
+  }
+
+  // Debug method: Get event count discrepancies between WebsiteEvent and UsageRecord
+  async getEventDiscrepancies(
+    userId: string,
+    month?: string,
+  ): Promise<{
+    usageRecordCount: number;
+    websiteEventCount: number;
+    discrepancy: number;
+    month: string;
+  }> {
+    const targetMonth = month || format(new Date(), 'yyyy-MM');
+
+    // Get UsageRecord count
+    const usage = await prisma.usageRecord.findUnique({
+      where: {
+        userId_month: {
+          userId,
+          month: targetMonth,
+        },
+      },
+    });
+    const usageRecordCount = usage?.eventsThisMonth || 0;
+
+    // Get WebsiteEvent count for the same month
+    const [year, monthNum] = targetMonth.split('-').map(Number);
+    const startDate = new Date(year, monthNum - 1, 1);
+    const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+
+    // First get user's websites
+    const userWebsites = await prisma.website.findMany({
+      where: { userId },
+      select: { id: true },
+    });
+    const websiteIds = userWebsites.map(w => w.id);
+
+    const websiteEventCount = await prisma.websiteEvent.count({
+      where: {
+        websiteId: {
+          in: websiteIds,
+        },
+        createdAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+    });
+
+    return {
+      usageRecordCount,
+      websiteEventCount,
+      discrepancy: websiteEventCount - usageRecordCount,
+      month: targetMonth,
+    };
   }
 
   // Check website limit
