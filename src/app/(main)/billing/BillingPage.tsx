@@ -1,13 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Row, Column, Text } from 'react-basics';
+import { Row, Column } from 'react-basics';
 import PageHeader from '@/components/layout/PageHeader';
 import { useLogin, useApi } from '@/components/hooks';
 import { UsageSummary } from '@/lib/services/simple-usage-manager';
-import { SIMPLIFIED_PLANS, getPlan } from '@/lib/config/simplified-plans';
-import PlanCard from './PlanCard';
+import { getPlan } from '@/lib/config/simplified-plans';
 import CurrentPlanCard from './CurrentPlanCard';
 import UsageCard from './UsageCard';
+import PricingSlider from './PricingSlider';
 import styles from './BillingPage.module.css';
 
 export default function BillingPage() {
@@ -55,11 +55,7 @@ export default function BillingPage() {
     }
   };
 
-  const currentPlan = user?.planId ? getPlan(user.planId) : null;
-  const subscriptionPlans = Object.values(SIMPLIFIED_PLANS).filter(
-    plan => plan.type === 'subscription',
-  );
-  const lifetimePlans = Object.values(SIMPLIFIED_PLANS).filter(plan => plan.type === 'lifetime');
+  const currentPlan = user?.planId ? getPlan(user.planId) : getPlan('free');
 
   if (!user) {
     return null;
@@ -71,7 +67,7 @@ export default function BillingPage() {
 
       <div className={styles.content}>
         {/* Current Plan & Usage Section */}
-        <Row>
+        <Row className={styles.cardRow}>
           <Column xs={12} md={8}>
             <CurrentPlanCard
               user={user}
@@ -82,40 +78,17 @@ export default function BillingPage() {
             />
           </Column>
           <Column xs={12} md={4}>
-            <UsageCard usageData={usageData} loading={loading} plan={currentPlan} />
+            <UsageCard usageData={usageData} loading={loading} />
           </Column>
         </Row>
 
-        {/* Available Plans Section */}
+        {/* Plan Recommendation Slider */}
         <div className={styles.section}>
-          <Text className={styles.sectionTitle}>Subscription Plans</Text>
-          <Text className={styles.sectionDescription}>
-            Choose the plan that fits your needs. Upgrade or downgrade anytime.
-          </Text>
-
-          <Row>
-            {subscriptionPlans.map(plan => (
-              <Column key={plan.id} xs={12} sm={6} md={4}>
-                <PlanCard plan={plan} currentPlanId={user.planId} isLifetime={user.isLifetime} />
-              </Column>
-            ))}
-          </Row>
-        </div>
-
-        {/* Lifetime Plans Section */}
-        <div className={styles.section}>
-          <Text className={styles.sectionTitle}>Lifetime Plans</Text>
-          <Text className={styles.sectionDescription}>
-            One-time payment for lifetime access. No recurring fees.
-          </Text>
-
-          <Row>
-            {lifetimePlans.map(plan => (
-              <Column key={plan.id} xs={12} sm={6} md={4}>
-                <PlanCard plan={plan} currentPlanId={user.planId} isLifetime={user.isLifetime} />
-              </Column>
-            ))}
-          </Row>
+          <PricingSlider
+            currentEvents={usageData?.events.current || 0}
+            currentPlanId={user.planId || 'free'}
+            isLifetime={user.isLifetime || false}
+          />
         </div>
       </div>
     </div>

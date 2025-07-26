@@ -2,32 +2,33 @@
   background: var(--base50);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: var(--spacing4);
+  padding: var(--size600);
   height: fit-content;
+  box-shadow: var(--card-shadow);
 }
 
 .title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
   color: var(--base900);
-  margin-bottom: var(--spacing3);
+  margin-bottom: var(--size600);
 }
 
 .loading {
   text-align: center;
   color: var(--base600);
-  padding: var(--spacing4);
+  padding: var(--size600);
 }
 
 .usageItems {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing4);
+  gap: var(--size600);
 }
 
 .usageItem {
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: var(--spacing3);
+  padding-bottom: var(--size500);
 }
 
 .usageItem:last-child {
@@ -38,33 +39,37 @@
 .usageHeader {
   display: flex;
   align-items: center;
-  gap: var(--spacing2);
-  margin-bottom: var(--spacing2);
+  gap: var(--size300);
+  margin-bottom: var(--size300);
 }
 
 .usageLabel {
-  font-weight: var(--font-weight-medium);
+  font-weight: 600;
   color: var(--base800);
+  font-size: var(--font-size-md);
 }
 
 .usageValue {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   color: var(--base700);
-  margin-bottom: var(--spacing2);
+  margin-bottom: var(--size300);
+  font-weight: 500;
 }
 
 .progressBar {
   background: var(--base200);
-  border-radius: var(--border-radius-sm);
+  border-radius: 4px;
   height: 6px;
   overflow: hidden;
-  margin-bottom: var(--spacing1);
+  margin-bottom: var(--size200);
+  border: 1px solid var(--base300);
 }
 
 .progress {
   height: 100%;
-  border-radius: var(--border-radius-sm);
+  border-radius: 3px;
   transition: width 0.3s ease;
+  min-width: 2px;
 }
 
 .progress.low {
@@ -95,14 +100,15 @@
 
 .planInfo {
   border-top: 1px solid var(--border-color);
-  padding-top: var(--spacing3);
-  margin-top: var(--spacing4);
+  padding-top: var(--size500);
+  margin-top: var(--size600);
 }
 
 .planName {
-  font-weight: var(--font-weight-medium);
+  font-weight: 600;
   color: var(--base800);
-  margin-bottom: var(--spacing1);
+  margin-bottom: var(--size200);
+  font-size: var(--font-size-md);
 }
 
 .planType {
@@ -112,6 +118,16 @@
 
 @media (max-width: 768px) {
   .card {
-    margin-top: var(--spacing4);
+    margin-top: var(--size600);
+    padding: var(--size500);
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--size500);
+  }
+
+  .usageItems {
+    gap: var(--size500);
   }
 }

@@ -1,0 +1,377 @@
+.container {
+  background: var(--base50);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--size800);
+  margin-bottom: var(--size800);
+  box-shadow: var(--card-shadow);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--size800);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--base900);
+  margin-bottom: var(--size300);
+}
+
+.subtitle {
+  color: var(--base600);
+  font-size: var(--font-size-md);
+}
+
+.sliderSection {
+  margin-bottom: var(--size800);
+}
+
+.sliderContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 var(--size400);
+}
+
+.sliderLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--size400);
+  font-size: var(--font-size-sm);
+  color: var(--base600);
+  font-weight: 500;
+  padding: 0 var(--size100);
+}
+
+.sliderWrapper {
+  position: relative;
+  margin-bottom: var(--size600);
+}
+
+.slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--base200);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.slider:hover {
+  background: var(--base300);
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary500);
+  cursor: pointer;
+  border: 3px solid var(--base50);
+  box-shadow:
+    0 2px 12px rgba(240, 100, 73, 0.4),
+    0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 4px 16px rgba(240, 100, 73, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.slider::-webkit-slider-thumb:active {
+  transform: scale(1.05);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary500);
+  cursor: pointer;
+  border: 3px solid var(--base50);
+  box-shadow:
+    0 2px 12px rgba(240, 100, 73, 0.4),
+    0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 4px 16px rgba(240, 100, 73, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.selectedValue {
+  text-align: center;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--base900);
+  padding: var(--size500);
+  background: linear-gradient(135deg, var(--base75) 0%, var(--base100) 100%);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.planCard {
+  background: var(--base50);
+  border: 2px solid var(--primary500);
+  border-radius: var(--border-radius);
+  padding: var(--size700);
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+}
+
+.planCard:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(240, 100, 73, 0.15),
+    var(--card-shadow);
+}
+
+.planHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--size600);
+}
+
+.planInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--size300);
+}
+
+.planName {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--base900);
+}
+
+.currentBadge {
+  background: linear-gradient(135deg, var(--primary500) 0%, var(--primary600) 100%);
+  color: white;
+  padding: var(--size100) var(--size300);
+  border-radius: calc(var(--border-radius) * 0.75);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(240, 100, 73, 0.3);
+}
+
+.billingToggle {
+  display: flex;
+  background: var(--base100);
+  border-radius: var(--border-radius);
+  padding: var(--size100);
+  margin-bottom: var(--size600);
+  gap: var(--size100);
+}
+
+.toggleButton {
+  flex: 1;
+  padding: var(--size300) var(--size400);
+  border: none;
+  border-radius: var(--border-radius);
+  background: transparent;
+  color: var(--base700);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.toggleButton.active {
+  background: var(--base50);
+  color: var(--base900);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.savings {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--green-600);
+  margin-top: var(--size50);
+}
+
+.pricing {
+  text-align: center;
+  margin-bottom: var(--size600);
+  padding: var(--size500) 0;
+}
+
+.price {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--base900);
+  line-height: 1.2;
+}
+
+.priceLabel {
+  font-size: var(--font-size-md);
+  color: var(--base600);
+  margin-top: var(--size100);
+}
+
+.features {
+  margin-bottom: var(--size600);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--size500);
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: var(--size300);
+  margin-bottom: var(--size300);
+  font-size: var(--font-size-sm);
+  color: var(--base700);
+}
+
+.feature:last-child {
+  margin-bottom: 0;
+}
+
+.feature svg {
+  color: var(--green-500);
+  flex-shrink: 0;
+}
+
+.actions {
+  text-align: center;
+}
+
+.freeNote {
+  font-size: var(--font-size-sm);
+  color: var(--base600);
+  margin-top: var(--size300);
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .sliderContainer {
+    padding: 0 var(--size300);
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--size600);
+    margin-bottom: var(--size600);
+  }
+
+  .header {
+    margin-bottom: var(--size600);
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--size300);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .sliderContainer {
+    padding: 0 var(--size200);
+  }
+
+  .sliderLabels {
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--size300);
+  }
+
+  .selectedValue {
+    font-size: var(--font-size-md);
+    padding: var(--size400);
+  }
+
+  .planCard {
+    padding: var(--size600);
+    margin: 0 var(--size200);
+  }
+
+  .planHeader {
+    flex-direction: column;
+    gap: var(--size300);
+    align-items: flex-start;
+    margin-bottom: var(--size500);
+  }
+
+  .planInfo {
+    align-items: flex-start;
+  }
+
+  .billingToggle {
+    margin-bottom: var(--size500);
+  }
+
+  .pricing {
+    margin-bottom: var(--size500);
+    padding: var(--size400) 0;
+  }
+
+  .price {
+    font-size: var(--font-size-xl);
+  }
+
+  .features {
+    margin-bottom: var(--size500);
+  }
+
+  .feature {
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--size200);
+  }
+
+  .slider {
+    height: 8px;
+  }
+
+  .slider::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .container {
+    padding: var(--size500);
+    margin: 0 var(--size300) var(--size500);
+  }
+
+  .planCard {
+    margin: 0;
+    padding: var(--size500);
+  }
+
+  .sliderLabels {
+    font-size: 10px;
+  }
+
+  .selectedValue {
+    font-size: var(--font-size-sm);
+    padding: var(--size300);
+  }
+}

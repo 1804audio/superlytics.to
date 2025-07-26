@@ -1,7 +1,7 @@
 'use client';
 import { Button, Text, Icon } from 'react-basics';
 import Icons from '@/components/icons';
-import { PlanConfiguration, isUnlimited } from '@/lib/config/simplified-plans';
+import { PlanConfiguration, isUnlimited, getPlanMode } from '@/lib/config/simplified-plans';
 import styles from './PlanCard.module.css';
 
 interface PlanCardProps {
@@ -33,6 +33,7 @@ export default function PlanCard({ plan, currentPlanId, isLifetime }: PlanCardPr
         },
         body: JSON.stringify({
           priceId: plan.stripeIds.monthly,
+          mode: getPlanMode(plan),
           successUrl: window.location.origin + '/billing?success=true',
           cancelUrl: window.location.href,
         }),

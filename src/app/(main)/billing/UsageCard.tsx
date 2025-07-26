@@ -1,17 +1,15 @@
 'use client';
 import { Text, Icon } from 'react-basics';
 import Icons from '@/components/icons';
-import { PlanConfiguration } from '@/lib/config/simplified-plans';
 import { UsageSummary } from '@/lib/services/simple-usage-manager';
 import styles from './UsageCard.module.css';
 
 interface UsageCardProps {
   usageData: UsageSummary | null;
   loading: boolean;
-  plan: PlanConfiguration | null;
 }
 
-export default function UsageCard({ usageData, loading, plan }: UsageCardProps) {
+export default function UsageCard({ usageData, loading }: UsageCardProps) {
   if (loading || !usageData) {
     return (
       <div className={styles.card}>
@@ -22,7 +20,7 @@ export default function UsageCard({ usageData, loading, plan }: UsageCardProps) 
   }
 
   const getUsagePercentage = (current: number, limit: number, unlimited: boolean) => {
-    if (unlimited) return 0;
+    if (unlimited || limit === 0) return 0;
     return Math.min((current / limit) * 100, 100);
   };
 
@@ -130,19 +128,6 @@ export default function UsageCard({ usageData, loading, plan }: UsageCardProps) 
           )}
         </div>
       </div>
-
-      {plan && (
-        <div className={styles.planInfo}>
-          <Text className={styles.planName}>Current Plan: {plan.name}</Text>
-          <Text className={styles.planType}>
-            {plan.type === 'lifetime'
-              ? 'Lifetime Access'
-              : plan.type === 'custom'
-                ? 'Custom Plan'
-                : 'Subscription'}
-          </Text>
-        </div>
-      )}
     </div>
   );
 }

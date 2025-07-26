@@ -45,12 +45,16 @@ export default function CurrentPlanCard({
     <div className={styles.card}>
       <div className={styles.header}>
         <div className={styles.planInfo}>
-          <Text className={styles.planName}>{plan?.name || 'Unknown Plan'}</Text>
+          <Text className={styles.planName}>{plan?.name || 'Free'}</Text>
           <div className={styles.badges}>
             <span className={getPlanBadgeClass()}>{user.isLifetime ? 'Lifetime' : plan?.name}</span>
           </div>
         </div>
-        <Icon className={styles.planIcon}>{user.isLifetime ? <Icons.Bolt /> : <Icons.Gear />}</Icon>
+        {user.isLifetime && (
+          <Icon className={styles.planIcon}>
+            <Icons.Bolt />
+          </Icon>
+        )}
       </div>
 
       <div className={styles.content}>
@@ -59,6 +63,8 @@ export default function CurrentPlanCard({
             <Text className={styles.customPrice}>Custom Pricing</Text>
           ) : user.isLifetime ? (
             <Text className={styles.lifetimePrice}>Lifetime Access - No recurring charges</Text>
+          ) : plan?.prices.monthly === 0 ? (
+            <Text className={styles.price}>$0/month</Text>
           ) : (
             <div className={styles.priceDetails}>
               <Text className={styles.price}>${plan?.prices.monthly || 0}/month</Text>

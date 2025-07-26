@@ -334,3 +334,23 @@ export function getPlanByStripeId(stripeId: string): PlanConfiguration | null {
   }
   return null;
 }
+
+export function getRecommendedPlan(monthlyEvents: number): PlanConfiguration {
+  const plans = getSubscriptionPlans().sort(
+    (a, b) => a.limits.eventsPerMonth - b.limits.eventsPerMonth,
+  );
+
+  // Find the first plan that can handle the event count
+  for (const plan of plans) {
+    if (isUnlimited(plan.limits.eventsPerMonth) || plan.limits.eventsPerMonth >= monthlyEvents) {
+      return plan;
+    }
+  }
+
+  // If no plan can handle it, return enterprise
+  return SIMPLIFIED_PLANS.enterprise;
+}
+
+export function getPlanMode(plan: PlanConfiguration): 'subscription' | 'payment' {
+  return plan.type === 'lifetime' ? 'payment' : 'subscription';
+}
