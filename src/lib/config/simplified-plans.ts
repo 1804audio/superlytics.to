@@ -41,11 +41,6 @@ export interface PlanConfiguration {
     appsumo?: number;
     custom?: boolean;
   };
-  stripeIds: {
-    monthly?: string;
-    yearly?: string;
-    lifetime?: string;
-  };
   limits: SimplifiedPlanLimits;
   features: SimplifiedPlanFeatures;
 }
@@ -59,10 +54,6 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
     prices: {
       monthly: 0,
       yearly: 0,
-    },
-    stripeIds: {
-      monthly: 'price_1RoVxtQAmWLtKTXWZM9N0JvP',
-      yearly: 'price_1RoVxtQAmWLtKTXWZM9N0JvP', // Same price for both since it's free
     },
     limits: {
       eventsPerMonth: 10000, // 10k events
@@ -97,10 +88,6 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       monthly: 9,
       yearly: 90, // 17% discount
     },
-    stripeIds: {
-      monthly: 'price_1RoVBJQAmWLtKTXWEv6JtObj',
-      yearly: 'price_1RoVBJQAmWLtKTXWeuZJeqpI',
-    },
     limits: {
       eventsPerMonth: 100000, // 100k
       websites: 5, // Increased from 3
@@ -133,10 +120,6 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       monthly: 19,
       yearly: 190,
     },
-    stripeIds: {
-      monthly: 'price_1RoVBKQAmWLtKTXWl2AROSCJ',
-      yearly: 'price_1RoVBKQAmWLtKTXW9Vm1ouMS',
-    },
     limits: {
       eventsPerMonth: 1000000, // 1M
       websites: 25, // Generous limit
@@ -166,7 +149,6 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
     name: 'Enterprise',
     type: 'custom',
     prices: { custom: true },
-    stripeIds: {},
     limits: {
       eventsPerMonth: -1, // Unlimited
       websites: -1, // Unlimited
@@ -200,9 +182,6 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       lifetime: 89,
       appsumo: 69, // AppSumo special price
     },
-    stripeIds: {
-      lifetime: 'price_1RoUoUQAmWLtKTXWFMYzRdai',
-    },
     limits: {
       eventsPerMonth: 250000, // 2.5x Hobby
       websites: 10, // 2x Hobby
@@ -235,9 +214,6 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       lifetime: 179,
       appsumo: 138,
     },
-    stripeIds: {
-      lifetime: 'price_1RoUoiQAmWLtKTXW0m5z801x',
-    },
     limits: {
       eventsPerMonth: 2000000, // 2x Pro
       websites: 50, // 2x Pro
@@ -269,9 +245,6 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
     prices: {
       lifetime: 299,
       appsumo: 207, // 3-code deal on AppSumo
-    },
-    stripeIds: {
-      lifetime: 'price_1RoUotQAmWLtKTXWcrnT1iBt',
     },
     limits: {
       eventsPerMonth: 5000000, // 5x Pro
@@ -342,14 +315,7 @@ export function getLifetimePlans(): PlanConfiguration[] {
   return getAllPlans().filter(plan => plan.type === 'lifetime');
 }
 
-export function getPlanByStripeId(stripeId: string): PlanConfiguration | null {
-  for (const plan of getAllPlans()) {
-    if (Object.values(plan.stripeIds).includes(stripeId)) {
-      return plan;
-    }
-  }
-  return null;
-}
+// Note: getPlanByStripeId moved to server-side utilities since price IDs are now environment-based
 
 export function getRecommendedPlan(monthlyEvents: number): PlanConfiguration {
   const plans = getSubscriptionPlans().sort(

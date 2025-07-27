@@ -3,7 +3,8 @@ import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { PrismaClient } from '@prisma/client';
 import { findCheckoutSession, getSubscriptionStatus } from '@/lib/stripe';
-import { getPlanByStripeId } from '@/lib/config/simplified-plans';
+import { getPlanByPriceId } from '@/lib/server/plan-price-ids';
+import { getPlan } from '@/lib/config/simplified-plans';
 import { StripeWebhookResponse } from '@/lib/types/stripe-api';
 import {
   CheckoutSessionCompletedHandler,
@@ -97,7 +98,12 @@ const handleCheckoutCompleted: CheckoutSessionCompletedHandler = async (
   }
 
   // Get plan configuration from Stripe price ID
-  const planConfig = getPlanByStripeId(priceId);
+  const planInfo = getPlanByPriceId(priceId);
+  if (!planInfo) {
+    return;
+  }
+
+  const planConfig = getPlan(planInfo.planId);
   if (!planConfig) {
     return;
   }
@@ -171,7 +177,14 @@ const handleSubscriptionUpdated: SubscriptionUpdatedHandler = async (
 
   const status = getSubscriptionStatus(subscription);
   const priceId = subscription.items.data[0]?.price?.id;
-  const planConfig = priceId ? getPlanByStripeId(priceId) : null;
+  let planConfig = null;
+
+  if (priceId) {
+    const planInfo = getPlanByPriceId(priceId);
+    if (planInfo) {
+      planConfig = getPlan(planInfo.planId);
+    }
+  }
 
   await prisma.user.update({
     where: { id: user.id },

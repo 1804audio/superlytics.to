@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { parseRequest } from '@/lib/request';
 import { createCheckout } from '@/lib/stripe';
 import { StripeCheckoutApiResponse } from '@/lib/types/stripe-api';
+import { getPlanByPriceId } from '@/lib/server/plan-price-ids';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -31,6 +32,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Validate that the price ID is from our environment configuration
+    const planInfo = getPlanByPriceId(priceId);
+    if (!planInfo) {
+      const response: StripeCheckoutApiResponse = {
+        error: 'Invalid price configuration',
+        success: false,
+      };
+      return NextResponse.json(response, { status: 400 });
+    }
+
     const stripeSessionURL = await createCheckout({
       priceId,
       mode,

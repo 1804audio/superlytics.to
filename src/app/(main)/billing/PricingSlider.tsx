@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button, Text, Icon, useToasts } from 'react-basics';
 import Icons from '@/components/icons';
 import { useApi } from '@/components/hooks';
@@ -12,6 +12,14 @@ interface PricingSliderProps {
   isLifetime: boolean;
 }
 
+interface PlanPriceIds {
+  [planId: string]: {
+    monthly?: string;
+    yearly?: string;
+    lifetime?: string;
+  };
+}
+
 export default function PricingSlider({
   currentEvents,
   currentPlanId,
@@ -20,12 +28,42 @@ export default function PricingSlider({
   const [selectedEvents, setSelectedEvents] = useState(Math.max(currentEvents, 10000));
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [upgradeLoading, setUpgradeLoading] = useState(false);
-  const { post } = useApi();
+  const [planPriceIds, setPlanPriceIds] = useState<PlanPriceIds | null>(null);
+  const [priceIdsLoading, setPriceIdsLoading] = useState(true);
+  const hasFetchedRef = useRef(false);
+  const { post, get } = useApi();
   const { showToast } = useToasts();
   useEffect(() => {
     // Set slider to current usage or minimum 10k
     setSelectedEvents(Math.max(currentEvents, 10000));
   }, [currentEvents]);
+
+  useEffect(() => {
+    // Only fetch once to prevent infinite loops
+    if (hasFetchedRef.current) return;
+
+    const fetchPlanPriceIds = async () => {
+      try {
+        hasFetchedRef.current = true;
+        setPriceIdsLoading(true);
+        const data = await get('/plans');
+        if (data.success && data.plans) {
+          setPlanPriceIds(data.plans);
+        } else {
+          throw new Error('Failed to load pricing configuration');
+        }
+      } catch {
+        showToast({
+          message: 'Failed to load pricing information. Please refresh the page.',
+          variant: 'error',
+        });
+      } finally {
+        setPriceIdsLoading(false);
+      }
+    };
+
+    fetchPlanPriceIds();
+  }, [get, showToast]);
 
   const recommendedPlan = getRecommendedPlan(selectedEvents);
   const isCurrentPlan = recommendedPlan.id === currentPlanId;
@@ -33,7 +71,7 @@ export default function PricingSlider({
 
   const handleUpgrade = async () => {
     // Prevent double clicks
-    if (upgradeLoading) return;
+    if (upgradeLoading || priceIdsLoading) return;
 
     if (recommendedPlan.type === 'custom') {
       // Contact sales for enterprise
@@ -41,12 +79,26 @@ export default function PricingSlider({
       return;
     }
 
+    if (!planPriceIds) {
+      showToast({
+        message: 'Pricing information not loaded. Please refresh the page.',
+        variant: 'error',
+      });
+      return;
+    }
+
     try {
       setUpgradeLoading(true);
-      const priceId =
-        billingPeriod === 'yearly'
-          ? recommendedPlan.stripeIds.yearly
-          : recommendedPlan.stripeIds.monthly;
+      const planPrices = planPriceIds[recommendedPlan.id];
+      if (!planPrices) {
+        throw new Error(`Price configuration not found for plan: ${recommendedPlan.id}`);
+      }
+
+      const priceId = billingPeriod === 'yearly' ? planPrices.yearly : planPrices.monthly;
+
+      if (!priceId) {
+        throw new Error(`Price ID not found for ${recommendedPlan.id} ${billingPeriod}`);
+      }
 
       const data = await post('/stripe/create-checkout', {
         priceId,
@@ -293,12 +345,18 @@ export default function PricingSlider({
           {isCurrentPlan ? (
             <Button disabled>Current Plan</Button>
           ) : canUpgrade ? (
-            <Button onClick={handleUpgrade} variant="primary" disabled={upgradeLoading}>
-              {upgradeLoading
-                ? 'Creating Checkout...'
-                : recommendedPlan.type === 'custom'
-                  ? 'Contact Sales'
-                  : 'Upgrade Plan'}
+            <Button
+              onClick={handleUpgrade}
+              variant="primary"
+              disabled={upgradeLoading || priceIdsLoading}
+            >
+              {priceIdsLoading
+                ? 'Loading...'
+                : upgradeLoading
+                  ? 'Creating Checkout...'
+                  : recommendedPlan.type === 'custom'
+                    ? 'Contact Sales'
+                    : 'Upgrade Plan'}
             </Button>
           ) : (
             <Button disabled>{isLifetime ? 'Lifetime Active' : 'Plan Not Available'}</Button>
