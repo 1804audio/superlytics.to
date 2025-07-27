@@ -1,6 +1,6 @@
 {
   "name": "superlytics",
-  "version": "2.18.1",
+  "version": "1.0",
   "description": "A modern, privacy-focused alternative to Google Analytics.",
   "author": "1804 Audio",
   "scripts": {
