@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Button, Text, Icon } from 'react-basics';
+import { Button, Text, Icon, useToasts } from 'react-basics';
 import Icons from '@/components/icons';
+import { useApi } from '@/components/hooks';
 import { getRecommendedPlan, getPlanMode, isUnlimited } from '@/lib/config/simplified-plans';
 import styles from './PricingSlider.module.css';
 
@@ -18,6 +19,9 @@ export default function PricingSlider({
 }: PricingSliderProps) {
   const [selectedEvents, setSelectedEvents] = useState(Math.max(currentEvents, 10000));
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const { post } = useApi();
+  const { showToast } = useToasts();
   useEffect(() => {
     // Set slider to current usage or minimum 10k
     setSelectedEvents(Math.max(currentEvents, 10000));
@@ -28,6 +32,9 @@ export default function PricingSlider({
   const canUpgrade = !isLifetime && !isCurrentPlan;
 
   const handleUpgrade = async () => {
+    // Prevent double clicks
+    if (upgradeLoading) return;
+
     if (recommendedPlan.type === 'custom') {
       // Contact sales for enterprise
       window.open('mailto:sales@superlytics.to?subject=Enterprise Plan Inquiry');
@@ -35,31 +42,30 @@ export default function PricingSlider({
     }
 
     try {
+      setUpgradeLoading(true);
       const priceId =
         billingPeriod === 'yearly'
           ? recommendedPlan.stripeIds.yearly
           : recommendedPlan.stripeIds.monthly;
 
-      const response = await fetch('/api/stripe/create-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId,
-          mode: getPlanMode(recommendedPlan),
-          successUrl: window.location.origin + '/billing?success=true',
-          cancelUrl: window.location.href,
-        }),
+      const data = await post('/stripe/create-checkout', {
+        priceId,
+        mode: getPlanMode(recommendedPlan),
+        successUrl: window.location.origin + '/billing?success=true',
+        cancelUrl: window.location.href,
       });
 
-      const data = await response.json();
-
       if (data.success && data.url) {
+        // Add a small delay for consistency
+        await new Promise(resolve => setTimeout(resolve, 100));
         window.location.href = data.url;
       }
-    } catch {
-      // Failed to create checkout session
+    } catch (error: any) {
+      setUpgradeLoading(false);
+      // Show user-friendly error message
+      const errorMessage =
+        error?.message || 'Failed to create checkout session. Please try again later.';
+      showToast({ message: errorMessage, variant: 'error' });
     }
   };
 
@@ -287,8 +293,12 @@ export default function PricingSlider({
           {isCurrentPlan ? (
             <Button disabled>Current Plan</Button>
           ) : canUpgrade ? (
-            <Button onClick={handleUpgrade} variant="primary">
-              {recommendedPlan.type === 'custom' ? 'Contact Sales' : 'Upgrade Plan'}
+            <Button onClick={handleUpgrade} variant="primary" disabled={upgradeLoading}>
+              {upgradeLoading
+                ? 'Creating Checkout...'
+                : recommendedPlan.type === 'custom'
+                  ? 'Contact Sales'
+                  : 'Upgrade Plan'}
             </Button>
           ) : (
             <Button disabled>{isLifetime ? 'Lifetime Active' : 'Plan Not Available'}</Button>

@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import debug from 'debug';
 
 export interface CreateCheckoutParams {
   priceId: string;
@@ -173,8 +174,13 @@ export const createCustomerPortal = async ({
     });
 
     return portalSession.url;
-  } catch {
-    return null;
+  } catch (error) {
+    const log = debug('superlytics:stripe');
+    log('Stripe portal creation failed:', error);
+
+    throw new Error(
+      `Failed to create Stripe portal: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
   }
 };
 

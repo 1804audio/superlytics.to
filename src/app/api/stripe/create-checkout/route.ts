@@ -13,13 +13,22 @@ const schema = z.object({
 });
 
 // This function is used to create a Stripe Checkout Session (one-time payment or subscription)
-// It supports both authenticated and anonymous users
+// Requires authentication to link payments to user accounts
 export async function POST(request: NextRequest) {
-  const { body, auth, error } = await parseRequest(request, schema, { skipAuth: true });
+  const { body, auth, error } = await parseRequest(request, schema);
 
   if (error) return error();
 
   const { priceId, mode, successUrl, cancelUrl, couponId } = body;
+
+  // Ensure user is authenticated
+  if (!auth?.user) {
+    const response: StripeCheckoutApiResponse = {
+      error: 'Authentication required to create checkout session',
+      success: false,
+    };
+    return NextResponse.json(response, { status: 401 });
+  }
 
   try {
     const stripeSessionURL = await createCheckout({
@@ -27,14 +36,12 @@ export async function POST(request: NextRequest) {
       mode,
       successUrl,
       cancelUrl,
-      clientReferenceId: auth?.user?.id || undefined,
-      user: auth?.user
-        ? {
-            id: auth.user.id,
-            customerId: auth.user.customerId,
-            username: auth.user.username,
-          }
-        : undefined,
+      clientReferenceId: auth.user.id,
+      user: {
+        id: auth.user.id,
+        customerId: auth.user.customerId,
+        username: auth.user.username,
+      },
       couponId,
     });
 

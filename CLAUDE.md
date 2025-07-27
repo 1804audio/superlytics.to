@@ -13,7 +13,8 @@
 - Every line must be intentional and purposeful
 - Follow established patterns exactly
 - Maintain consistency across the entire platform
-
+- **Simplicity First**: Choose the simplest solution that works - avoid over-engineering
+- **3 Lines Better Than 10**: If you can solve it simply, do it
 ---
 
 ## 🏗️ **Architecture & Structure**

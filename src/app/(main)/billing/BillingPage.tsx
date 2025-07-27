@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Row, Column } from 'react-basics';
+import { Row, Column, useToasts } from 'react-basics';
 import PageHeader from '@/components/layout/PageHeader';
 import { useLogin, useApi } from '@/components/hooks';
 import { UsageSummary } from '@/lib/services/simple-usage-manager';
@@ -12,9 +12,11 @@ import styles from './BillingPage.module.css';
 
 export default function BillingPage() {
   const { user } = useLogin();
-  const { get } = useApi();
+  const { get, post } = useApi();
   const [usageData, setUsageData] = useState<UsageSummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [billingLoading, setBillingLoading] = useState(false);
+  const { showToast } = useToasts();
 
   useEffect(() => {
     const fetchUsageData = async () => {
@@ -34,24 +36,26 @@ export default function BillingPage() {
   }, [user?.id, get]);
 
   const handleBillingPortal = async () => {
+    // Prevent double clicks
+    if (billingLoading) return;
+
     try {
-      const response = await fetch('/api/stripe/create-portal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          returnUrl: window.location.href,
-        }),
+      setBillingLoading(true);
+      const data = await post('/stripe/create-portal', {
+        returnUrl: window.location.href,
       });
 
-      const data = await response.json();
-
       if (data.success && data.url) {
+        // Add a small delay for consistency
+        await new Promise(resolve => setTimeout(resolve, 100));
         window.location.href = data.url;
       }
-    } catch {
-      // Failed to open billing portal
+    } catch (error: any) {
+      setBillingLoading(false);
+      // Show user-friendly error message
+      const errorMessage =
+        error?.message || 'Failed to open billing portal. Please try again later.';
+      showToast({ message: errorMessage, variant: 'error' });
     }
   };
 
@@ -74,6 +78,7 @@ export default function BillingPage() {
               plan={currentPlan}
               usageData={usageData}
               loading={loading}
+              billingLoading={billingLoading}
               onManageBilling={handleBillingPortal}
             />
           </Column>

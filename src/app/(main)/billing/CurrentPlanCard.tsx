@@ -18,6 +18,7 @@ interface CurrentPlanCardProps {
   plan: PlanConfiguration | null;
   usageData: UsageSummary | null;
   loading: boolean;
+  billingLoading?: boolean;
   onManageBilling: () => void;
 }
 
@@ -26,6 +27,7 @@ export default function CurrentPlanCard({
   plan,
   usageData,
   loading,
+  billingLoading = false,
   onManageBilling,
 }: CurrentPlanCardProps) {
   const getPlanBadgeClass = () => {
@@ -127,11 +129,11 @@ export default function CurrentPlanCard({
 
         <div className={styles.actions}>
           {user.hasAccess && !user.isLifetime && (
-            <Button onClick={onManageBilling} variant="primary">
+            <Button onClick={onManageBilling} variant="primary" disabled={billingLoading}>
               <Icon>
                 <Icons.Gear />
               </Icon>
-              Manage Billing
+              {billingLoading ? 'Opening Portal...' : 'Manage Billing'}
             </Button>
           )}
           {plan?.type === 'custom' && (
