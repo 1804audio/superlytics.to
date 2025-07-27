@@ -7,6 +7,7 @@ import ThemeSetting from '@/app/(main)/profile/ThemeSetting';
 import PasswordChangeButton from './PasswordChangeButton';
 import { UsernameEditButton } from './UsernameEditButton';
 import { EmailEditButton } from './EmailEditButton';
+import { DeleteAccountButton } from './DeleteAccountButton';
 import { useLogin, useMessages } from '@/components/hooks';
 import { ROLES } from '@/lib/constants';
 
@@ -90,6 +91,17 @@ export function ProfileSettings() {
       </FormRow>
       <FormRow label={formatMessage(labels.theme)}>
         <ThemeSetting />
+      </FormRow>
+      <FormRow
+        label="Danger Zone"
+        style={{ borderTop: '1px solid #e1e4e8', paddingTop: '20px', marginTop: '20px' }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ fontSize: '14px', color: '#666' }}>
+            Permanently delete your account and all associated data
+          </div>
+          <DeleteAccountButton />
+        </div>
       </FormRow>
     </Form>
   );

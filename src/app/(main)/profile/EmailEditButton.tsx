@@ -15,7 +15,7 @@ export function EmailEditButton({
 
   return (
     <ModalTrigger>
-      <Button variant="action" size="sm">
+      <Button variant="secondary" size="sm">
         <Icon>
           <GearIcon />
         </Icon>

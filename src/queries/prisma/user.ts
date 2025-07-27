@@ -29,6 +29,10 @@ async function findUser(
       password: includePassword,
       role: true,
       createdAt: true,
+      customerId: true,
+      subscriptionId: true,
+      subscriptionStatus: true,
+      hasAccess: true,
     },
   });
 }
@@ -131,19 +135,7 @@ export async function updateUser(userId: string, data: Prisma.UserUpdateInput): 
   });
 }
 
-export async function deleteUser(
-  userId: string,
-): Promise<
-  [
-    Prisma.BatchPayload,
-    Prisma.BatchPayload,
-    Prisma.BatchPayload,
-    Prisma.BatchPayload,
-    Prisma.BatchPayload,
-    Prisma.BatchPayload,
-    User,
-  ]
-> {
+export async function deleteUser(userId: string): Promise<any> {
   const { client, transaction } = prisma;
   const cloudMode = process.env.CLOUD_MODE;
 
@@ -178,10 +170,21 @@ export async function deleteUser(
         },
         where: { id: { in: websiteIds } },
       }),
+      client.team.updateMany({
+        data: {
+          deletedAt: new Date(),
+        },
+        where: { id: { in: teamIds } },
+      }),
       client.user.update({
         data: {
           username: getRandomChars(32),
+          email: getRandomChars(32) + '@deleted.local',
           deletedAt: new Date(),
+          customerId: null,
+          subscriptionId: null,
+          hasAccess: false,
+          subscriptionStatus: null,
         },
         where: {
           id: userId,
@@ -240,6 +243,9 @@ export async function deleteUser(
     }),
     client.website.deleteMany({
       where: { id: { in: websiteIds } },
+    }),
+    client.usageRecord.deleteMany({
+      where: { userId },
     }),
     client.user.delete({
       where: {
