@@ -6,6 +6,7 @@ export interface SimplifiedPlanLimits {
 
   // Data Management
   dataRetentionMonths: number; // -1 for forever
+  apiKeys: number; // -1 for unlimited
 }
 
 export interface SimplifiedPlanFeatures {
@@ -23,6 +24,7 @@ export interface SimplifiedPlanFeatures {
   customDomain: boolean;
   prioritySLA: boolean;
   onboardingSupport: boolean;
+  apiKeys: boolean; // New feature
 
   // Support Level
   supportLevel: 'community' | 'email' | 'priority' | 'dedicated';
@@ -67,6 +69,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       websites: 1, // Single website
       teamMembers: 1, // Solo user
       dataRetentionMonths: 6,
+      apiKeys: 0, // No API keys for free plan
     },
     features: {
       basicAnalytics: true,
@@ -76,6 +79,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       dataImport: false,
       emailReports: false,
       apiAccess: 'limited',
+      apiKeys: false, // No API key creation
       whiteLabel: false,
       customDomain: false,
       prioritySLA: false,
@@ -102,6 +106,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       websites: 5, // Increased from 3
       teamMembers: 3, // Added as requested
       dataRetentionMonths: 36, // 3 years as requested
+      apiKeys: 2, // Limited API keys for hobby
     },
     features: {
       basicAnalytics: true,
@@ -111,6 +116,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       dataImport: false,
       emailReports: false,
       apiAccess: 'limited',
+      apiKeys: true, // API key creation allowed
       whiteLabel: false,
       customDomain: false,
       prioritySLA: false,
@@ -136,6 +142,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       websites: 25, // Generous limit
       teamMembers: 10, // Reasonable team size
       dataRetentionMonths: 60, // 5 years
+      apiKeys: 10, // Full API key access
     },
     features: {
       basicAnalytics: true,
@@ -145,6 +152,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       dataImport: true, // ✅ Pro feature
       emailReports: true, // ✅ Pro feature
       apiAccess: 'full',
+      apiKeys: true, // Full API key creation
       whiteLabel: false,
       customDomain: false,
       prioritySLA: false,
@@ -164,6 +172,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       websites: -1, // Unlimited
       teamMembers: -1, // Unlimited
       dataRetentionMonths: -1, // Forever
+      apiKeys: -1, // Unlimited API keys
     },
     features: {
       basicAnalytics: true,
@@ -173,6 +182,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       dataImport: true,
       emailReports: true,
       apiAccess: 'full',
+      apiKeys: true, // Full API key access
       whiteLabel: true, // ✅ Enterprise feature
       customDomain: true, // ✅ Enterprise feature
       prioritySLA: true, // ✅ Enterprise feature
@@ -198,6 +208,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       websites: 10, // 2x Hobby
       teamMembers: 5, // Better than Hobby
       dataRetentionMonths: 24, // 2 years
+      apiKeys: 5, // Lifetime benefit
     },
     features: {
       basicAnalytics: true,
@@ -207,6 +218,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       dataImport: true, // ✅ Lifetime benefit
       emailReports: true, // ✅ Lifetime benefit
       apiAccess: 'full', // ✅ Lifetime benefit
+      apiKeys: true, // ✅ Lifetime benefit
       whiteLabel: false,
       customDomain: false,
       prioritySLA: false,
@@ -231,6 +243,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       websites: 50, // 2x Pro
       teamMembers: 25, // 2.5x Pro
       dataRetentionMonths: -1, // Forever
+      apiKeys: 25, // Enhanced for lifetime
     },
     features: {
       basicAnalytics: true,
@@ -240,6 +253,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       dataImport: true,
       emailReports: true,
       apiAccess: 'full',
+      apiKeys: true, // Full access
       whiteLabel: true, // ✅ Lifetime benefit
       customDomain: true, // ✅ Lifetime benefit
       prioritySLA: true, // ✅ Lifetime benefit
@@ -264,6 +278,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       websites: 100, // 4x Pro
       teamMembers: 50, // 5x Pro
       dataRetentionMonths: -1, // Forever
+      apiKeys: -1, // Unlimited for max plan
     },
     features: {
       basicAnalytics: true,
@@ -273,6 +288,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       dataImport: true,
       emailReports: true,
       apiAccess: 'full',
+      apiKeys: true, // Full unlimited access
       whiteLabel: true,
       customDomain: true,
       prioritySLA: true,

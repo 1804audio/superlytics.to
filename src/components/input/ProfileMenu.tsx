@@ -34,6 +34,18 @@ export function ProfileMenu({ user, onSelect, version }: ProfileMenuProps) {
         </Icon>
         <Text>{formatMessage(labels.profile)}</Text>
       </Item>
+      <Item key="api-keys" className={styles.item}>
+        <Icon>
+          <Icons.Lock />
+        </Icon>
+        <Text>API Keys</Text>
+      </Item>
+      <Item key="data" className={styles.item}>
+        <Icon>
+          <Icons.BarChart />
+        </Icon>
+        <Text>Data</Text>
+      </Item>
       <Item key="websites" className={styles.item}>
         <Icon>
           <Icons.Globe />

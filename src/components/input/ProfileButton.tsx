@@ -16,6 +16,12 @@ export function ProfileButton() {
     if (key === 'profile') {
       router.push('/profile');
     }
+    if (key === 'api-keys') {
+      router.push('/profile/api-keys');
+    }
+    if (key === 'data') {
+      router.push('/profile/data');
+    }
     if (key === 'logout') {
       router.push('/logout');
     }
