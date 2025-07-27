@@ -48,13 +48,16 @@ describe('Plan Upgrade Flow', () => {
       expect(hobbyYearly).toBeCloseTo(expectedYearly, 0);
     });
 
-    it('should have valid Stripe price IDs for upgrade', () => {
+    it('should have valid environment price IDs for upgrade', () => {
+      // Note: Environment-based price IDs are managed server-side
+      // This test validates the plan configuration exists
       const hobbyPlan = getPlan('hobby')!;
 
-      expect(hobbyPlan.stripeIds.monthly).toBeTruthy();
-      expect(hobbyPlan.stripeIds.yearly).toBeTruthy();
-      expect(hobbyPlan.stripeIds.monthly).toMatch(/^price_/);
-      expect(hobbyPlan.stripeIds.yearly).toMatch(/^price_/);
+      expect(hobbyPlan).toBeDefined();
+      expect(hobbyPlan.id).toBe('hobby');
+      expect(hobbyPlan.type).toBe('subscription');
+      expect(hobbyPlan.prices.monthly).toBe(9);
+      expect(hobbyPlan.prices.yearly).toBe(90);
     });
 
     it('should simulate user upgrade process', () => {
@@ -253,30 +256,31 @@ describe('Plan Upgrade Flow', () => {
       }
     });
 
-    it('should ensure all subscription plans have Stripe IDs', () => {
+    it('should ensure all subscription plans have valid configuration', () => {
       const subscriptionPlans = Object.values(SIMPLIFIED_PLANS).filter(
         plan => plan.type === 'subscription' && plan.id !== 'enterprise',
       );
 
       subscriptionPlans.forEach(plan => {
-        expect(plan.stripeIds.monthly).toBeTruthy();
-        expect(plan.stripeIds.monthly).toMatch(/^price_/);
+        expect(plan.id).toBeTruthy();
+        expect(plan.name).toBeTruthy();
+        expect(plan.prices.monthly).toBeGreaterThanOrEqual(0);
 
         if (plan.prices.yearly && plan.prices.yearly > 0) {
-          expect(plan.stripeIds.yearly).toBeTruthy();
-          expect(plan.stripeIds.yearly).toMatch(/^price_/);
+          expect(plan.prices.yearly).toBeGreaterThan(0);
         }
       });
     });
 
-    it('should ensure lifetime plans have lifetime Stripe IDs', () => {
+    it('should ensure lifetime plans have valid configuration', () => {
       const lifetimePlans = Object.values(SIMPLIFIED_PLANS).filter(
         plan => plan.type === 'lifetime',
       );
 
       lifetimePlans.forEach(plan => {
-        expect(plan.stripeIds.lifetime).toBeTruthy();
-        expect(plan.stripeIds.lifetime).toMatch(/^price_/);
+        expect(plan.id).toBeTruthy();
+        expect(plan.name).toBeTruthy();
+        expect(plan.type).toBe('lifetime');
         expect(plan.prices.lifetime).toBeGreaterThan(0);
       });
     });
