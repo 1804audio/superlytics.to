@@ -6,10 +6,10 @@
  * to replace the incorrect one-time prices created by the MCP.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const logger = require('./utils/logger');
+import Stripe from 'stripe';
+import logger from './utils/logger.js';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const RECURRING_PRICES = [
   {
