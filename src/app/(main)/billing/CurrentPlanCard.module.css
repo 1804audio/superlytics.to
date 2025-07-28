@@ -31,49 +31,97 @@
   gap: var(--size200);
 }
 
+.badges span {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing1);
+}
+
 .badgeLifetime {
   background: linear-gradient(135deg, #ffd700, #ffed4a);
   color: #000;
-  padding: var(--spacing1) var(--spacing2);
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow:
+    0 2px 8px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 215, 0, 0.4);
 }
 
 .badgeEnterprise {
   background: linear-gradient(135deg, #9333ea, #a855f7);
   color: white;
-  padding: var(--spacing1) var(--spacing2);
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow:
+    0 2px 8px rgba(147, 51, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(147, 51, 234, 0.4);
 }
 
 .badgeGrowth {
   background: linear-gradient(135deg, #2563eb, #3b82f6);
   color: white;
-  padding: var(--spacing1) var(--spacing2);
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow:
+    0 2px 8px rgba(37, 99, 235, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(37, 99, 235, 0.4);
 }
 
 .badgeStarter {
   background: linear-gradient(135deg, #059669, #10b981);
   color: white;
-  padding: var(--spacing1) var(--spacing2);
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow:
+    0 2px 8px rgba(5, 150, 105, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(5, 150, 105, 0.4);
 }
 
 .badgeFree {
-  background: var(--base200);
+  background: linear-gradient(135deg, var(--base200), var(--base100));
   color: var(--base700);
-  padding: var(--spacing1) var(--spacing2);
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--base300);
+}
+
+.yearlyIndicator {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-left: 4px;
 }
 
 .planIcon {

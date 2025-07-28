@@ -32,7 +32,9 @@ async function findUser(
       customerId: true,
       subscriptionId: true,
       subscriptionStatus: true,
+      planId: true,
       hasAccess: true,
+      isLifetime: true,
     },
   });
 }
@@ -70,6 +72,12 @@ export async function getUserByUsernameOrEmail(
       password: includePassword,
       role: true,
       createdAt: true,
+      customerId: true,
+      subscriptionId: true,
+      subscriptionStatus: true,
+      planId: true,
+      hasAccess: true,
+      isLifetime: true,
     },
   });
 }

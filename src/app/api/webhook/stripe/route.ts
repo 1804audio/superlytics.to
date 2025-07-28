@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { PrismaClient } from '@prisma/client';
-import { findCheckoutSession, getSubscriptionStatus } from '@/lib/stripe';
+import { findCheckoutSession, getSubscriptionStatus, cancelOtherSubscriptions } from '@/lib/stripe';
 import { getPlanByPriceId } from '@/lib/server/plan-price-ids';
 import { getPlan } from '@/lib/config/simplified-plans';
 import { StripeWebhookResponse } from '@/lib/types/stripe-api';
@@ -43,6 +43,11 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case 'customer.subscription.created': {
+        await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+        break;
+      }
+
       case 'customer.subscription.updated': {
         await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
         break;
@@ -64,6 +69,8 @@ export async function POST(request: NextRequest) {
       }
 
       default:
+        // Silently ignore unhandled events
+        break;
     }
   } catch {
     const response: StripeWebhookResponse = {
@@ -89,7 +96,14 @@ const handleCheckoutCompleted: CheckoutSessionCompletedHandler = async (
     return;
   }
 
-  const customerId = fullSession.customer as string;
+  // Extract customer ID properly - it can be a string or object
+  const customerId =
+    typeof fullSession.customer === 'string' ? fullSession.customer : fullSession.customer?.id;
+
+  if (!customerId) {
+    return;
+  }
+
   const priceId = fullSession.line_items?.data[0]?.price?.id;
   const userId = session.client_reference_id;
 
@@ -148,6 +162,9 @@ const handleCheckoutCompleted: CheckoutSessionCompletedHandler = async (
     return;
   }
 
+  // Cancel all other active subscriptions for this customer
+  await cancelOtherSubscriptions(customerId, session.subscription as string);
+
   // Update user with subscription data
   await prisma.user.update({
     where: { id: user.id },
@@ -167,8 +184,10 @@ const handleCheckoutCompleted: CheckoutSessionCompletedHandler = async (
 const handleSubscriptionUpdated: SubscriptionUpdatedHandler = async (
   subscription: Stripe.Subscription,
 ) => {
+  const customerId = subscription.customer as string;
+
   const user = await prisma.user.findFirst({
-    where: { customerId: subscription.customer as string },
+    where: { customerId },
   });
 
   if (!user) {
@@ -186,12 +205,17 @@ const handleSubscriptionUpdated: SubscriptionUpdatedHandler = async (
     }
   }
 
+  const newPlanId = planConfig?.id || user.planId;
+
+  // Cancel all other active subscriptions for this customer
+  await cancelOtherSubscriptions(customerId, subscription.id);
+
   await prisma.user.update({
     where: { id: user.id },
     data: {
       subscriptionId: subscription.id,
       subscriptionStatus: status,
-      planId: planConfig?.id || user.planId,
+      planId: newPlanId,
       hasAccess: ['active', 'trialing'].includes(status),
     },
   });

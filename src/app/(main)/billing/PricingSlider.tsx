@@ -3,12 +3,31 @@ import { useState, useEffect, useRef } from 'react';
 import { Button, Text, Icon, useToasts } from 'react-basics';
 import Icons from '@/components/icons';
 import { useApi } from '@/components/hooks';
-import { getRecommendedPlan, getPlanMode, isUnlimited } from '@/lib/config/simplified-plans';
+import {
+  getRecommendedPlan,
+  getPlanMode,
+  isUnlimited,
+  getPlan,
+} from '@/lib/config/simplified-plans';
 import styles from './PricingSlider.module.css';
 
 interface PricingSliderProps {
   currentEvents: number;
   currentPlanId: string;
+  isLifetime: boolean;
+  user: {
+    id: string;
+    planId?: string;
+    subscriptionId?: string;
+    isLifetime?: boolean;
+    subscriptionStatus?: string;
+  };
+}
+
+interface UserSubscription {
+  planId: string;
+  billingInterval: 'monthly' | 'yearly' | 'lifetime';
+  status: string;
   isLifetime: boolean;
 }
 
@@ -24,19 +43,74 @@ export default function PricingSlider({
   currentEvents,
   currentPlanId,
   isLifetime,
+  user,
 }: PricingSliderProps) {
   const [selectedEvents, setSelectedEvents] = useState(Math.max(currentEvents, 10000));
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [planPriceIds, setPlanPriceIds] = useState<PlanPriceIds | null>(null);
   const [priceIdsLoading, setPriceIdsLoading] = useState(true);
+  const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
   const hasFetchedRef = useRef(false);
+  const hasSubscriptionFetchedRef = useRef(false);
   const { post, get } = useApi();
   const { showToast } = useToasts();
   useEffect(() => {
-    // Set slider to current usage or minimum 10k
+    // Set slider based on user's current plan event limit, fallback to usage or minimum 10k
+    if (userSubscription?.planId) {
+      const currentPlan = getPlan(userSubscription.planId);
+      if (currentPlan) {
+        const planEventLimit = currentPlan.limits.eventsPerMonth;
+        if (planEventLimit === -1) {
+          // Unlimited plan - set to highest tier
+          setSelectedEvents(10000000);
+        } else {
+          // Set to plan's event limit
+          setSelectedEvents(Math.max(planEventLimit, 10000));
+        }
+        return;
+      }
+    }
+    // Fallback to current usage or minimum 10k
     setSelectedEvents(Math.max(currentEvents, 10000));
-  }, [currentEvents]);
+  }, [currentEvents, userSubscription?.planId]);
+
+  // Fetch user subscription details
+  useEffect(() => {
+    if (hasSubscriptionFetchedRef.current) return;
+
+    const fetchUserSubscription = async () => {
+      try {
+        hasSubscriptionFetchedRef.current = true;
+        setSubscriptionLoading(true);
+        const data = await get('/me/subscription');
+        if (data.success && data.subscription) {
+          setUserSubscription(data.subscription);
+          // Set the billing period toggle to match user's current subscription
+          if (data.subscription.billingInterval === 'yearly') {
+            setBillingPeriod('yearly');
+          } else {
+            setBillingPeriod('monthly');
+          }
+        }
+      } catch {
+        // Use default values if fetch fails
+        setUserSubscription({
+          planId: currentPlanId,
+          billingInterval: 'monthly',
+          status: 'active',
+          isLifetime: isLifetime,
+        });
+      } finally {
+        setSubscriptionLoading(false);
+      }
+    };
+
+    if (user?.id) {
+      fetchUserSubscription();
+    }
+  }, [user?.id, get, currentPlanId, isLifetime]);
 
   useEffect(() => {
     // Only fetch once to prevent infinite loops
@@ -66,8 +140,38 @@ export default function PricingSlider({
   }, [get, showToast]);
 
   const recommendedPlan = getRecommendedPlan(selectedEvents);
-  const isCurrentPlan = recommendedPlan.id === currentPlanId;
-  const canUpgrade = !isLifetime && !isCurrentPlan;
+
+  // Use subscription data if available, fall back to props
+  const userCurrentPlanId = userSubscription?.planId || currentPlanId;
+  const userBillingInterval = userSubscription?.billingInterval || 'monthly';
+  const userIsLifetime = userSubscription?.isLifetime || isLifetime;
+
+  // Check if this is the user's current plan (not the recommended plan)
+  const isUserCurrentPlan = recommendedPlan.id === userCurrentPlanId;
+
+  // Plan hierarchy for upgrade/downgrade logic
+  const getPlanHierarchy = (planId: string): number => {
+    const hierarchyMap: Record<string, number> = {
+      free: 0,
+      starter: 1,
+      growth: 2,
+      enterprise: 3,
+      // Lifetime plans are separate
+      lifetime_starter: 101,
+      lifetime_growth: 102,
+      lifetime_max: 103,
+    };
+    return hierarchyMap[planId] || 0;
+  };
+
+  const isUpgrade = getPlanHierarchy(recommendedPlan.id) > getPlanHierarchy(userCurrentPlanId);
+  const isDowngrade = getPlanHierarchy(recommendedPlan.id) < getPlanHierarchy(userCurrentPlanId);
+
+  // Allow plan changes if:
+  // 1. User is not on lifetime plan
+  // 2. It's a different plan OR same plan with different billing period
+  const canUpgrade =
+    !userIsLifetime && (!isUserCurrentPlan || billingPeriod !== userBillingInterval);
 
   const handleUpgrade = async () => {
     // Prevent double clicks
@@ -215,7 +319,7 @@ export default function PricingSlider({
         <div className={styles.planHeader}>
           <div className={styles.planInfo}>
             <Text className={styles.planName}>{recommendedPlan.name}</Text>
-            {isCurrentPlan && <span className={styles.currentBadge}>Current Plan</span>}
+            {isUserCurrentPlan && <span className={styles.currentBadge}>Current Plan</span>}
           </div>
         </div>
 
@@ -226,12 +330,18 @@ export default function PricingSlider({
               onClick={() => setBillingPeriod('monthly')}
             >
               Monthly
+              {isUserCurrentPlan && userBillingInterval === 'monthly' && !subscriptionLoading && (
+                <span> (Current)</span>
+              )}
             </button>
             <button
               className={`${styles.toggleButton} ${billingPeriod === 'yearly' ? styles.active : ''}`}
               onClick={() => setBillingPeriod('yearly')}
             >
               Yearly
+              {isUserCurrentPlan && userBillingInterval === 'yearly' && !subscriptionLoading && (
+                <span> (Current)</span>
+              )}
               {getYearlySavings() && (
                 <span className={styles.savings}>Save ${getYearlySavings()}</span>
               )}
@@ -342,27 +452,33 @@ export default function PricingSlider({
         </div>
 
         <div className={styles.actions}>
-          {isCurrentPlan ? (
+          {isUserCurrentPlan && billingPeriod === userBillingInterval ? (
             <Button disabled>Current Plan</Button>
           ) : canUpgrade ? (
             <Button
               onClick={handleUpgrade}
               variant="primary"
-              disabled={upgradeLoading || priceIdsLoading}
+              disabled={upgradeLoading || priceIdsLoading || subscriptionLoading}
             >
-              {priceIdsLoading
+              {priceIdsLoading || subscriptionLoading
                 ? 'Loading...'
                 : upgradeLoading
                   ? 'Creating Checkout...'
                   : recommendedPlan.type === 'custom'
                     ? 'Contact Sales'
-                    : 'Upgrade Plan'}
+                    : isUserCurrentPlan && billingPeriod !== userBillingInterval
+                      ? `Switch to ${billingPeriod === 'yearly' ? 'Yearly' : 'Monthly'}`
+                      : isUpgrade
+                        ? 'Upgrade Plan'
+                        : isDowngrade
+                          ? 'Downgrade Plan'
+                          : 'Change Plan'}
             </Button>
           ) : (
-            <Button disabled>{isLifetime ? 'Lifetime Active' : 'Plan Not Available'}</Button>
+            <Button disabled>{userIsLifetime ? 'Lifetime Active' : 'Plan Not Available'}</Button>
           )}
 
-          {recommendedPlan.prices.monthly === 0 && !isCurrentPlan && (
+          {recommendedPlan.prices.monthly === 0 && !isUserCurrentPlan && (
             <Text className={styles.freeNote}>$0.00 due today. No credit card required.</Text>
           )}
         </div>

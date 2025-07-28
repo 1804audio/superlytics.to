@@ -29,7 +29,17 @@ export async function POST(request: Request) {
     return unauthorized('message.incorrect-username-password');
   }
 
-  const { id, role, createdAt } = user;
+  const {
+    id,
+    role,
+    createdAt,
+    planId,
+    hasAccess,
+    isLifetime,
+    customerId,
+    subscriptionId,
+    subscriptionStatus,
+  } = user;
 
   let token: string;
 
@@ -41,6 +51,19 @@ export async function POST(request: Request) {
 
   return json({
     token,
-    user: { id, username, email: user.email, role, createdAt, isAdmin: role === ROLES.admin },
+    user: {
+      id,
+      username,
+      email: user.email,
+      role,
+      createdAt,
+      isAdmin: role === ROLES.admin,
+      planId,
+      hasAccess,
+      isLifetime,
+      customerId,
+      subscriptionId,
+      subscriptionStatus,
+    },
   });
 }

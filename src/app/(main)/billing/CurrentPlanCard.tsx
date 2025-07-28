@@ -13,22 +13,27 @@ interface User {
   isLifetime: boolean;
 }
 
+interface UserSubscription {
+  planId: string;
+  billingInterval: 'monthly' | 'yearly' | 'lifetime';
+  status: string;
+  isLifetime: boolean;
+}
+
 interface CurrentPlanCardProps {
   user: User;
   plan: PlanConfiguration | null;
+  userSubscription: UserSubscription | null;
   usageData: UsageSummary | null;
   loading: boolean;
-  billingLoading?: boolean;
-  onManageBilling: () => void;
 }
 
 export default function CurrentPlanCard({
   user,
   plan,
+  userSubscription,
   usageData,
   loading,
-  billingLoading = false,
-  onManageBilling,
 }: CurrentPlanCardProps) {
   const getPlanBadgeClass = () => {
     if (user.isLifetime) return styles.badgeLifetime;
@@ -37,6 +42,25 @@ export default function CurrentPlanCard({
     if (plan?.id === 'starter') return styles.badgeStarter;
     return styles.badgeFree;
   };
+
+  const getPlanPrice = () => {
+    if (!plan || plan.type === 'custom') return null;
+    if (user.isLifetime) return null;
+
+    const billingInterval = userSubscription?.billingInterval || 'monthly';
+
+    if (plan.prices.monthly === 0) {
+      return { amount: 0, period: 'month' };
+    }
+
+    if (billingInterval === 'yearly' && plan.prices.yearly) {
+      return { amount: plan.prices.yearly, period: 'year' };
+    }
+
+    return { amount: plan.prices.monthly || 0, period: 'month' };
+  };
+
+  const planPrice = getPlanPrice();
 
   const formatLimit = (current: number, limit: number, unlimited: boolean) => {
     if (unlimited) return `${current.toLocaleString()} / Unlimited`;
@@ -49,7 +73,12 @@ export default function CurrentPlanCard({
         <div className={styles.planInfo}>
           <Text className={styles.planName}>{plan?.name || 'Free'}</Text>
           <div className={styles.badges}>
-            <span className={getPlanBadgeClass()}>{user.isLifetime ? 'Lifetime' : plan?.name}</span>
+            <span className={getPlanBadgeClass()}>
+              {user.isLifetime ? 'Lifetime' : plan?.name}
+              {userSubscription?.billingInterval === 'yearly' && !user.isLifetime && (
+                <span className={styles.yearlyIndicator}>Annual</span>
+              )}
+            </span>
           </div>
         </div>
         {user.isLifetime && (
@@ -65,19 +94,21 @@ export default function CurrentPlanCard({
             <Text className={styles.customPrice}>Custom Pricing</Text>
           ) : user.isLifetime ? (
             <Text className={styles.lifetimePrice}>Lifetime Access - No recurring charges</Text>
-          ) : plan?.prices.monthly === 0 ? (
+          ) : planPrice?.amount === 0 ? (
             <Text className={styles.price}>$0/month</Text>
-          ) : (
+          ) : planPrice ? (
             <div className={styles.priceDetails}>
-              <Text className={styles.price}>${plan?.prices.monthly || 0}/month</Text>
-              {plan?.prices.yearly && (
+              <Text className={styles.price}>
+                ${planPrice.amount}/{planPrice.period}
+              </Text>
+              {planPrice.period === 'month' && plan?.prices.yearly && (
                 <Text className={styles.yearlyPrice}>
                   or ${plan.prices.yearly}/year (save $
                   {(plan.prices.monthly * 12 - plan.prices.yearly).toFixed(0)})
                 </Text>
               )}
             </div>
-          )}
+          ) : null}
         </div>
 
         {!loading && usageData && (
@@ -128,14 +159,6 @@ export default function CurrentPlanCard({
         )}
 
         <div className={styles.actions}>
-          {user.hasAccess && !user.isLifetime && (
-            <Button onClick={onManageBilling} variant="primary" disabled={billingLoading}>
-              <Icon>
-                <Icons.Gear />
-              </Icon>
-              {billingLoading ? 'Opening Portal...' : 'Manage Billing'}
-            </Button>
-          )}
           {plan?.type === 'custom' && (
             <Button variant="quiet">
               <Icon>

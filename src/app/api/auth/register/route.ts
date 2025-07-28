@@ -9,7 +9,8 @@ import { parseRequest } from '@/lib/request';
 import { saveAuth } from '@/lib/auth';
 import { secret } from '@/lib/crypto';
 import { ROLES } from '@/lib/constants';
-import { createStripeCustomer } from '@/lib/stripe';
+import { createStripeCustomer, createFreeSubscription } from '@/lib/stripe';
+import { getPriceId } from '@/lib/server/plan-price-ids';
 import prisma from '@/lib/prisma';
 
 export async function POST(request: Request) {
@@ -56,6 +57,18 @@ export async function POST(request: Request) {
       name: username, // Use username as display name
     });
 
+    // Get free plan price ID
+    const freePriceId = getPriceId('free', 'monthly');
+    if (!freePriceId) {
+      throw new Error('Free plan price ID not configured');
+    }
+
+    // Create free subscription in Stripe
+    const freeSubscription = await createFreeSubscription({
+      customerId: stripeCustomer.id,
+      priceId: freePriceId,
+    });
+
     // Hash password
     const hashedPassword = await hash(password, 10);
 
@@ -71,6 +84,8 @@ export async function POST(request: Request) {
           password: hashedPassword,
           role: ROLES.user,
           customerId: stripeCustomer.id,
+          subscriptionId: freeSubscription.id,
+          subscriptionStatus: freeSubscription.status,
           planId: 'free',
           hasAccess: true,
           isLifetime: false,
@@ -97,8 +112,12 @@ export async function POST(request: Request) {
         email: user.email,
         role: user.role,
         isAdmin: user.role === ROLES.admin,
-        planId: 'free',
-        hasAccess: true,
+        planId: user.planId,
+        hasAccess: user.hasAccess,
+        isLifetime: user.isLifetime,
+        customerId: user.customerId,
+        subscriptionId: user.subscriptionId,
+        subscriptionStatus: user.subscriptionStatus,
       },
       message: 'Account created successfully! Welcome to Superlytics.',
     });

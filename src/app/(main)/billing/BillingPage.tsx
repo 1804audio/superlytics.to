@@ -10,28 +10,45 @@ import UsageCard from './UsageCard';
 import PricingSlider from './PricingSlider';
 import styles from './BillingPage.module.css';
 
+interface UserSubscription {
+  planId: string;
+  billingInterval: 'monthly' | 'yearly' | 'lifetime';
+  status: string;
+  isLifetime: boolean;
+}
+
 export default function BillingPage() {
   const { user } = useLogin();
   const { get, post } = useApi();
   const [usageData, setUsageData] = useState<UsageSummary | null>(null);
+  const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [billingLoading, setBillingLoading] = useState(false);
   const { showToast } = useToasts();
 
   useEffect(() => {
-    const fetchUsageData = async () => {
+    const fetchData = async () => {
       try {
-        const data = await get(`/usage/${user.id}`);
-        setUsageData(data);
+        // Fetch both usage data and subscription data in parallel
+        const [usageResponse, subscriptionResponse] = await Promise.all([
+          get(`/usage/${user.id}`),
+          get('/me/subscription'),
+        ]);
+
+        setUsageData(usageResponse);
+
+        if (subscriptionResponse.success && subscriptionResponse.subscription) {
+          setUserSubscription(subscriptionResponse.subscription);
+        }
       } catch {
-        // Failed to fetch usage data
+        // Failed to fetch data
       } finally {
         setLoading(false);
       }
     };
 
     if (user?.id) {
-      fetchUsageData();
+      fetchData();
     }
   }, [user?.id, get]);
 
@@ -67,7 +84,19 @@ export default function BillingPage() {
 
   return (
     <div className={styles.container}>
-      <PageHeader title="Billing & Plans" />
+      <PageHeader title="Billing & Plans">
+        {/* Show Manage Billing text for all users */}
+        <span
+          onClick={billingLoading ? undefined : handleBillingPortal}
+          className={styles.manageBillingLink}
+          style={{
+            cursor: billingLoading ? 'default' : 'pointer',
+            opacity: billingLoading ? 0.6 : 1,
+          }}
+        >
+          {billingLoading ? 'Opening Portal...' : 'Manage Billing'}
+        </span>
+      </PageHeader>
 
       <div className={styles.content}>
         {/* Current Plan & Usage Section */}
@@ -76,10 +105,9 @@ export default function BillingPage() {
             <CurrentPlanCard
               user={user}
               plan={currentPlan}
+              userSubscription={userSubscription}
               usageData={usageData}
               loading={loading}
-              billingLoading={billingLoading}
-              onManageBilling={handleBillingPortal}
             />
           </Column>
           <Column xs={12} md={4}>
@@ -93,6 +121,7 @@ export default function BillingPage() {
             currentEvents={usageData?.events.current || 0}
             currentPlanId={user.planId || 'free'}
             isLifetime={user.isLifetime || false}
+            user={user}
           />
         </div>
       </div>

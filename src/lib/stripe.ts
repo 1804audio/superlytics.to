@@ -201,6 +201,64 @@ export const findCheckoutSession = async (
   }
 };
 
+// Create a free subscription for new users
+export const createFreeSubscription = async ({
+  customerId,
+  priceId,
+}: {
+  customerId: string;
+  priceId: string;
+}): Promise<Stripe.Subscription> => {
+  const stripe = getStripeInstance();
+
+  return stripe.subscriptions.create({
+    customer: customerId,
+    items: [
+      {
+        price: priceId,
+      },
+    ],
+    // Free subscriptions should start immediately
+    trial_end: 'now',
+    metadata: {
+      source: 'superlytics_registration',
+      plan_type: 'free',
+    },
+  });
+};
+
+// Cancel all active subscriptions for a customer except the specified one
+export const cancelOtherSubscriptions = async (
+  customerId: string,
+  keepSubscriptionId?: string,
+): Promise<void> => {
+  const stripe = getStripeInstance();
+
+  try {
+    // List all active subscriptions for the customer
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      status: 'active',
+      limit: 100,
+    });
+
+    // Cancel all subscriptions except the one we want to keep
+    const cancelPromises = subscriptions.data
+      .filter(sub => sub.id !== keepSubscriptionId)
+      .map(async subscription => {
+        try {
+          await stripe.subscriptions.cancel(subscription.id);
+        } catch {
+          // Silently handle individual subscription cancellation errors
+        }
+      });
+
+    await Promise.all(cancelPromises);
+  } catch {
+    // Silently handle errors - this is a cleanup operation
+  }
+};
+
 // New utility functions for Superlytics integration
 export const syncStripeCustomer = async () => {
   // This will be implemented when we have the Prisma integration
