@@ -182,12 +182,12 @@ export default function DataContent() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <Text style={{ fontSize: '14px', color: 'var(--font-color300)' }}>
             Import data from a CSV file into a website.
-            {!hasDataImport && ' (Pro plan required)'}
+            {!hasDataImport && ' (Growth plan required)'}
           </Text>
 
           {!hasDataImport && (
             <Banner variant="warning">
-              Data import is only available on Pro plans and above. Please upgrade your plan to
+              Data import is only available on Growth plans and above. Please upgrade your plan to
               access this feature.
             </Banner>
           )}

@@ -16,48 +16,48 @@ interface MockUser {
 }
 
 describe('Plan Upgrade Flow', () => {
-  describe('Free to Hobby Upgrade', () => {
+  describe('Free to Starter Upgrade', () => {
     it('should validate upgrade path exists', () => {
       const freePlan = getPlan('free');
-      const hobbyPlan = getPlan('hobby');
+      const starterPlan = getPlan('starter');
 
       expect(freePlan).toBeDefined();
-      expect(hobbyPlan).toBeDefined();
+      expect(starterPlan).toBeDefined();
 
-      // Verify hobby is an upgrade from free
-      expect(hobbyPlan!.limits.eventsPerMonth).toBeGreaterThan(freePlan!.limits.eventsPerMonth);
-      expect(hobbyPlan!.limits.websites).toBeGreaterThan(freePlan!.limits.websites);
-      expect(hobbyPlan!.limits.teamMembers).toBeGreaterThan(freePlan!.limits.teamMembers);
-      expect(hobbyPlan!.limits.dataRetentionMonths).toBeGreaterThan(
+      // Verify starter is an upgrade from free
+      expect(starterPlan!.limits.eventsPerMonth).toBeGreaterThan(freePlan!.limits.eventsPerMonth);
+      expect(starterPlan!.limits.websites).toBeGreaterThan(freePlan!.limits.websites);
+      expect(starterPlan!.limits.teamMembers).toBeGreaterThan(freePlan!.limits.teamMembers);
+      expect(starterPlan!.limits.dataRetentionMonths).toBeGreaterThan(
         freePlan!.limits.dataRetentionMonths,
       );
     });
 
     it('should calculate correct upgrade pricing', () => {
-      const hobbyMonthly = getPlanPrice('hobby', 'monthly');
-      const hobbyYearly = getPlanPrice('hobby', 'yearly');
+      const starterMonthly = getPlanPrice('starter', 'monthly');
+      const starterYearly = getPlanPrice('starter', 'yearly');
 
-      expect(hobbyMonthly).toBe(9);
-      expect(hobbyYearly).toBe(90);
+      expect(starterMonthly).toBe(9);
+      expect(starterYearly).toBe(90);
 
       // Yearly should be discounted
-      expect(hobbyYearly).toBeLessThan(hobbyMonthly * 12);
+      expect(starterYearly).toBeLessThan(starterMonthly * 12);
 
       // 17% discount calculation
-      const expectedYearly = hobbyMonthly * 12 * 0.83;
-      expect(hobbyYearly).toBeCloseTo(expectedYearly, 0);
+      const expectedYearly = starterMonthly * 12 * 0.83;
+      expect(starterYearly).toBeCloseTo(expectedYearly, 0);
     });
 
     it('should have valid environment price IDs for upgrade', () => {
       // Note: Environment-based price IDs are managed server-side
       // This test validates the plan configuration exists
-      const hobbyPlan = getPlan('hobby')!;
+      const starterPlan = getPlan('starter')!;
 
-      expect(hobbyPlan).toBeDefined();
-      expect(hobbyPlan.id).toBe('hobby');
-      expect(hobbyPlan.type).toBe('subscription');
-      expect(hobbyPlan.prices.monthly).toBe(9);
-      expect(hobbyPlan.prices.yearly).toBe(90);
+      expect(starterPlan).toBeDefined();
+      expect(starterPlan.id).toBe('starter');
+      expect(starterPlan.type).toBe('subscription');
+      expect(starterPlan.prices.monthly).toBe(9);
+      expect(starterPlan.prices.yearly).toBe(90);
     });
 
     it('should simulate user upgrade process', () => {
@@ -69,11 +69,11 @@ describe('Plan Upgrade Flow', () => {
         isLifetime: false,
       };
 
-      // After upgrade to hobby
+      // After upgrade to starter
       const upgradedUser: MockUser = {
         ...freeUser,
-        planId: 'hobby',
-        subscriptionId: 'sub_hobby123',
+        planId: 'starter',
+        subscriptionId: 'sub_starter123',
       };
 
       const newPlan = getPlan(upgradedUser.planId)!;
@@ -85,67 +85,67 @@ describe('Plan Upgrade Flow', () => {
     });
   });
 
-  describe('Hobby to Pro Upgrade', () => {
-    it('should unlock pro features', () => {
-      const hobbyPlan = getPlan('hobby')!;
-      const proPlan = getPlan('pro')!;
+  describe('Starter to Growth Upgrade', () => {
+    it('should unlock growth features', () => {
+      const starterPlan = getPlan('starter')!;
+      const growthPlan = getPlan('growth')!;
 
-      // Features unlocked in Pro
-      expect(proPlan.features.dataImport).toBe(true);
-      expect(proPlan.features.emailReports).toBe(true);
-      expect(proPlan.features.apiAccess).toBe('full');
-      expect(proPlan.features.supportLevel).toBe('email');
+      // Features unlocked in Growth
+      expect(growthPlan.features.dataImport).toBe(true);
+      expect(growthPlan.features.emailReports).toBe(true);
+      expect(growthPlan.features.apiAccess).toBe('full');
+      expect(growthPlan.features.supportLevel).toBe('email');
 
-      // Hobby still restricted
-      expect(hobbyPlan.features.dataImport).toBe(false);
-      expect(hobbyPlan.features.emailReports).toBe(false);
-      expect(hobbyPlan.features.apiAccess).toBe('limited');
-      expect(hobbyPlan.features.supportLevel).toBe('community');
+      // Starter still restricted
+      expect(starterPlan.features.dataImport).toBe(false);
+      expect(starterPlan.features.emailReports).toBe(false);
+      expect(starterPlan.features.apiAccess).toBe('limited');
+      expect(starterPlan.features.supportLevel).toBe('community');
     });
 
     it('should have significant limit increases', () => {
-      const hobbyPlan = getPlan('hobby')!;
-      const proPlan = getPlan('pro')!;
+      const starterPlan = getPlan('starter')!;
+      const growthPlan = getPlan('growth')!;
 
-      expect(proPlan.limits.eventsPerMonth).toBe(hobbyPlan.limits.eventsPerMonth * 10);
-      expect(proPlan.limits.websites).toBe(25);
-      expect(proPlan.limits.teamMembers).toBe(10);
-      expect(proPlan.limits.dataRetentionMonths).toBe(60); // 5 years
+      expect(growthPlan.limits.eventsPerMonth).toBe(starterPlan.limits.eventsPerMonth * 10);
+      expect(growthPlan.limits.websites).toBe(25);
+      expect(growthPlan.limits.teamMembers).toBe(10);
+      expect(growthPlan.limits.dataRetentionMonths).toBe(60); // 5 years
     });
 
-    it('should calculate pro upgrade pricing', () => {
-      const proMonthly = getPlanPrice('pro', 'monthly');
-      const proYearly = getPlanPrice('pro', 'yearly');
+    it('should calculate growth upgrade pricing', () => {
+      const growthMonthly = getPlanPrice('growth', 'monthly');
+      const growthYearly = getPlanPrice('growth', 'yearly');
 
-      expect(proMonthly).toBe(19);
-      expect(proYearly).toBe(190);
+      expect(growthMonthly).toBe(19);
+      expect(growthYearly).toBe(190);
 
-      // Should be more expensive than hobby
-      expect(proMonthly).toBeGreaterThan(getPlanPrice('hobby', 'monthly'));
-      expect(proYearly).toBeGreaterThan(getPlanPrice('hobby', 'yearly'));
+      // Should be more expensive than starter
+      expect(growthMonthly).toBeGreaterThan(getPlanPrice('starter', 'monthly'));
+      expect(growthYearly).toBeGreaterThan(getPlanPrice('starter', 'yearly'));
     });
   });
 
   describe('Lifetime Plan Upgrades', () => {
     it('should offer lifetime alternatives to subscriptions', () => {
       const lifetimeStarter = getPlan('lifetime_starter')!;
-      const lifetimePro = getPlan('lifetime_pro')!;
+      const lifetimeGrowth = getPlan('lifetime_growth')!;
       const lifetimeMax = getPlan('lifetime_max')!;
 
       expect(lifetimeStarter.type).toBe('lifetime');
-      expect(lifetimePro.type).toBe('lifetime');
+      expect(lifetimeGrowth.type).toBe('lifetime');
       expect(lifetimeMax.type).toBe('lifetime');
     });
 
     it('should provide better value than subscriptions', () => {
       const lifetimeStarter = getPlan('lifetime_starter')!;
-      const hobby = getPlan('hobby')!;
+      const starter = getPlan('starter')!;
 
-      // Lifetime starter should have more than hobby
-      expect(lifetimeStarter.limits.eventsPerMonth).toBeGreaterThan(hobby.limits.eventsPerMonth);
-      expect(lifetimeStarter.limits.websites).toBeGreaterThan(hobby.limits.websites);
+      // Lifetime starter should have more than starter
+      expect(lifetimeStarter.limits.eventsPerMonth).toBeGreaterThan(starter.limits.eventsPerMonth);
+      expect(lifetimeStarter.limits.websites).toBeGreaterThan(starter.limits.websites);
 
-      // Should include Pro features
+      // Should include Growth features
       expect(lifetimeStarter.features.dataImport).toBe(true);
       expect(lifetimeStarter.features.emailReports).toBe(true);
       expect(lifetimeStarter.features.apiAccess).toBe('full');
@@ -154,10 +154,10 @@ describe('Plan Upgrade Flow', () => {
     it('should simulate lifetime upgrade from subscription', () => {
       const subscriptionUser: MockUser = {
         id: 'user456',
-        planId: 'hobby',
+        planId: 'starter',
         hasAccess: true,
-        customerId: 'cus_hobby456',
-        subscriptionId: 'sub_hobby456',
+        customerId: 'cus_starter456',
+        subscriptionId: 'sub_starter456',
         isLifetime: false,
       };
 
@@ -209,15 +209,15 @@ describe('Plan Upgrade Flow', () => {
 
   describe('Downgrade Scenarios', () => {
     it('should identify feature loss on downgrade', () => {
-      const proPlan = getPlan('pro')!;
-      const hobbyPlan = getPlan('hobby')!;
+      const growthPlan = getPlan('growth')!;
+      const starterPlan = getPlan('starter')!;
 
-      // Features lost when downgrading from Pro to Hobby
+      // Features lost when downgrading from Growth to Starter
       const featuresLost = {
-        dataImport: proPlan.features.dataImport && !hobbyPlan.features.dataImport,
-        emailReports: proPlan.features.emailReports && !hobbyPlan.features.emailReports,
+        dataImport: growthPlan.features.dataImport && !starterPlan.features.dataImport,
+        emailReports: growthPlan.features.emailReports && !starterPlan.features.emailReports,
         fullApiAccess:
-          proPlan.features.apiAccess === 'full' && hobbyPlan.features.apiAccess === 'limited',
+          growthPlan.features.apiAccess === 'full' && starterPlan.features.apiAccess === 'limited',
       };
 
       expect(featuresLost.dataImport).toBe(true);
@@ -226,19 +226,21 @@ describe('Plan Upgrade Flow', () => {
     });
 
     it('should identify limit reductions on downgrade', () => {
-      const proPlan = getPlan('pro')!;
-      const hobbyPlan = getPlan('hobby')!;
+      const growthPlan = getPlan('growth')!;
+      const starterPlan = getPlan('starter')!;
 
-      expect(hobbyPlan.limits.eventsPerMonth).toBeLessThan(proPlan.limits.eventsPerMonth);
-      expect(hobbyPlan.limits.websites).toBeLessThan(proPlan.limits.websites);
-      expect(hobbyPlan.limits.teamMembers).toBeLessThan(proPlan.limits.teamMembers);
-      expect(hobbyPlan.limits.dataRetentionMonths).toBeLessThan(proPlan.limits.dataRetentionMonths);
+      expect(starterPlan.limits.eventsPerMonth).toBeLessThan(growthPlan.limits.eventsPerMonth);
+      expect(starterPlan.limits.websites).toBeLessThan(growthPlan.limits.websites);
+      expect(starterPlan.limits.teamMembers).toBeLessThan(growthPlan.limits.teamMembers);
+      expect(starterPlan.limits.dataRetentionMonths).toBeLessThan(
+        growthPlan.limits.dataRetentionMonths,
+      );
     });
   });
 
   describe('Plan Validation', () => {
     it('should validate all upgrade paths are logical', () => {
-      const planOrder = ['free', 'hobby', 'pro'];
+      const planOrder = ['free', 'starter', 'growth'];
 
       for (let i = 1; i < planOrder.length; i++) {
         const currentPlan = getPlan(planOrder[i])!;

@@ -33,7 +33,7 @@ export async function requireApiAccess(auth: Auth, requiredLevel: 'limited' | 'f
     return NextResponse.json(
       {
         error:
-          'Full API access is required for this endpoint. Please upgrade to a Pro plan or higher.',
+          'Full API access is required for this endpoint. Please upgrade to Growth plan or higher.',
         feature: 'apiAccess',
         required: 'full',
         current: userApiAccess,

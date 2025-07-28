@@ -58,82 +58,82 @@ describe('Signup Flow (Config Only)', () => {
     });
   });
 
-  describe('Hobby Plan Updates', () => {
-    it('should have updated hobby plan data retention to 3 years', () => {
-      const hobbyPlan = SIMPLIFIED_PLANS.hobby;
+  describe('Starter Plan Updates', () => {
+    it('should have updated starter plan data retention to 3 years', () => {
+      const starterPlan = SIMPLIFIED_PLANS.starter;
 
-      expect(hobbyPlan.limits.dataRetentionMonths).toBe(36); // 3 years
+      expect(starterPlan.limits.dataRetentionMonths).toBe(36); // 3 years
     });
 
-    it('should maintain hobby plan pricing', () => {
-      const hobbyPlan = SIMPLIFIED_PLANS.hobby;
+    it('should maintain starter plan pricing', () => {
+      const starterPlan = SIMPLIFIED_PLANS.starter;
 
-      expect(hobbyPlan.prices.monthly).toBe(9);
-      expect(hobbyPlan.prices.yearly).toBe(90);
+      expect(starterPlan.prices.monthly).toBe(9);
+      expect(starterPlan.prices.yearly).toBe(90);
     });
 
     it('should be upgrade from free plan', () => {
       const freePlan = SIMPLIFIED_PLANS.free;
-      const hobbyPlan = SIMPLIFIED_PLANS.hobby;
+      const starterPlan = SIMPLIFIED_PLANS.starter;
 
-      expect(hobbyPlan.limits.eventsPerMonth).toBeGreaterThan(freePlan.limits.eventsPerMonth);
-      expect(hobbyPlan.limits.websites).toBeGreaterThan(freePlan.limits.websites);
-      expect(hobbyPlan.limits.teamMembers).toBeGreaterThan(freePlan.limits.teamMembers);
-      expect(hobbyPlan.limits.dataRetentionMonths).toBeGreaterThan(
+      expect(starterPlan.limits.eventsPerMonth).toBeGreaterThan(freePlan.limits.eventsPerMonth);
+      expect(starterPlan.limits.websites).toBeGreaterThan(freePlan.limits.websites);
+      expect(starterPlan.limits.teamMembers).toBeGreaterThan(freePlan.limits.teamMembers);
+      expect(starterPlan.limits.dataRetentionMonths).toBeGreaterThan(
         freePlan.limits.dataRetentionMonths,
       );
     });
   });
 
   describe('Plan Progression Validation', () => {
-    it('should validate signup flow progression: free -> hobby -> pro', () => {
+    it('should validate signup flow progression: free -> starter -> growth', () => {
       const free = SIMPLIFIED_PLANS.free;
-      const hobby = SIMPLIFIED_PLANS.hobby;
-      const pro = SIMPLIFIED_PLANS.pro;
+      const starter = SIMPLIFIED_PLANS.starter;
+      const growth = SIMPLIFIED_PLANS.growth;
 
       // Event limits should increase
-      expect(hobby.limits.eventsPerMonth).toBeGreaterThan(free.limits.eventsPerMonth);
-      expect(pro.limits.eventsPerMonth).toBeGreaterThan(hobby.limits.eventsPerMonth);
+      expect(starter.limits.eventsPerMonth).toBeGreaterThan(free.limits.eventsPerMonth);
+      expect(growth.limits.eventsPerMonth).toBeGreaterThan(starter.limits.eventsPerMonth);
 
       // Website limits should increase
-      expect(hobby.limits.websites).toBeGreaterThan(free.limits.websites);
-      expect(pro.limits.websites).toBeGreaterThan(hobby.limits.websites);
+      expect(starter.limits.websites).toBeGreaterThan(free.limits.websites);
+      expect(growth.limits.websites).toBeGreaterThan(starter.limits.websites);
 
       // Team member limits should increase
-      expect(hobby.limits.teamMembers).toBeGreaterThan(free.limits.teamMembers);
-      expect(pro.limits.teamMembers).toBeGreaterThan(hobby.limits.teamMembers);
+      expect(starter.limits.teamMembers).toBeGreaterThan(free.limits.teamMembers);
+      expect(growth.limits.teamMembers).toBeGreaterThan(starter.limits.teamMembers);
 
       // Pricing should increase (except free)
-      expect(hobby.prices.monthly).toBeGreaterThan(free.prices.monthly);
-      expect(pro.prices.monthly).toBeGreaterThan(hobby.prices.monthly);
+      expect(starter.prices.monthly).toBeGreaterThan(free.prices.monthly);
+      expect(growth.prices.monthly).toBeGreaterThan(starter.prices.monthly);
     });
 
     it('should validate feature progression across plans', () => {
       const free = SIMPLIFIED_PLANS.free;
-      const hobby = SIMPLIFIED_PLANS.hobby;
-      const pro = SIMPLIFIED_PLANS.pro;
+      const starter = SIMPLIFIED_PLANS.starter;
+      const growth = SIMPLIFIED_PLANS.growth;
 
       // Core features available to all
-      [free, hobby, pro].forEach(plan => {
+      [free, starter, growth].forEach(plan => {
         expect(plan.features.basicAnalytics).toBe(true);
         expect(plan.features.reports).toBe(true);
         expect(plan.features.privacy).toBe(true);
         expect(plan.features.dataExport).toBe(true);
       });
 
-      // Pro features locked until Pro plan
+      // Growth features locked until Growth plan
       expect(free.features.dataImport).toBe(false);
-      expect(hobby.features.dataImport).toBe(false);
-      expect(pro.features.dataImport).toBe(true);
+      expect(starter.features.dataImport).toBe(false);
+      expect(growth.features.dataImport).toBe(true);
 
       expect(free.features.emailReports).toBe(false);
-      expect(hobby.features.emailReports).toBe(false);
-      expect(pro.features.emailReports).toBe(true);
+      expect(starter.features.emailReports).toBe(false);
+      expect(growth.features.emailReports).toBe(true);
 
       // API access progression
       expect(free.features.apiAccess).toBe('limited');
-      expect(hobby.features.apiAccess).toBe('limited');
-      expect(pro.features.apiAccess).toBe('full');
+      expect(starter.features.apiAccess).toBe('limited');
+      expect(growth.features.apiAccess).toBe('full');
     });
   });
 
@@ -154,9 +154,9 @@ describe('Signup Flow (Config Only)', () => {
 
     it('should validate upgrade paths exist for new free users', () => {
       const upgradePaths = [
-        { from: 'free', to: 'hobby' },
-        { from: 'hobby', to: 'pro' },
-        { from: 'pro', to: 'enterprise' },
+        { from: 'free', to: 'starter' },
+        { from: 'starter', to: 'growth' },
+        { from: 'growth', to: 'enterprise' },
       ];
 
       upgradePaths.forEach(({ from, to }) => {

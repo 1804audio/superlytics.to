@@ -13,12 +13,12 @@ beforeEach(() => {
     ...originalEnv,
     STRIPE_PRICE_FREE_MONTHLY: 'price_test_free_monthly',
     STRIPE_PRICE_FREE_YEARLY: 'price_test_free_yearly',
-    STRIPE_PRICE_HOBBY_MONTHLY: 'price_test_hobby_monthly',
-    STRIPE_PRICE_HOBBY_YEARLY: 'price_test_hobby_yearly',
-    STRIPE_PRICE_PRO_MONTHLY: 'price_test_pro_monthly',
-    STRIPE_PRICE_PRO_YEARLY: 'price_test_pro_yearly',
+    STRIPE_PRICE_STARTER_MONTHLY: 'price_test_starter_monthly',
+    STRIPE_PRICE_STARTER_YEARLY: 'price_test_starter_yearly',
+    STRIPE_PRICE_GROWTH_MONTHLY: 'price_test_growth_monthly',
+    STRIPE_PRICE_GROWTH_YEARLY: 'price_test_growth_yearly',
     STRIPE_PRICE_LIFETIME_STARTER: 'price_test_lifetime_starter',
-    STRIPE_PRICE_LIFETIME_PRO: 'price_test_lifetime_pro',
+    STRIPE_PRICE_LIFETIME_GROWTH: 'price_test_lifetime_growth',
     STRIPE_PRICE_LIFETIME_MAX: 'price_test_lifetime_max',
   };
 });
@@ -102,39 +102,39 @@ describe('Stripe Integration (Environment-Based)', () => {
       expect(freePlan.prices.yearly).toBe(0);
     });
 
-    it('should have correct hobby plan configuration', () => {
+    it('should have correct starter plan configuration', () => {
       // Import here to get fresh module with mocked env vars
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getPlanPriceIds } = require('@/lib/server/plan-price-ids');
-      const hobbyPlan = SIMPLIFIED_PLANS.hobby;
+      const starterPlan = SIMPLIFIED_PLANS.starter;
       const planPriceIds = getPlanPriceIds();
-      const hobbyPrices = planPriceIds.hobby;
+      const starterPrices = planPriceIds.starter;
 
-      expect(hobbyPrices.monthly).toBeDefined();
-      expect(hobbyPrices.yearly).toBeDefined();
-      expect(hobbyPlan.prices.monthly).toBe(9);
-      expect(hobbyPlan.prices.yearly).toBe(90);
+      expect(starterPrices.monthly).toBeDefined();
+      expect(starterPrices.yearly).toBeDefined();
+      expect(starterPlan.prices.monthly).toBe(9);
+      expect(starterPlan.prices.yearly).toBe(90);
     });
 
-    it('should have correct pro plan configuration', () => {
+    it('should have correct growth plan configuration', () => {
       // Import here to get fresh module with mocked env vars
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getPlanPriceIds } = require('@/lib/server/plan-price-ids');
-      const proPlan = SIMPLIFIED_PLANS.pro;
+      const growthPlan = SIMPLIFIED_PLANS.growth;
       const planPriceIds = getPlanPriceIds();
-      const proPrices = planPriceIds.pro;
+      const growthPrices = planPriceIds.growth;
 
-      expect(proPrices.monthly).toBeDefined();
-      expect(proPrices.yearly).toBeDefined();
-      expect(proPlan.prices.monthly).toBe(19);
-      expect(proPlan.prices.yearly).toBe(190);
+      expect(growthPrices.monthly).toBeDefined();
+      expect(growthPrices.yearly).toBeDefined();
+      expect(growthPlan.prices.monthly).toBe(19);
+      expect(growthPlan.prices.yearly).toBe(190);
     });
 
     it('should have lifetime plans with valid price IDs', () => {
       // Import here to get fresh module with mocked env vars
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getPlanPriceIds } = require('@/lib/server/plan-price-ids');
-      const lifetimePlans = ['lifetime_starter', 'lifetime_pro', 'lifetime_max'];
+      const lifetimePlans = ['lifetime_starter', 'lifetime_growth', 'lifetime_max'];
       const planPriceIds = getPlanPriceIds();
 
       lifetimePlans.forEach(planId => {
@@ -152,7 +152,7 @@ describe('Stripe Integration (Environment-Based)', () => {
       // Import here to get fresh module with mocked env vars
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getPlanPriceIds } = require('@/lib/server/plan-price-ids');
-      const requiredPlans = ['free', 'hobby', 'pro'];
+      const requiredPlans = ['free', 'starter', 'growth'];
       const planPriceIds = getPlanPriceIds();
 
       requiredPlans.forEach(planId => {
@@ -180,64 +180,64 @@ describe('Stripe Integration (Environment-Based)', () => {
       expect(SIMPLIFIED_PLANS.free.prices.monthly).toBe(0);
       expect(SIMPLIFIED_PLANS.free.prices.yearly).toBe(0);
 
-      // Hobby plan should be $9/$90
-      expect(SIMPLIFIED_PLANS.hobby.prices.monthly).toBe(9);
-      expect(SIMPLIFIED_PLANS.hobby.prices.yearly).toBe(90);
+      // Starter plan should be $9/$90
+      expect(SIMPLIFIED_PLANS.starter.prices.monthly).toBe(9);
+      expect(SIMPLIFIED_PLANS.starter.prices.yearly).toBe(90);
 
-      // Pro plan should be $19/$190
-      expect(SIMPLIFIED_PLANS.pro.prices.monthly).toBe(19);
-      expect(SIMPLIFIED_PLANS.pro.prices.yearly).toBe(190);
+      // Growth plan should be $19/$190
+      expect(SIMPLIFIED_PLANS.growth.prices.monthly).toBe(19);
+      expect(SIMPLIFIED_PLANS.growth.prices.yearly).toBe(190);
     });
   });
 
   describe('Plan Upgrade Flow', () => {
-    it('should support upgrade from free to hobby', () => {
+    it('should support upgrade from free to starter', () => {
       // Import here to get fresh module with mocked env vars
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getPlanPriceIds } = require('@/lib/server/plan-price-ids');
       const freePlan = SIMPLIFIED_PLANS.free;
-      const hobbyPlan = SIMPLIFIED_PLANS.hobby;
+      const starterPlan = SIMPLIFIED_PLANS.starter;
       const planPriceIds = getPlanPriceIds();
-      const hobbyPrices = planPriceIds.hobby;
+      const starterPrices = planPriceIds.starter;
 
-      // Hobby should be better than free
-      expect(hobbyPlan.limits.eventsPerMonth).toBeGreaterThan(freePlan.limits.eventsPerMonth);
-      expect(hobbyPlan.limits.websites).toBeGreaterThan(freePlan.limits.websites);
-      expect(hobbyPlan.limits.teamMembers).toBeGreaterThan(freePlan.limits.teamMembers);
-      expect(hobbyPlan.limits.dataRetentionMonths).toBeGreaterThan(
+      // Starter should be better than free
+      expect(starterPlan.limits.eventsPerMonth).toBeGreaterThan(freePlan.limits.eventsPerMonth);
+      expect(starterPlan.limits.websites).toBeGreaterThan(freePlan.limits.websites);
+      expect(starterPlan.limits.teamMembers).toBeGreaterThan(freePlan.limits.teamMembers);
+      expect(starterPlan.limits.dataRetentionMonths).toBeGreaterThan(
         freePlan.limits.dataRetentionMonths,
       );
 
       // Should have valid environment price IDs for upgrade
-      expect(hobbyPrices.monthly).toBeTruthy();
-      expect(hobbyPrices.yearly).toBeTruthy();
+      expect(starterPrices.monthly).toBeTruthy();
+      expect(starterPrices.yearly).toBeTruthy();
     });
 
-    it('should support upgrade from hobby to pro', () => {
+    it('should support upgrade from starter to growth', () => {
       // Import here to get fresh module with mocked env vars
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getPlanPriceIds } = require('@/lib/server/plan-price-ids');
-      const hobbyPlan = SIMPLIFIED_PLANS.hobby;
-      const proPlan = SIMPLIFIED_PLANS.pro;
+      const starterPlan = SIMPLIFIED_PLANS.starter;
+      const growthPlan = SIMPLIFIED_PLANS.growth;
       const planPriceIds = getPlanPriceIds();
-      const proPrices = planPriceIds.pro;
+      const growthPrices = planPriceIds.growth;
 
-      // Pro should be better than hobby
-      expect(proPlan.limits.eventsPerMonth).toBeGreaterThan(hobbyPlan.limits.eventsPerMonth);
-      expect(proPlan.limits.websites).toBeGreaterThan(hobbyPlan.limits.websites);
-      expect(proPlan.limits.teamMembers).toBeGreaterThan(hobbyPlan.limits.teamMembers);
-      expect(proPlan.limits.dataRetentionMonths).toBeGreaterThan(
-        hobbyPlan.limits.dataRetentionMonths,
+      // Growth should be better than starter
+      expect(growthPlan.limits.eventsPerMonth).toBeGreaterThan(starterPlan.limits.eventsPerMonth);
+      expect(growthPlan.limits.websites).toBeGreaterThan(starterPlan.limits.websites);
+      expect(growthPlan.limits.teamMembers).toBeGreaterThan(starterPlan.limits.teamMembers);
+      expect(growthPlan.limits.dataRetentionMonths).toBeGreaterThan(
+        starterPlan.limits.dataRetentionMonths,
       );
 
-      // Pro should have additional features
-      expect(proPlan.features.dataImport).toBe(true);
-      expect(proPlan.features.emailReports).toBe(true);
-      expect(proPlan.features.apiAccess).toBe('full');
+      // Growth should have additional features
+      expect(growthPlan.features.dataImport).toBe(true);
+      expect(growthPlan.features.emailReports).toBe(true);
+      expect(growthPlan.features.apiAccess).toBe('full');
 
       // Should have valid environment price IDs for upgrade
-      expect(proPrices.monthly).toBeTruthy();
-      expect(proPrices.yearly).toBeTruthy();
+      expect(growthPrices.monthly).toBeTruthy();
+      expect(growthPrices.yearly).toBeTruthy();
     });
   });
 });

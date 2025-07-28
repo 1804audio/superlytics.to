@@ -53,65 +53,65 @@ describe('Plan Limitations and Features', () => {
     });
   });
 
-  describe('Hobby Plan Limitations', () => {
-    const hobbyPlan = SIMPLIFIED_PLANS.hobby;
+  describe('Starter Plan Limitations', () => {
+    const starterPlan = SIMPLIFIED_PLANS.starter;
 
     it('should have 10x more events than free plan', () => {
-      expect(hobbyPlan.limits.eventsPerMonth).toBe(100000);
-      expect(hobbyPlan.limits.eventsPerMonth).toBe(
+      expect(starterPlan.limits.eventsPerMonth).toBe(100000);
+      expect(starterPlan.limits.eventsPerMonth).toBe(
         SIMPLIFIED_PLANS.free.limits.eventsPerMonth * 10,
       );
     });
 
     it('should allow multiple websites', () => {
-      expect(hobbyPlan.limits.websites).toBe(5);
-      expect(hobbyPlan.limits.websites).toBeGreaterThan(SIMPLIFIED_PLANS.free.limits.websites);
+      expect(starterPlan.limits.websites).toBe(5);
+      expect(starterPlan.limits.websites).toBeGreaterThan(SIMPLIFIED_PLANS.free.limits.websites);
     });
 
     it('should allow team collaboration', () => {
-      expect(hobbyPlan.limits.teamMembers).toBe(3);
-      expect(hobbyPlan.limits.teamMembers).toBeGreaterThan(
+      expect(starterPlan.limits.teamMembers).toBe(3);
+      expect(starterPlan.limits.teamMembers).toBeGreaterThan(
         SIMPLIFIED_PLANS.free.limits.teamMembers,
       );
     });
 
     it('should have 3 years data retention', () => {
-      expect(hobbyPlan.limits.dataRetentionMonths).toBe(36);
-      expect(hobbyPlan.limits.dataRetentionMonths).toBeGreaterThan(
+      expect(starterPlan.limits.dataRetentionMonths).toBe(36);
+      expect(starterPlan.limits.dataRetentionMonths).toBeGreaterThan(
         SIMPLIFIED_PLANS.free.limits.dataRetentionMonths,
       );
     });
 
     it('should still restrict premium features', () => {
-      expect(hobbyPlan.features.dataImport).toBe(false);
-      expect(hobbyPlan.features.emailReports).toBe(false);
-      expect(hobbyPlan.features.whiteLabel).toBe(false);
-      expect(hobbyPlan.features.customDomain).toBe(false);
+      expect(starterPlan.features.dataImport).toBe(false);
+      expect(starterPlan.features.emailReports).toBe(false);
+      expect(starterPlan.features.whiteLabel).toBe(false);
+      expect(starterPlan.features.customDomain).toBe(false);
     });
   });
 
-  describe('Pro Plan Features', () => {
-    const proPlan = SIMPLIFIED_PLANS.pro;
+  describe('Growth Plan Features', () => {
+    const growthPlan = SIMPLIFIED_PLANS.growth;
 
     it('should have significantly higher limits', () => {
-      expect(proPlan.limits.eventsPerMonth).toBe(1000000);
-      expect(proPlan.limits.websites).toBe(25);
-      expect(proPlan.limits.teamMembers).toBe(10);
-      expect(proPlan.limits.dataRetentionMonths).toBe(60); // 5 years
+      expect(growthPlan.limits.eventsPerMonth).toBe(1000000);
+      expect(growthPlan.limits.websites).toBe(25);
+      expect(growthPlan.limits.teamMembers).toBe(10);
+      expect(growthPlan.limits.dataRetentionMonths).toBe(60); // 5 years
     });
 
-    it('should unlock pro features', () => {
-      expect(proPlan.features.dataImport).toBe(true);
-      expect(proPlan.features.emailReports).toBe(true);
-      expect(proPlan.features.apiAccess).toBe('full');
-      expect(proPlan.features.supportLevel).toBe('email');
+    it('should unlock growth features', () => {
+      expect(growthPlan.features.dataImport).toBe(true);
+      expect(growthPlan.features.emailReports).toBe(true);
+      expect(growthPlan.features.apiAccess).toBe('full');
+      expect(growthPlan.features.supportLevel).toBe('email');
     });
 
     it('should still restrict enterprise features', () => {
-      expect(proPlan.features.whiteLabel).toBe(false);
-      expect(proPlan.features.customDomain).toBe(false);
-      expect(proPlan.features.prioritySLA).toBe(false);
-      expect(proPlan.features.onboardingSupport).toBe(false);
+      expect(growthPlan.features.whiteLabel).toBe(false);
+      expect(growthPlan.features.customDomain).toBe(false);
+      expect(growthPlan.features.prioritySLA).toBe(false);
+      expect(growthPlan.features.onboardingSupport).toBe(false);
     });
   });
 
@@ -145,56 +145,56 @@ describe('Plan Limitations and Features', () => {
   describe('Lifetime Plans', () => {
     it('should identify lifetime plans correctly', () => {
       expect(isLifetimePlan('lifetime_starter')).toBe(true);
-      expect(isLifetimePlan('lifetime_pro')).toBe(true);
+      expect(isLifetimePlan('lifetime_growth')).toBe(true);
       expect(isLifetimePlan('lifetime_max')).toBe(true);
-      expect(isLifetimePlan('hobby')).toBe(false);
-      expect(isLifetimePlan('pro')).toBe(false);
+      expect(isLifetimePlan('starter')).toBe(false);
+      expect(isLifetimePlan('growth')).toBe(false);
     });
 
     it('should have better limits than subscription equivalents', () => {
       const lifetimeStarter = SIMPLIFIED_PLANS.lifetime_starter;
-      const lifetimePro = SIMPLIFIED_PLANS.lifetime_pro;
-      const hobby = SIMPLIFIED_PLANS.hobby;
-      const pro = SIMPLIFIED_PLANS.pro;
+      const lifetimeGrowth = SIMPLIFIED_PLANS.lifetime_growth;
+      const starter = SIMPLIFIED_PLANS.starter;
+      const growth = SIMPLIFIED_PLANS.growth;
 
-      // Lifetime Starter vs Hobby
-      expect(lifetimeStarter.limits.eventsPerMonth).toBeGreaterThan(hobby.limits.eventsPerMonth);
-      expect(lifetimeStarter.limits.websites).toBeGreaterThan(hobby.limits.websites);
+      // Lifetime Starter vs Starter
+      expect(lifetimeStarter.limits.eventsPerMonth).toBeGreaterThan(starter.limits.eventsPerMonth);
+      expect(lifetimeStarter.limits.websites).toBeGreaterThan(starter.limits.websites);
 
-      // Lifetime Pro vs Pro
-      expect(lifetimePro.limits.eventsPerMonth).toBeGreaterThan(pro.limits.eventsPerMonth);
-      expect(lifetimePro.limits.websites).toBeGreaterThan(pro.limits.websites);
+      // Lifetime Pro vs Growth
+      expect(lifetimeGrowth.limits.eventsPerMonth).toBeGreaterThan(growth.limits.eventsPerMonth);
+      expect(lifetimeGrowth.limits.websites).toBeGreaterThan(growth.limits.websites);
     });
 
     it('should include premium features for lifetime plans', () => {
       const lifetimeStarter = SIMPLIFIED_PLANS.lifetime_starter;
-      const lifetimePro = SIMPLIFIED_PLANS.lifetime_pro;
+      const lifetimeGrowth = SIMPLIFIED_PLANS.lifetime_growth;
 
-      // Lifetime Starter gets Pro features
+      // Lifetime Starter gets Growth features
       expect(lifetimeStarter.features.dataImport).toBe(true);
       expect(lifetimeStarter.features.emailReports).toBe(true);
       expect(lifetimeStarter.features.apiAccess).toBe('full');
 
       // Lifetime Pro gets Enterprise features
-      expect(lifetimePro.features.whiteLabel).toBe(true);
-      expect(lifetimePro.features.customDomain).toBe(true);
-      expect(lifetimePro.features.prioritySLA).toBe(true);
+      expect(lifetimeGrowth.features.whiteLabel).toBe(true);
+      expect(lifetimeGrowth.features.customDomain).toBe(true);
+      expect(lifetimeGrowth.features.prioritySLA).toBe(true);
     });
   });
 
   describe('Plan Helper Functions', () => {
     it('should get plan by ID', () => {
       expect(getPlan('free')).toEqual(SIMPLIFIED_PLANS.free);
-      expect(getPlan('hobby')).toEqual(SIMPLIFIED_PLANS.hobby);
+      expect(getPlan('starter')).toEqual(SIMPLIFIED_PLANS.starter);
       expect(getPlan('nonexistent')).toBeNull();
     });
 
     it('should calculate pricing correctly', () => {
       expect(getPlanPrice('free', 'monthly')).toBe(0);
-      expect(getPlanPrice('hobby', 'monthly')).toBe(9);
-      expect(getPlanPrice('hobby', 'yearly')).toBe(90);
-      expect(getPlanPrice('pro', 'monthly')).toBe(19);
-      expect(getPlanPrice('pro', 'yearly')).toBe(190);
+      expect(getPlanPrice('starter', 'monthly')).toBe(9);
+      expect(getPlanPrice('starter', 'yearly')).toBe(90);
+      expect(getPlanPrice('growth', 'monthly')).toBe(19);
+      expect(getPlanPrice('growth', 'yearly')).toBe(190);
     });
 
     it('should handle unlimited values', () => {
@@ -206,7 +206,7 @@ describe('Plan Limitations and Features', () => {
 
   describe('Plan Progression Logic', () => {
     it('should have logical progression in limits', () => {
-      const plans = [SIMPLIFIED_PLANS.free, SIMPLIFIED_PLANS.hobby, SIMPLIFIED_PLANS.pro];
+      const plans = [SIMPLIFIED_PLANS.free, SIMPLIFIED_PLANS.starter, SIMPLIFIED_PLANS.growth];
 
       for (let i = 1; i < plans.length; i++) {
         const current = plans[i];
@@ -233,11 +233,11 @@ describe('Plan Limitations and Features', () => {
 
     it('should have logical pricing progression', () => {
       expect(SIMPLIFIED_PLANS.free.prices.monthly).toBe(0);
-      expect(SIMPLIFIED_PLANS.hobby.prices.monthly).toBeGreaterThan(
+      expect(SIMPLIFIED_PLANS.starter.prices.monthly).toBeGreaterThan(
         SIMPLIFIED_PLANS.free.prices.monthly,
       );
-      expect(SIMPLIFIED_PLANS.pro.prices.monthly).toBeGreaterThan(
-        SIMPLIFIED_PLANS.hobby.prices.monthly,
+      expect(SIMPLIFIED_PLANS.growth.prices.monthly).toBeGreaterThan(
+        SIMPLIFIED_PLANS.starter.prices.monthly,
       );
     });
   });

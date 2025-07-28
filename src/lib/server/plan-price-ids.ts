@@ -20,19 +20,19 @@ export function getPlanPriceIds(): PlanPriceMapping {
       monthly: process.env.STRIPE_PRICE_FREE_MONTHLY,
       yearly: process.env.STRIPE_PRICE_FREE_YEARLY || process.env.STRIPE_PRICE_FREE_MONTHLY,
     },
-    hobby: {
-      monthly: process.env.STRIPE_PRICE_HOBBY_MONTHLY,
-      yearly: process.env.STRIPE_PRICE_HOBBY_YEARLY,
+    starter: {
+      monthly: process.env.STRIPE_PRICE_STARTER_MONTHLY,
+      yearly: process.env.STRIPE_PRICE_STARTER_YEARLY,
     },
-    pro: {
-      monthly: process.env.STRIPE_PRICE_PRO_MONTHLY,
-      yearly: process.env.STRIPE_PRICE_PRO_YEARLY,
+    growth: {
+      monthly: process.env.STRIPE_PRICE_GROWTH_MONTHLY,
+      yearly: process.env.STRIPE_PRICE_GROWTH_YEARLY,
     },
     lifetime_starter: {
       lifetime: process.env.STRIPE_PRICE_LIFETIME_STARTER,
     },
-    lifetime_pro: {
-      lifetime: process.env.STRIPE_PRICE_LIFETIME_PRO,
+    lifetime_growth: {
+      lifetime: process.env.STRIPE_PRICE_LIFETIME_GROWTH,
     },
     lifetime_max: {
       lifetime: process.env.STRIPE_PRICE_LIFETIME_MAX,
@@ -83,12 +83,12 @@ export function getPlanByPriceId(
 export function validatePriceConfiguration(): { isValid: boolean; missingVars: string[] } {
   const requiredVars = [
     'STRIPE_PRICE_FREE_MONTHLY',
-    'STRIPE_PRICE_HOBBY_MONTHLY',
-    'STRIPE_PRICE_HOBBY_YEARLY',
-    'STRIPE_PRICE_PRO_MONTHLY',
-    'STRIPE_PRICE_PRO_YEARLY',
+    'STRIPE_PRICE_STARTER_MONTHLY',
+    'STRIPE_PRICE_STARTER_YEARLY',
+    'STRIPE_PRICE_GROWTH_MONTHLY',
+    'STRIPE_PRICE_GROWTH_YEARLY',
     'STRIPE_PRICE_LIFETIME_STARTER',
-    'STRIPE_PRICE_LIFETIME_PRO',
+    'STRIPE_PRICE_LIFETIME_GROWTH',
     'STRIPE_PRICE_LIFETIME_MAX',
   ];
 

@@ -2,43 +2,45 @@
 /**
  * Fix Stripe Recurring Prices
  *
- * This script creates proper recurring subscription prices for Hobby and Pro plans
+ * This script creates proper recurring subscription prices for Starter and Growth plans
  * to replace the incorrect one-time prices created by the MCP.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const logger = require('./utils/logger');
 
 const RECURRING_PRICES = [
   {
-    productId: 'prod_SjvIZ7ydTyAnmI', // Hobby product
-    planName: 'Hobby',
+    productId: 'prod_SjvIZ7ydTyAnmI', // Starter product
+    planName: 'Starter',
     prices: [
       {
         unitAmount: 900, // $9.00
         interval: 'month',
-        nickname: 'Hobby Monthly',
+        nickname: 'Starter Monthly',
       },
       {
         unitAmount: 9000, // $90.00
         interval: 'year',
-        nickname: 'Hobby Yearly',
+        nickname: 'Starter Yearly',
       },
     ],
   },
   {
-    productId: 'prod_SjylF2rSM2ppKz', // Pro product
-    planName: 'Pro',
+    productId: 'prod_SjylF2rSM2ppKz', // Growth product
+    planName: 'Growth',
     prices: [
       {
         unitAmount: 1900, // $19.00
         interval: 'month',
-        nickname: 'Pro Monthly',
+        nickname: 'Growth Monthly',
       },
       {
         unitAmount: 19000, // $190.00
         interval: 'year',
-        nickname: 'Pro Yearly',
+        nickname: 'Growth Yearly',
       },
     ],
   },

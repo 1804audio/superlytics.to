@@ -52,8 +52,8 @@ export default function PlanCard({ plan, currentPlanId, isLifetime }: PlanCardPr
   const getPlanBadgeClass = () => {
     if (plan.type === 'lifetime') return styles.badgeLifetime;
     if (plan.id === 'enterprise') return styles.badgeEnterprise;
-    if (plan.id === 'pro') return styles.badgePro;
-    if (plan.id === 'hobby') return styles.badgeHobby;
+    if (plan.id === 'growth') return styles.badgeGrowth;
+    if (plan.id === 'starter') return styles.badgeStarter;
     return styles.badgeFree;
   };
 

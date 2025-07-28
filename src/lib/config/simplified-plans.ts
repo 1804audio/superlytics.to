@@ -80,9 +80,9 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
   },
 
   // Regular Subscription Plans
-  hobby: {
-    id: 'hobby',
-    name: 'Hobby',
+  starter: {
+    id: 'starter',
+    name: 'Starter',
     type: 'subscription',
     prices: {
       monthly: 9,
@@ -93,7 +93,7 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       websites: 5, // Increased from 3
       teamMembers: 3, // Added as requested
       dataRetentionMonths: 36, // 3 years as requested
-      apiKeys: 2, // Limited API keys for hobby
+      apiKeys: 2, // Limited API keys for starter
     },
     features: {
       basicAnalytics: true,
@@ -112,9 +112,9 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
     },
   },
 
-  pro: {
-    id: 'pro',
-    name: 'Pro',
+  growth: {
+    id: 'growth',
+    name: 'Growth',
     type: 'subscription',
     prices: {
       monthly: 19,
@@ -132,8 +132,8 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       reports: true,
       privacy: true,
       dataExport: true,
-      dataImport: true, // ✅ Pro feature
-      emailReports: true, // ✅ Pro feature
+      dataImport: true, // ✅ Growth feature
+      emailReports: true, // ✅ Growth feature
       apiAccess: 'full',
       apiKeys: true, // Full API key creation
       whiteLabel: false,
@@ -183,9 +183,9 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       appsumo: 69, // AppSumo special price
     },
     limits: {
-      eventsPerMonth: 250000, // 2.5x Hobby
-      websites: 10, // 2x Hobby
-      teamMembers: 5, // Better than Hobby
+      eventsPerMonth: 250000, // 2.5x Starter
+      websites: 10, // 2x Starter
+      teamMembers: 5, // Better than Starter
       dataRetentionMonths: 24, // 2 years
       apiKeys: 5, // Lifetime benefit
     },
@@ -202,22 +202,22 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       customDomain: false,
       prioritySLA: false,
       onboardingSupport: false,
-      supportLevel: 'email', // Better than Hobby
+      supportLevel: 'email', // Better than Starter
     },
   },
 
-  lifetime_pro: {
-    id: 'lifetime_pro',
-    name: 'Pro Lifetime',
+  lifetime_growth: {
+    id: 'lifetime_growth',
+    name: 'Growth Lifetime',
     type: 'lifetime',
     prices: {
       lifetime: 179,
       appsumo: 138,
     },
     limits: {
-      eventsPerMonth: 2000000, // 2x Pro
-      websites: 50, // 2x Pro
-      teamMembers: 25, // 2.5x Pro
+      eventsPerMonth: 2000000, // 2x Growth
+      websites: 50, // 2x Growth
+      teamMembers: 25, // 2.5x Growth
       dataRetentionMonths: -1, // Forever
       apiKeys: 25, // Enhanced for lifetime
     },
@@ -247,9 +247,9 @@ export const SIMPLIFIED_PLANS: Record<string, PlanConfiguration> = {
       appsumo: 207, // 3-code deal on AppSumo
     },
     limits: {
-      eventsPerMonth: 5000000, // 5x Pro
-      websites: 100, // 4x Pro
-      teamMembers: 50, // 5x Pro
+      eventsPerMonth: 5000000, // 5x Growth
+      websites: 100, // 4x Growth
+      teamMembers: 50, // 5x Growth
       dataRetentionMonths: -1, // Forever
       apiKeys: -1, // Unlimited for max plan
     },
