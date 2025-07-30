@@ -35,6 +35,7 @@ async function findUser(
       planId: true,
       hasAccess: true,
       isLifetime: true,
+      emailVerified: true,
     },
   });
 }
@@ -78,6 +79,7 @@ export async function getUserByUsernameOrEmail(
       planId: true,
       hasAccess: true,
       isLifetime: true,
+      emailVerified: true,
     },
   });
 }

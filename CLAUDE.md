@@ -147,6 +147,123 @@ if (name.length > 100) {
 
 ## 📊 **Database & Data Management**
 
+### **🔄 Database Migration Workflow**
+
+**CRITICAL: Follow this exact workflow for all database changes to ensure production safety.**
+
+#### **Development Phase**
+```bash
+# 1. Make schema changes in db/{database_type}/schema.prisma
+# 2. Never edit prisma/schema.prisma directly - it gets overwritten
+# 3. For new features requiring database changes:
+
+# Create numbered migration folder (sequential)
+mkdir db/postgresql/migrations/03_your_feature_name
+mkdir db/mysql/migrations/03_your_feature_name
+
+# Write ONLY incremental SQL changes
+# Example: db/postgresql/migrations/03_your_feature_name/migration.sql
+```
+
+#### **Migration File Structure**
+```sql
+-- ✅ CORRECT: Only include NEW changes, not existing schema
+
+-- AddColumn (if adding a field)
+ALTER TABLE "user" ADD COLUMN "new_field" VARCHAR(255);
+
+-- CreateTable (if adding a new table)
+CREATE TABLE "new_table" (
+    "id" UUID NOT NULL,
+    "name" VARCHAR(255) NOT NULL,
+    "created_at" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "new_table_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE INDEX "new_table_name_idx" ON "new_table"("name");
+
+-- ❌ WRONG: Don't recreate existing tables or enums
+-- This will cause migration conflicts in production
+```
+
+#### **Testing Workflow**
+```bash
+# 1. Test your migration in development
+npm run build-db        # Copy files and generate client
+npm run check-db        # Apply migrations and verify
+
+# 2. Verify everything works
+npm run lint           # Must pass with zero errors
+npm run build          # Complete build must succeed
+
+# 3. Test feature functionality
+# 4. Test rollback scenarios if needed
+```
+
+#### **Production Deployment**
+```bash
+# The existing build process handles everything automatically:
+npm run build
+# This runs: check-env → build-db → check-db → build-tracker → build-geo → build-app
+
+# ✅ Migration system ensures:
+# - Automatic database type detection (PostgreSQL/MySQL)
+# - Safe incremental migrations
+# - Zero downtime deployments
+# - Rollback capability if needed
+```
+
+#### **Migration Best Practices**
+
+**✅ DO:**
+- Create sequential numbered migrations (01, 02, 03...)
+- Write only incremental changes in migration files
+- Test thoroughly in development before production
+- Use proper SQL syntax for your database type
+- Add appropriate indexes for performance
+- Include both PostgreSQL and MySQL versions
+
+**❌ DON'T:**
+- Edit existing migration files after they're applied
+- Skip migration numbers (always sequential)
+- Include entire schema in migration files
+- Make breaking changes without migration path
+- Deploy without testing migrations first
+
+#### **Database File Structure**
+```
+db/
+├── postgresql/
+│   ├── migrations/
+│   │   ├── 01_init/migration.sql              # Initial baseline
+│   │   ├── 02_new_feature/migration.sql       # Your changes
+│   │   └── migration_lock.toml
+│   └── schema.prisma                          # Source of truth
+└── mysql/
+    ├── migrations/
+    │   ├── 01_init/migration.sql              # Initial baseline  
+    │   ├── 02_new_feature/migration.sql       # Your changes
+    │   └── migration_lock.toml
+    └── schema.prisma                          # Source of truth
+```
+
+#### **Emergency Procedures**
+
+**Migration Conflicts:**
+```bash
+# If you get migration conflicts in production:
+npx prisma migrate status              # Check current state
+npx prisma migrate resolve --applied 02_migration_name  # Mark as applied if DB has changes
+```
+
+**Schema Drift:**
+```bash
+# If database and migrations are out of sync:
+npx prisma db pull                     # Pull current DB state
+# Review changes and create proper migration
+```
+
 ### **Prisma Queries**
 ```typescript
 // ✅ CORRECT: Proper field selection and error handling
@@ -277,6 +394,9 @@ apiKeys.set(userId, [...userKeys, { id: keyId, name, key: apiKey, maskedKey }]);
 - [ ] Responsive design works
 - [ ] Light/dark mode compatibility
 - [ ] Accessibility standards met
+- [ ] **Database migrations tested and working** (if applicable)
+- [ ] **Migration files created for both PostgreSQL and MySQL** (if schema changes)
+- [ ] **`npm run check-db` passes without errors** (if database changes)
 
 ---
 
@@ -300,6 +420,22 @@ return { message: 'Success' }; // Missing json() wrapper
 // ❌ WRONG: No error handling
 const data = await fetch('/api/endpoint');
 return data.json();
+```
+
+```sql
+-- ❌ WRONG: Database Migration Pitfalls
+
+-- Don't recreate existing tables/enums (causes conflicts)
+CREATE TYPE "AuthTokenType" AS ENUM ('EMAIL_VERIFICATION', 'PASSWORD_RESET');
+
+-- Don't include full schema in migration files
+CREATE TABLE "user" (...); -- This already exists!
+
+-- Don't edit prisma/schema.prisma directly
+-- It gets overwritten by copy-db-files script
+
+-- Don't skip migration numbers
+-- db/postgresql/migrations/05_feature/ (if 03 and 04 don't exist)
 ```
 
 ### **Always Do This**
@@ -326,6 +462,37 @@ try {
 }
 ```
 
+```sql
+-- ✅ CORRECT: Database Migration Best Practices
+
+-- Create sequential numbered migrations
+-- db/postgresql/migrations/02_add_notifications/migration.sql
+
+-- Only include incremental changes
+ALTER TABLE "user" ADD COLUMN "notification_preferences" JSONB DEFAULT '{}';
+
+-- Add appropriate indexes
+CREATE INDEX "user_notification_preferences_idx" ON "user" USING GIN ("notification_preferences");
+
+-- Use proper SQL syntax for each database type
+-- PostgreSQL: TIMESTAMPTZ(6), UUID, JSONB
+-- MySQL: TIMESTAMP(0), VARCHAR(36), JSON
+```
+
+```bash
+# ✅ CORRECT: Database Workflow Commands
+
+# Test migration in development
+npm run build-db && npm run check-db
+
+# Create migration files for both databases
+mkdir -p db/postgresql/migrations/02_new_feature
+mkdir -p db/mysql/migrations/02_new_feature
+
+# Always test complete build process
+npm run build
+```
+
 ---
 
 ## 📋 **Implementation Workflow**
@@ -334,24 +501,32 @@ try {
 - Understand existing patterns in similar components
 - Identify correct `react-basics` components to use
 - Plan proper error handling and validation
+- **Assess database changes needed** (if any)
+- **Plan migration strategy** for schema changes
 
 ### **2. Implementation Phase**
 - Follow established file structure
 - Use proper imports and exports
 - Implement security checks first
 - Add proper logging throughout
+- **Create database migrations first** (if schema changes needed)
+- **Test migrations in development** before coding features
 
 ### **3. Quality Assurance Phase**
 - Run `npm run lint` and fix ALL issues
 - Test in both light and dark modes
 - Verify responsive behavior
 - Check accessibility
+- **Verify database migrations work correctly**
+- **Test complete build process** (`npm run build`)
 
 ### **4. Final Review**
 - Ensure zero linting errors
 - Verify build success
 - Test user flows
 - Document any new patterns
+- **Confirm migration files exist for both PostgreSQL and MySQL**
+- **Verify production deployment readiness**
 
 ---
 

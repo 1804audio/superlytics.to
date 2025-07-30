@@ -344,3 +344,6 @@ export async function canDeleteUser({ user }: Auth) {
 export async function hasPermission(role: string, permission: string | string[]) {
   return ensureArray(permission).some(e => ROLE_PERMISSIONS[role]?.includes(e));
 }
+
+// Alias for backwards compatibility
+export const getAuth = checkAuth;

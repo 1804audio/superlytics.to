@@ -22,6 +22,13 @@ export function App({ children }) {
     return null;
   }
 
+  // Check if user's email is verified
+  // Allow access to email-verification page even if not verified
+  if (!user.emailVerified && pathname !== '/email-verification') {
+    window.location.href = `${process.env.basePath || ''}/email-verification`;
+    return null;
+  }
+
   if (config.uiDisabled) {
     return null;
   }

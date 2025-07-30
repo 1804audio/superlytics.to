@@ -77,6 +77,9 @@ export function LoginForm() {
         </FormButtons>
       </Form>
       <div className={styles.links}>
+        <Link href="/forgot-password">Forgot password?</Link>
+      </div>
+      <div className={styles.links}>
         Don&apos;t have an account? <Link href="/signup">Sign up</Link>
       </div>
     </div>

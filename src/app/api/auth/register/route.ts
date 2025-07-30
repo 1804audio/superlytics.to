@@ -11,7 +11,12 @@ import { secret } from '@/lib/crypto';
 import { ROLES } from '@/lib/constants';
 import { createStripeCustomer, createFreeSubscription } from '@/lib/stripe';
 import { getPriceId } from '@/lib/server/plan-price-ids';
+import { authTokenService } from '@/lib/auth-tokens';
+import { emailService } from '@/lib/email';
 import prisma from '@/lib/prisma';
+import debug from 'debug';
+
+const log = debug('superlytics:auth:register');
 
 export async function POST(request: Request) {
   const schema = z
@@ -89,11 +94,32 @@ export async function POST(request: Request) {
           planId: 'free',
           hasAccess: true,
           isLifetime: false,
+          emailVerified: false, // New users need to verify email
         },
       });
 
       return newUser;
     });
+
+    // Generate email verification token and send verification email
+    try {
+      const verificationToken = await authTokenService.createToken({
+        userId: user.id,
+        type: 'EMAIL_VERIFICATION',
+        expiresInHours: 24,
+      });
+
+      const emailSent = await emailService.sendEmailVerification(
+        user.email,
+        verificationToken,
+        user.username,
+      );
+
+      log(`Account created for ${user.email}, verification email ${emailSent ? 'sent' : 'failed'}`);
+    } catch (error) {
+      log('Failed to send verification email:', error);
+      // Don't fail registration if email fails
+    }
 
     // Create JWT token and log user in
     let token: string;
@@ -118,8 +144,10 @@ export async function POST(request: Request) {
         customerId: user.customerId,
         subscriptionId: user.subscriptionId,
         subscriptionStatus: user.subscriptionStatus,
+        emailVerified: user.emailVerified,
       },
-      message: 'Account created successfully! Welcome to Superlytics.',
+      message: 'Account created successfully! Please check your email to verify your account.',
+      requiresEmailVerification: true,
     });
   } catch {
     return badRequest('Failed to create account. Please try again.');

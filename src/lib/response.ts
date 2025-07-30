@@ -54,6 +54,10 @@ export function notFound(error: any = 'Not found') {
   return Response.json({ error: sanitizeError(error) }, { status: 404 });
 }
 
+export function tooManyRequests(error: any = 'Too many requests') {
+  return Response.json({ error: sanitizeError(error) }, { status: 429 });
+}
+
 export function serverError(error: any = 'Server error') {
   // Log the actual error for debugging (server-side only)
   if (process.env.NODE_ENV === 'production') {

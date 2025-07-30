@@ -1,0 +1,109 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: var(--base50);
+}
+
+.content {
+  max-width: 500px;
+  width: 100%;
+  background-color: var(--base25);
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 4px 6px var(--base300);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+  color: var(--primary500);
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--font-color);
+}
+
+.message {
+  line-height: 1.6;
+}
+
+.message p {
+  margin: 0 0 16px 0;
+}
+
+.message p:last-child {
+  margin-bottom: 0;
+}
+
+.instructions {
+  margin: 30px 0;
+  padding: 20px;
+  background-color: var(--base75);
+  border-radius: 6px;
+  border-left: 4px solid var(--primary500);
+}
+
+.instructions h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: var(--font-color);
+}
+
+.instructions ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.instructions li {
+  margin-bottom: 8px;
+  color: var(--font-color300);
+}
+
+.instructions li:last-child {
+  margin-bottom: 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.help {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--base300);
+  text-align: center;
+}
+
+.help p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--font-color300);
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+}

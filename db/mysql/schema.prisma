@@ -11,6 +11,7 @@ datasource db {
 model User {
   id          String    @id @unique @map("user_id") @db.VarChar(36)
   username    String    @unique @db.VarChar(255)
+  email       String    @unique @db.VarChar(255)
   password    String    @db.VarChar(60)
   role        String    @map("role") @db.VarChar(50)
   logoUrl     String?   @map("logo_url") @db.VarChar(2183)
@@ -19,11 +20,29 @@ model User {
   updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamp(0)
   deletedAt   DateTime? @map("deleted_at") @db.Timestamp(0)
 
-  websiteUser       Website[]  @relation("user")
-  websiteCreateUser Website[]  @relation("createUser")
+  // Email verification
+  emailVerified Boolean @default(false) @map("email_verified")
+
+  // Stripe integration fields
+  customerId           String?   @map("customer_id") @db.VarChar(255)
+  subscriptionId       String?   @map("subscription_id") @db.VarChar(255)
+  planId               String    @default("hobby") @map("plan_id") @db.VarChar(50)
+  hasAccess            Boolean   @default(false) @map("has_access")
+  isLifetime           Boolean   @default(false) @map("is_lifetime")
+  subscriptionStatus   String?   @map("subscription_status") @db.VarChar(50)
+  currentPeriodStart   DateTime? @map("current_period_start") @db.Timestamp(0)
+  currentPeriodEnd     DateTime? @map("current_period_end") @db.Timestamp(0)
+
+  websiteUser       Website[]     @relation("user")
+  websiteCreateUser Website[]     @relation("createUser")
   teamUser          TeamUser[]
   report            Report[]
+  usageRecords      UsageRecord[]
+  authTokens        AuthToken[]
 
+  @@index([customerId])
+  @@index([subscriptionId])
+  @@index([planId])
   @@map("user")
 }
 
@@ -230,4 +249,60 @@ model Report {
   @@index([type])
   @@index([name])
   @@map("report")
+}
+
+model UsageRecord {
+  id              String    @id @unique @map("usage_record_id") @db.VarChar(36)
+  userId          String    @map("user_id") @db.VarChar(36)
+  month           String    @map("month") @db.VarChar(7) // Format: "2024-01"
+  year            Int       @map("year") @db.UnsignedInt
+  eventsThisMonth Int       @default(0) @map("events_this_month") @db.UnsignedInt
+  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt       DateTime? @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, month], name: "userId_month")
+  @@index([userId])
+  @@index([month])
+  @@index([year])
+  @@map("usage_record")
+}
+
+model AppSumoCode {
+  id          String    @id @unique @map("appsumo_code_id") @db.VarChar(36)
+  code        String    @unique @map("code") @db.VarChar(50)
+  planId      String    @map("plan_id") @db.VarChar(50)
+  isUsed      Boolean   @default(false) @map("is_used")
+  usedBy      String?   @map("used_by") @db.VarChar(36)
+  usedAt      DateTime? @map("used_at") @db.Timestamp(0)
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+
+  @@index([code])
+  @@index([planId])
+  @@index([isUsed])
+  @@map("appsumo_code")
+}
+
+model AuthToken {
+  id        String        @id @unique @map("token_id") @db.VarChar(36)
+  userId    String        @map("user_id") @db.VarChar(36)
+  type      AuthTokenType @map("type")
+  token     String        @unique @map("token") @db.VarChar(255)
+  expiresAt DateTime      @map("expires_at") @db.Timestamp(0)
+  used      Boolean       @default(false) @map("used")
+  createdAt DateTime?     @default(now()) @map("created_at") @db.Timestamp(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("auth_token")
+}
+
+enum AuthTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
 }
