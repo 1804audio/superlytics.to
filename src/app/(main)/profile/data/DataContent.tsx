@@ -121,8 +121,55 @@ export default function DataContent() {
         throw new Error('CSV file must contain at least a header and one data row');
       }
 
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      // Security: Limit number of records (100 + header = 101 lines max)
+      if (lines.length > 101) {
+        throw new Error('CSV file cannot contain more than 100 data rows');
+      }
+
+      // Proper CSV parsing function that handles quoted fields
+      const parseCSVLine = (line: string): string[] => {
+        const result: string[] = [];
+        let current = '';
+        let inQuotes = false;
+        let i = 0;
+
+        while (i < line.length) {
+          const char = line[i];
+          const nextChar = line[i + 1];
+
+          if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+              // Handle escaped quotes ("")
+              current += '"';
+              i += 2;
+            } else {
+              // Toggle quote state
+              inQuotes = !inQuotes;
+              i++;
+            }
+          } else if (char === ',' && !inQuotes) {
+            // Field separator outside quotes
+            result.push(current.trim());
+            current = '';
+            i++;
+          } else {
+            current += char;
+            i++;
+          }
+        }
+
+        // Add the last field
+        result.push(current.trim());
+        return result;
+      };
+
+      const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
       const requiredColumns = ['type', 'payload', 'website'];
+
+      // Validate CSV structure
+      if (headers.length === 0) {
+        throw new Error('Invalid CSV format: no headers found');
+      }
 
       // Validate required columns
       for (const col of requiredColumns) {
@@ -131,14 +178,63 @@ export default function DataContent() {
         }
       }
 
-      // Parse data rows
-      const data = lines.slice(1).map(line => {
-        const values = line.split(',');
-        const record: any = {};
-        headers.forEach((header, index) => {
-          record[header] = values[index]?.trim() || '';
-        });
-        return record;
+      // Security: Basic content validation
+      const suspiciousPatterns = [/<script/i, /javascript:/i, /on\w+\s*=/i, /data:\s*text\/html/i];
+
+      for (let i = 1; i < Math.min(lines.length, 6); i++) {
+        // Check first 5 data rows
+        const line = lines[i];
+        for (const pattern of suspiciousPatterns) {
+          if (pattern.test(line)) {
+            throw new Error(`Potentially malicious content detected in CSV file`);
+          }
+        }
+      }
+
+      // Parse data rows and transform to expected format
+      const data = lines.slice(1).map((line, lineIndex) => {
+        try {
+          const values = parseCSVLine(line);
+          const record: any = {};
+          headers.forEach((header, index) => {
+            let value = values[index]?.trim() || '';
+
+            // Remove surrounding quotes if present
+            if (value.startsWith('"') && value.endsWith('"')) {
+              value = value.slice(1, -1);
+            }
+
+            record[header] = value;
+          });
+
+          // Transform CSV data to match API expected format
+          const transformedRecord = {
+            type: record.type === 'pageview' ? 'event' : record.type, // Convert pageview to event
+            payload: {
+              website: record.website,
+              hostname: record.hostname || undefined,
+              url: record.url || undefined,
+              referrer: record.referrer || undefined,
+              title: record.title || undefined,
+              name: record.name || undefined,
+              data: record.payload ? JSON.parse(record.payload) : undefined,
+              timestamp: record.timestamp
+                ? Math.floor(new Date(record.timestamp).getTime() / 1000)
+                : undefined,
+            },
+          };
+
+          // Remove undefined values to keep payload clean
+          Object.keys(transformedRecord.payload).forEach(key => {
+            if (transformedRecord.payload[key] === undefined) {
+              delete transformedRecord.payload[key];
+            }
+          });
+
+          return transformedRecord;
+        } catch (error) {
+          throw new Error(`Error parsing line ${lineIndex + 2}: ${error.message}`);
+        }
       });
 
       // Import the data using the batch API
@@ -249,6 +345,7 @@ export default function DataContent() {
               <br />
               • Optional columns: hostname, url, referrer, title, name, timestamp
               <br />• Maximum file size: 50MB
+              <br />• Maximum rows: 100 data records per import
             </Text>
           </div>
         </div>
