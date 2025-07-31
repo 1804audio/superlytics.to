@@ -6,8 +6,13 @@ import clickhouse from '@/lib/clickhouse';
 import { r2StorageService } from '@/lib/services/r2-storage-service';
 import { format } from 'date-fns';
 import debug from 'debug';
+import archiver from 'archiver';
 
 const log = debug('superlytics:data-export-service');
+
+// Data export file retention period (24 hours)
+const EXPORT_RETENTION_HOURS = 24;
+const EXPORT_RETENTION_SECONDS = EXPORT_RETENTION_HOURS * 3600;
 
 interface ExportFile {
   filename: string;
@@ -44,45 +49,61 @@ class DataExportService {
       // Store files in R2
       const exportId = this.generateExportId(userId);
       log(`Generated export ID: ${exportId}`);
-      log(`Storing ${exportFiles.length} files in R2`);
 
-      await r2StorageService.storeExportFiles(exportId, exportFiles);
-      log(`Files stored successfully in R2 for export ${exportId}`);
+      // Create ZIP bundle and store individual files
+      const zipBuffer = await this.createZipBundle(exportFiles, exportId);
+      log(`Created ZIP bundle (${this.formatFileSize(zipBuffer.length)}) for export ${exportId}`);
 
-      // Cleanup handled automatically by R2 Lifecycle Rules (24 hours)
+      // Store only ZIP bundle (simplified approach)
+      log(`Storing ZIP bundle in R2 for export ${exportId}`);
+
+      await r2StorageService.storeFile({
+        key: `exports/${exportId}/data-export.zip`,
+        content: zipBuffer,
+        contentType: 'application/zip',
+        metadata: { exportId, type: 'zip-bundle', fileCount: exportFiles.length.toString() },
+      });
+
+      log(`ZIP bundle stored successfully in R2 for export ${exportId}`);
+
+      // Cleanup handled automatically by R2 Lifecycle Rules
       log(
-        `Export ${exportId} will be automatically cleaned up by R2 Lifecycle Rules after 24 hours`,
+        `Export ${exportId} will be automatically cleaned up by R2 Lifecycle Rules after ${EXPORT_RETENTION_HOURS} hours`,
       );
 
-      // Generate presigned download URLs for R2
+      // Generate presigned download URL for ZIP bundle only
       const downloadLinks: DownloadLink[] = [];
-      for (const file of exportFiles) {
-        const presignedUrl = await r2StorageService.getDownloadUrl(
-          `exports/${exportId}/${file.filename}`,
-          3600,
-        ); // 1 hour expiry
-        if (presignedUrl) {
-          downloadLinks.push({
-            filename: file.filename,
-            url: presignedUrl,
-            size: file.size,
-          });
-        } else {
-          log(`Failed to generate download URL for ${file.filename}`);
-          // Fallback to API route if presigned URL fails
-          downloadLinks.push({
-            filename: file.filename,
-            url: `${this.appUrl}/api/exports/${exportId}/${encodeURIComponent(file.filename)}`,
-            size: file.size,
-          });
-        }
+
+      const zipPresignedUrl = await r2StorageService.getDownloadUrl(
+        `exports/${exportId}/data-export.zip`,
+        EXPORT_RETENTION_SECONDS,
+      );
+
+      if (zipPresignedUrl) {
+        downloadLinks.push({
+          filename: 'data-export.zip',
+          url: zipPresignedUrl,
+          size: this.formatFileSize(zipBuffer.length),
+        });
+        log(`ZIP download URL generated successfully for export ${exportId}`);
+      } else {
+        log(`CRITICAL: Failed to generate presigned URL for ZIP bundle - export failed`);
+        throw new Error('Failed to generate secure download link for ZIP bundle');
+      }
+
+      // Security check: Ensure ZIP download link was generated
+      if (downloadLinks.length === 0) {
+        log(`CRITICAL: No secure download links generated for export ${exportId} - aborting`);
+        throw new Error('Failed to generate secure download links for export');
       }
 
       // Send success email
       const emailSent = await emailService.sendDataExportReady(userEmail, username, downloadLinks);
 
       if (emailSent) {
-        log(`Data export completed successfully for user ${userId}`);
+        log(
+          `Data export completed successfully for user ${userId} - ZIP bundle ready for download`,
+        );
         return true;
       } else {
         log(`Export completed but email failed for user ${userId}`);
@@ -394,6 +415,114 @@ class DataExportService {
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  /**
+   * Create a ZIP bundle containing all export files
+   */
+  private async createZipBundle(exportFiles: ExportFile[], exportId: string): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const archive = archiver('zip', {
+        zlib: { level: 9 }, // Maximum compression
+        comment: `SuperLytics Data Export - ${new Date().toISOString()}`,
+      });
+
+      const buffers: Buffer[] = [];
+
+      // Collect data chunks
+      archive.on('data', (chunk: Buffer) => {
+        buffers.push(chunk);
+      });
+
+      // Handle completion
+      archive.on('end', () => {
+        const zipBuffer = Buffer.concat(buffers);
+        log(
+          `ZIP bundle created: ${this.formatFileSize(zipBuffer.length)} (${exportFiles.length} files)`,
+        );
+        resolve(zipBuffer);
+      });
+
+      // Handle errors
+      archive.on('error', error => {
+        log(`ZIP creation failed:`, error);
+        reject(error);
+      });
+
+      // Add each export file to the ZIP
+      for (const file of exportFiles) {
+        archive.append(file.content, {
+          name: file.filename,
+          comment: `${file.size} - Generated ${new Date().toISOString()}`,
+        });
+      }
+
+      // Add a README file with export information
+      const readmeContent = this.generateExportReadme(exportId, exportFiles);
+      archive.append(readmeContent, {
+        name: 'README.txt',
+        comment: 'Export information and file descriptions',
+      });
+
+      // Finalize the archive
+      archive.finalize();
+    });
+  }
+
+  /**
+   * Generate README content for the ZIP bundle
+   */
+  private generateExportReadme(exportId: string, exportFiles: ExportFile[]): string {
+    const exportDate = new Date().toISOString();
+    const totalSize = exportFiles.reduce((sum, file) => {
+      // Parse size string (e.g., "68.2 KB" -> bytes)
+      const sizeMatch = file.size.match(/^([\d.]+)\s*([KMGT]?)B$/i);
+      if (!sizeMatch) return sum;
+
+      const value = parseFloat(sizeMatch[1]);
+      const unit = sizeMatch[2].toUpperCase();
+      const multipliers: { [key: string]: number } = {
+        '': 1,
+        K: 1024,
+        M: 1024 ** 2,
+        G: 1024 ** 3,
+        T: 1024 ** 4,
+      };
+
+      return sum + value * (multipliers[unit] || 1);
+    }, 0);
+
+    return `SuperLytics Data Export
+========================
+
+Export ID: ${exportId}
+Generated: ${exportDate}
+Total Files: ${exportFiles.length}
+Total Size: ${this.formatFileSize(totalSize)}
+
+File Contents:
+--------------
+${exportFiles.map(file => `• ${file.filename} (${file.size})`).join('\n')}
+
+File Descriptions:
+------------------
+• websites.csv - Your website configurations and basic information
+• events_[website].csv - Page views, clicks, and custom events for each website
+• sessions_[website].csv - User session data including browser, device, and location info
+• reports.csv - Your saved custom reports and configurations
+
+Notes:
+------
+- All timestamps are in UTC format (YYYY-MM-DD HH:MM:SS)
+- CSV files use standard comma separation with quoted fields
+- Empty files indicate no data was available for that category
+- This export includes all data available at the time of generation
+
+For support or questions about your data export, please contact:
+https://superlytics.co/support
+
+Generated by SuperLytics Analytics Platform
+${exportDate}`;
   }
 
   // Public method to retrieve export files for download
