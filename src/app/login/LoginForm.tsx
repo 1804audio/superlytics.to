@@ -47,7 +47,7 @@ export function LoginForm() {
         error={getMessage(error)}
         values={{ username: '', password: '' }}
       >
-        <FormRow label={formatMessage(labels.username)}>
+        <FormRow label={formatMessage(labels.emailOrUsername)}>
           <FormInput
             data-test="input-username"
             name="username"

@@ -3,9 +3,9 @@ import { json, badRequest, notFound } from '@/lib/response';
 import { apiKeyService } from '@/lib/services/api-key-service';
 import debug from 'debug';
 
-const log = debug('superlytics:api-key-delete');
+const log = debug('superlytics:api-key-reveal');
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ keyId: string }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ keyId: string }> }) {
   const { auth, error } = await parseRequest(request);
 
   if (error) {
@@ -20,16 +20,16 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ k
       return badRequest('API key ID is required');
     }
 
-    const deleted = await apiKeyService.deleteApiKey(userId, keyId);
+    const fullKey = await apiKeyService.getFullApiKey(userId, keyId);
 
-    if (!deleted) {
+    if (!fullKey) {
       return notFound('API key not found');
     }
 
-    log('Deleted API key:', keyId, 'for user:', userId);
-    return json({ success: true, message: 'API key deleted successfully' });
+    log('Revealed full API key:', keyId, 'for user:', userId);
+    return json({ success: true, key: fullKey });
   } catch (err) {
-    log('Failed to delete API key:', err);
-    return badRequest('Failed to delete API key');
+    log('Failed to reveal API key:', err);
+    return badRequest('Failed to retrieve API key');
   }
 }

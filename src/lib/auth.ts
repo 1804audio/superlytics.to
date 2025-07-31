@@ -8,6 +8,8 @@ import { createSecureToken, parseSecureToken, parseToken } from '@/lib/jwt';
 import { ensureArray } from '@/lib/utils';
 import { getTeamUser, getUser, getWebsite } from '@/queries';
 import { Auth } from './types';
+import { extractApiKeyFromHeaders } from '@/lib/middleware/api-key-auth';
+import { apiKeyService } from '@/lib/services/api-key-service';
 
 const log = debug('superlytics:auth');
 const cloudMode = process.env.CLOUD_MODE;
@@ -22,6 +24,34 @@ export function checkPassword(password: string, passwordHash: string) {
 }
 
 export async function checkAuth(request: Request) {
+  // First try API key authentication
+  const apiKey = extractApiKeyFromHeaders(request.headers);
+  if (apiKey) {
+    try {
+      const validation = await apiKeyService.validateApiKey(apiKey);
+      if (validation) {
+        const user = await getUser(validation.userId);
+        if (user) {
+          user.isAdmin = user.role === ROLES.admin;
+          log('API key authentication successful for user:', user.id);
+          return {
+            user,
+            grant: null,
+            token: null,
+            shareToken: null,
+            authKey: null,
+            apiKey: true, // Flag to indicate API key auth
+            permissions: validation.permissions,
+          };
+        }
+      }
+    } catch (error) {
+      log('API key authentication failed:', error);
+      // Fall through to session auth
+    }
+  }
+
+  // Fallback to session-based authentication
   const token = request.headers.get('authorization')?.split(' ')?.[1];
   const payload = parseSecureToken(token, secret());
   const shareToken = await parseShareToken(request.headers);
@@ -65,6 +95,7 @@ export async function checkAuth(request: Request) {
       payload: sanitizedPayload,
       user: sanitizedUser,
       grant,
+      apiKey: apiKey ? '[REDACTED]' : null,
     });
   }
 
@@ -83,6 +114,7 @@ export async function checkAuth(request: Request) {
     token,
     shareToken,
     authKey,
+    apiKey: false, // Flag to indicate session auth
   };
 }
 

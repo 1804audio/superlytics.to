@@ -21,10 +21,10 @@ const log = debug('superlytics:api-keys');
 interface ApiKey {
   id: string;
   name: string;
-  key: string;
+  key?: string; // Only available on creation
   maskedKey: string;
   createdAt: string;
-  lastUsed?: string;
+  lastUsedAt?: string;
   permissions: string[];
 }
 
@@ -33,6 +33,9 @@ export default function ApiKeysContent() {
   const [loading, setLoading] = useState(true);
   const [hasApiKeys, setHasApiKeys] = useState(false);
   const [planCheckLoading, setPlanCheckLoading] = useState(true);
+  const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
+  const [newlyCreatedKeys, setNewlyCreatedKeys] = useState<Set<string>>(new Set());
+  const [revealedKeys, setRevealedKeys] = useState<Map<string, string>>(new Map());
   const { get, del } = useApi();
   const { showToast } = useToasts();
 
@@ -79,6 +82,54 @@ export default function ApiKeysContent() {
 
   const handleKeyCreated = (newKey: ApiKey) => {
     setApiKeys(keys => [newKey, ...keys]);
+    // Mark this key as newly created and visible
+    if (newKey.key) {
+      setNewlyCreatedKeys(prev => new Set(prev.add(newKey.id)));
+      setVisibleKeys(prev => new Set(prev.add(newKey.id)));
+    }
+  };
+
+  const copyToClipboard = async (text: string, keyName: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast({ message: `${keyName} copied to clipboard!`, variant: 'success' });
+    } catch (error) {
+      log('Failed to copy to clipboard:', error);
+      showToast({ message: 'Failed to copy to clipboard', variant: 'error' });
+    }
+  };
+
+  const revealFullKey = async (keyId: string) => {
+    try {
+      const response = await get(`/me/api-keys/${keyId}/reveal`);
+      setRevealedKeys(prev => new Map(prev.set(keyId, response.key)));
+      return response.key;
+    } catch (error) {
+      log('Failed to reveal API key:', error);
+      showToast({ message: 'Failed to reveal API key', variant: 'error' });
+      return null;
+    }
+  };
+
+  const toggleKeyVisibility = async (keyId: string) => {
+    const isVisible = visibleKeys.has(keyId);
+
+    if (isVisible) {
+      // Hide the key
+      setVisibleKeys(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(keyId);
+        return newSet;
+      });
+    } else {
+      // Show the key - reveal it if not already revealed
+      if (!revealedKeys.has(keyId)) {
+        const fullKey = await revealFullKey(keyId);
+        if (!fullKey) return; // Failed to reveal
+      }
+
+      setVisibleKeys(prev => new Set(prev.add(keyId)));
+    }
   };
 
   useEffect(() => {
@@ -174,43 +225,97 @@ export default function ApiKeysContent() {
           </div>
         </FormRow>
       ) : (
-        apiKeys.map(apiKey => (
-          <FormRow key={apiKey.id} label={apiKey.name}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Text
+        apiKeys.map(apiKey => {
+          const isVisible = visibleKeys.has(apiKey.id);
+          const isNewlyCreated = newlyCreatedKeys.has(apiKey.id);
+          const revealedKey = revealedKeys.get(apiKey.id);
+
+          // Determine what key to show: newly created full key, revealed key, or masked key
+          let keyToShow = apiKey.maskedKey;
+          let keyToCopy = apiKey.maskedKey;
+
+          if (isVisible) {
+            if (isNewlyCreated && apiKey.key) {
+              keyToShow = apiKey.key;
+              keyToCopy = apiKey.key;
+            } else if (revealedKey) {
+              keyToShow = revealedKey;
+              keyToCopy = revealedKey;
+            }
+          }
+
+          return (
+            <FormRow key={apiKey.id} label={apiKey.name}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Text
+                    style={{
+                      fontFamily: 'var(--font-family-mono)',
+                      fontSize: '12px',
+                      color: 'var(--font-color300)',
+                      flex: 1,
+                      wordBreak: 'break-all',
+                    }}
+                  >
+                    {keyToShow}
+                  </Text>
+
+                  {/* Copy button */}
+                  <Button
+                    variant="quiet"
+                    size="sm"
+                    onClick={() => copyToClipboard(keyToCopy, apiKey.name)}
+                    title="Copy API key"
+                  >
+                    <Icon>
+                      <Icons.Copy />
+                    </Icon>
+                  </Button>
+
+                  {/* Show/Hide button */}
+                  <Button
+                    variant="quiet"
+                    size="sm"
+                    onClick={() => toggleKeyVisibility(apiKey.id)}
+                    title={isVisible ? 'Hide API key' : 'Show API key'}
+                  >
+                    <Icon>
+                      <Icons.Eye />
+                    </Icon>
+                  </Button>
+
+                  {/* Delete button */}
+                  <Button variant="danger" size="sm" onClick={() => handleDelete(apiKey.id)}>
+                    <Icon>
+                      <Icons.Close />
+                    </Icon>
+                    <Text>Delete</Text>
+                  </Button>
+                </div>
+
+                <div
                   style={{
-                    fontFamily: 'var(--font-family-mono)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
                     fontSize: '12px',
-                    color: 'var(--font-color300)',
+                    color: 'var(--font-color400)',
                   }}
                 >
-                  {apiKey.maskedKey}
-                </Text>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(apiKey.id)}>
-                  <Icon>
-                    <Icons.Close />
-                  </Icon>
-                  <Text>Delete</Text>
-                </Button>
+                  <div style={{ display: 'flex', gap: '16px' }}>
+                    <Text>Created: {new Date(apiKey.createdAt).toLocaleDateString()}</Text>
+                    <Text>
+                      Last used:{' '}
+                      {apiKey.lastUsedAt
+                        ? new Date(apiKey.lastUsedAt).toLocaleDateString()
+                        : 'Never'}
+                    </Text>
+                  </div>
+                </div>
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '16px',
-                  fontSize: '12px',
-                  color: 'var(--font-color400)',
-                }}
-              >
-                <Text>Created: {new Date(apiKey.createdAt).toLocaleDateString()}</Text>
-                <Text>
-                  Last used:{' '}
-                  {apiKey.lastUsed ? new Date(apiKey.lastUsed).toLocaleDateString() : 'Never'}
-                </Text>
-              </div>
-            </div>
-          </FormRow>
-        ))
+            </FormRow>
+          );
+        })
       )}
     </Form>
   );

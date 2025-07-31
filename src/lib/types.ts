@@ -71,6 +71,10 @@ export interface Auth {
   shareToken?: {
     websiteId: string;
   };
+  token?: string | null;
+  authKey?: string | null;
+  apiKey?: boolean; // Flag to indicate if authenticated via API key
+  permissions?: string[]; // API key permissions
 }
 
 export interface User {

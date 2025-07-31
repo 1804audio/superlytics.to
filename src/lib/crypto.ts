@@ -81,3 +81,13 @@ export function uuid(...args: any) {
 
   return v5(hash(...args, secret()), v5.DNS);
 }
+
+export function createSecureToken(length: number = 32) {
+  return crypto.randomBytes(length).toString('hex');
+}
+
+export function generateApiKey() {
+  // Generate a secure random key with prefix
+  const randomPart = createSecureToken(20); // 40 characters
+  return `sly_${randomPart}`;
+}

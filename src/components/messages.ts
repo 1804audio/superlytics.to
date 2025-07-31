@@ -298,6 +298,7 @@ export const labels = defineMessages({
   referral: { id: 'label.referral', defaultMessage: 'Referral' },
   affiliate: { id: 'label.affiliate', defaultMessage: 'Affiliate' },
   email: { id: 'label.email', defaultMessage: 'Email' },
+  emailOrUsername: { id: 'label.email-or-username', defaultMessage: 'Email or Username' },
   sms: { id: 'label.sms', defaultMessage: 'SMS' },
   organicSearch: { id: 'label.organic-search', defaultMessage: 'Organic search' },
   organicSocial: { id: 'label.organic-social', defaultMessage: 'Organic social' },

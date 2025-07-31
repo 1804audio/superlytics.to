@@ -382,6 +382,9 @@ function getClient(params?: {
 
 const client = global[PRISMA] || getClient();
 
+// Named export for prisma client (used by API routes and services)
+export const prisma = client;
+
 export default {
   client,
   transaction,

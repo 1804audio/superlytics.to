@@ -39,6 +39,7 @@ model User {
   report            Report[]
   usageRecords      UsageRecord[]
   authTokens        AuthToken[]
+  apiKeys           ApiKey[]
 
   @@index([customerId])
   @@index([subscriptionId])
@@ -305,4 +306,25 @@ model AuthToken {
 enum AuthTokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
+}
+
+model ApiKey {
+  id          String    @id @unique @map("id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  name        String    @map("name") @db.VarChar(255)
+  keyHash     String    @unique @map("key_hash") @db.VarChar(255)
+  keyEncrypted String   @map("key_encrypted") @db.Text
+  keyPrefix   String    @map("key_prefix") @db.VarChar(20)
+  keySuffix   String    @map("key_suffix") @db.VarChar(10)
+  permissions String[]  @default(["read", "write"]) @map("permissions")
+  lastUsedAt  DateTime? @map("last_used_at") @db.Timestamptz(6)
+  expiresAt   DateTime? @map("expires_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("api_key")
 }
