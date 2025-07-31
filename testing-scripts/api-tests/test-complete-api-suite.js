@@ -1,5 +1,4 @@
-const API_KEY = 'sly_bb5f9889f804da5e6c4846a467d06779903d39b0';
-const WEBSITE_ID = '77b5aae8-8e1c-4604-a4cc-a4de2b9e3b7e';
+const { API_KEY, WEBSITE_ID, BASE_URL } = require('./config.js');
 
 async function runCompleteAPITest() {
   console.log('🚀 Running Complete API Test Suite');
@@ -45,7 +44,7 @@ async function runCompleteAPITest() {
   console.log('----------------------');
 
   await runTest('Send Single Event', async () => {
-    const response = await fetch('http://localhost:3000/api/send', {
+    const response = await fetch(`${BASE_URL}/api/send`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -63,7 +62,7 @@ async function runCompleteAPITest() {
   });
 
   await runTest('Send Custom Event', async () => {
-    const response = await fetch('http://localhost:3000/api/send', {
+    const response = await fetch(`${BASE_URL}/api/send`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -82,7 +81,7 @@ async function runCompleteAPITest() {
   });
 
   await runTest('Send User Identification', async () => {
-    const response = await fetch('http://localhost:3000/api/send', {
+    const response = await fetch(`${BASE_URL}/api/send`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -126,7 +125,7 @@ async function runCompleteAPITest() {
       },
     ];
 
-    const response = await fetch('http://localhost:3000/api/batch', {
+    const response = await fetch(`${BASE_URL}/api/batch`, {
       method: 'POST',
       headers,
       body: JSON.stringify(batchData),
@@ -152,13 +151,10 @@ async function runCompleteAPITest() {
   });
 
   await runTest('Website Statistics', async () => {
-    const response = await fetch(
-      `http://localhost:3000/api/websites/${WEBSITE_ID}/stats?${commonParams}`,
-      {
-        method: 'GET',
-        headers,
-      },
-    );
+    const response = await fetch(`${BASE_URL}/api/websites/${WEBSITE_ID}/stats?${commonParams}`, {
+      method: 'GET',
+      headers,
+    });
     return response.ok;
   });
 
@@ -168,7 +164,7 @@ async function runCompleteAPITest() {
       unit: 'day',
     });
     const response = await fetch(
-      `http://localhost:3000/api/websites/${WEBSITE_ID}/pageviews?${pageviewsParams}`,
+      `${BASE_URL}/api/websites/${WEBSITE_ID}/pageviews?${pageviewsParams}`,
       {
         method: 'GET',
         headers,
@@ -178,19 +174,16 @@ async function runCompleteAPITest() {
   });
 
   await runTest('Events List', async () => {
-    const response = await fetch(
-      `http://localhost:3000/api/websites/${WEBSITE_ID}/events?${commonParams}`,
-      {
-        method: 'GET',
-        headers,
-      },
-    );
+    const response = await fetch(`${BASE_URL}/api/websites/${WEBSITE_ID}/events?${commonParams}`, {
+      method: 'GET',
+      headers,
+    });
     return response.ok;
   });
 
   await runTest('Sessions List', async () => {
     const response = await fetch(
-      `http://localhost:3000/api/websites/${WEBSITE_ID}/sessions?${commonParams}`,
+      `${BASE_URL}/api/websites/${WEBSITE_ID}/sessions?${commonParams}`,
       {
         method: 'GET',
         headers,
@@ -206,7 +199,7 @@ async function runCompleteAPITest() {
   console.log('-------------------');
 
   await runTest('Data Export JSON', async () => {
-    const response = await fetch('http://localhost:3000/api/me/data-export', {
+    const response = await fetch(`${BASE_URL}/api/me/data-export`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ type: 'json' }),
@@ -221,7 +214,7 @@ async function runCompleteAPITest() {
   console.log('-------------------');
 
   await runTest('V1 Websites List', async () => {
-    const response = await fetch('http://localhost:3000/api/v1/websites', {
+    const response = await fetch(`${BASE_URL}/api/v1/websites`, {
       method: 'GET',
       headers,
     });
@@ -233,13 +226,10 @@ async function runCompleteAPITest() {
       startAt: startAt.toString(),
       endAt: endAt.toString(),
     });
-    const response = await fetch(
-      `http://localhost:3000/api/v1/websites/${WEBSITE_ID}/stats?${statsParams}`,
-      {
-        method: 'GET',
-        headers,
-      },
-    );
+    const response = await fetch(`${BASE_URL}/api/v1/websites/${WEBSITE_ID}/stats?${statsParams}`, {
+      method: 'GET',
+      headers,
+    });
     return response.ok;
   });
 
@@ -250,7 +240,7 @@ async function runCompleteAPITest() {
   console.log('-----------------------');
 
   await runTest('Invalid API Key Rejection', async () => {
-    const response = await fetch('http://localhost:3000/api/send', {
+    const response = await fetch(`${BASE_URL}/api/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -270,7 +260,7 @@ async function runCompleteAPITest() {
   });
 
   await runTest('No API Key Rejection', async () => {
-    const response = await fetch('http://localhost:3000/api/send', {
+    const response = await fetch(`${BASE_URL}/api/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

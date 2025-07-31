@@ -1,4 +1,4 @@
-const API_KEY = 'sly_bb5f9889f804da5e6c4846a467d06779903d39b0';
+const { API_KEY, BASE_URL } = require('../config.js');
 
 async function testWebsiteManagement() {
   console.log('🔍 Testing Website Management & Cleanup APIs');
@@ -14,7 +14,7 @@ async function testWebsiteManagement() {
 
   // Test 1: List existing websites
   console.log('\n📋 Testing website listing...');
-  const listResponse = await fetch('http://localhost:3000/api/websites', {
+  const listResponse = await fetch(`${BASE_URL}/api/websites`, {
     method: 'GET',
     headers,
   });
@@ -36,7 +36,7 @@ async function testWebsiteManagement() {
 
   // Test 2: Create a test website
   console.log('\n🏗️ Testing website creation...');
-  const createResponse = await fetch('http://localhost:3000/api/websites', {
+  const createResponse = await fetch(`${BASE_URL}/api/websites`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
@@ -99,7 +99,7 @@ async function testWebsiteManagement() {
   ];
 
   for (let i = 0; i < trackingData.length; i++) {
-    const trackResponse = await fetch('http://localhost:3000/api/send', {
+    const trackResponse = await fetch(`${BASE_URL}/api/send`, {
       method: 'POST',
       headers,
       body: JSON.stringify(trackingData[i]),
@@ -123,7 +123,7 @@ async function testWebsiteManagement() {
   });
 
   const statsResponse = await fetch(
-    `http://localhost:3000/api/websites/${testWebsiteId}/stats?${statsParams}`,
+    `${BASE_URL}/api/websites/${testWebsiteId}/stats?${statsParams}`,
     {
       method: 'GET',
       headers,
@@ -142,17 +142,14 @@ async function testWebsiteManagement() {
 
   // Test 5: Test data cleanup by URL
   console.log('\n🧹 Testing data cleanup by URL...');
-  const cleanupResponse = await fetch(
-    `http://localhost:3000/api/websites/${testWebsiteId}/cleanup`,
-    {
-      method: 'DELETE',
-      headers,
-      body: JSON.stringify({
-        urlPath: '/products',
-        deleteType: 'exact',
-      }),
-    },
-  );
+  const cleanupResponse = await fetch(`${BASE_URL}/api/websites/${testWebsiteId}/cleanup`, {
+    method: 'DELETE',
+    headers,
+    body: JSON.stringify({
+      urlPath: '/products',
+      deleteType: 'exact',
+    }),
+  });
 
   console.log('Data cleanup by URL:', cleanupResponse.ok ? '✅ Success' : '❌ Failed');
   if (!cleanupResponse.ok) {
@@ -164,7 +161,7 @@ async function testWebsiteManagement() {
 
   // Test 6: Get website details
   console.log('\n🔍 Testing website details retrieval...');
-  const detailsResponse = await fetch(`http://localhost:3000/api/websites/${testWebsiteId}`, {
+  const detailsResponse = await fetch(`${BASE_URL}/api/websites/${testWebsiteId}`, {
     method: 'GET',
     headers,
   });
@@ -179,7 +176,7 @@ async function testWebsiteManagement() {
 
   // Test 7: Update website
   console.log('\n✏️ Testing website update...');
-  const updateResponse = await fetch(`http://localhost:3000/api/websites/${testWebsiteId}`, {
+  const updateResponse = await fetch(`${BASE_URL}/api/websites/${testWebsiteId}`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
@@ -196,7 +193,7 @@ async function testWebsiteManagement() {
 
   // Test 8: Delete the entire website (CRITICAL TEST)
   console.log('\n🗑️ Testing complete website deletion...');
-  const deleteResponse = await fetch(`http://localhost:3000/api/websites/${testWebsiteId}`, {
+  const deleteResponse = await fetch(`${BASE_URL}/api/websites/${testWebsiteId}`, {
     method: 'DELETE',
     headers,
   });
@@ -208,7 +205,7 @@ async function testWebsiteManagement() {
 
   // Test 9: Verify website is gone
   console.log('\n✅ Verifying website deletion...');
-  const verifyResponse = await fetch(`http://localhost:3000/api/websites/${testWebsiteId}`, {
+  const verifyResponse = await fetch(`${BASE_URL}/api/websites/${testWebsiteId}`, {
     method: 'GET',
     headers,
   });
@@ -224,7 +221,7 @@ async function testWebsiteManagement() {
   // Test 10: Verify data is cleaned up
   console.log('\n🔍 Verifying data cleanup after website deletion...');
   const dataVerifyResponse = await fetch(
-    `http://localhost:3000/api/websites/${testWebsiteId}/stats?${statsParams}`,
+    `${BASE_URL}/api/websites/${testWebsiteId}/stats?${statsParams}`,
     {
       method: 'GET',
       headers,

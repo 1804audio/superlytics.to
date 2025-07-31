@@ -1,4 +1,4 @@
-const API_KEY = 'sly_bb5f9889f804da5e6c4846a467d06779903d39b0';
+const { API_KEY, BASE_URL } = require('../config.js');
 
 async function testComprehensiveCleanup() {
   console.log('🧹 Testing Comprehensive Website Data Cleanup');
@@ -14,7 +14,7 @@ async function testComprehensiveCleanup() {
   try {
     // Step 1: Create a test website
     console.log('\n🏗️ Step 1: Creating test website...');
-    const createResponse = await fetch('http://localhost:3000/api/websites', {
+    const createResponse = await fetch(`${BASE_URL}/api/websites`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -67,7 +67,7 @@ async function testComprehensiveCleanup() {
 
     for (let i = 0; i < trackingData.length; i++) {
       const data = trackingData[i];
-      const response = await fetch('http://localhost:3000/api/send', {
+      const response = await fetch(`${BASE_URL}/api/send`, {
         method: 'POST',
         headers,
         body: JSON.stringify(data),
@@ -87,13 +87,10 @@ async function testComprehensiveCleanup() {
     console.log('\n📈 Step 3: Verifying data exists before deletion...');
 
     // Check website stats
-    const statsResponse = await fetch(
-      `http://localhost:3000/api/websites/${createdWebsiteId}/stats`,
-      {
-        method: 'GET',
-        headers,
-      },
-    );
+    const statsResponse = await fetch(`${BASE_URL}/api/websites/${createdWebsiteId}/stats`, {
+      method: 'GET',
+      headers,
+    });
 
     if (statsResponse.ok) {
       const stats = await statsResponse.json();
@@ -103,13 +100,10 @@ async function testComprehensiveCleanup() {
     }
 
     // Check events
-    const eventsResponse = await fetch(
-      `http://localhost:3000/api/websites/${createdWebsiteId}/events`,
-      {
-        method: 'GET',
-        headers,
-      },
-    );
+    const eventsResponse = await fetch(`${BASE_URL}/api/websites/${createdWebsiteId}/events`, {
+      method: 'GET',
+      headers,
+    });
 
     if (eventsResponse.ok) {
       const eventsData = await eventsResponse.json();
@@ -120,7 +114,7 @@ async function testComprehensiveCleanup() {
 
     // Step 4: Delete the website
     console.log('\n🗑️ Step 4: Deleting website...');
-    const deleteResponse = await fetch(`http://localhost:3000/api/websites/${createdWebsiteId}`, {
+    const deleteResponse = await fetch(`${BASE_URL}/api/websites/${createdWebsiteId}`, {
       method: 'DELETE',
       headers,
     });
@@ -134,7 +128,7 @@ async function testComprehensiveCleanup() {
 
     // Step 5: Verify website no longer exists
     console.log('\n🔍 Step 5: Verifying website deletion...');
-    const getResponse = await fetch(`http://localhost:3000/api/websites/${createdWebsiteId}`, {
+    const getResponse = await fetch(`${BASE_URL}/api/websites/${createdWebsiteId}`, {
       method: 'GET',
       headers,
     });
@@ -153,13 +147,10 @@ async function testComprehensiveCleanup() {
     console.log('\n🧹 Step 6: Verifying associated data cleanup...');
 
     // Try to access stats for deleted website
-    const deletedStatsResponse = await fetch(
-      `http://localhost:3000/api/websites/${createdWebsiteId}/stats`,
-      {
-        method: 'GET',
-        headers,
-      },
-    );
+    const deletedStatsResponse = await fetch(`${BASE_URL}/api/websites/${createdWebsiteId}/stats`, {
+      method: 'GET',
+      headers,
+    });
 
     if (deletedStatsResponse.status === 404) {
       console.log('  ✅ Website stats properly cleaned up (404 Not Found)');
@@ -171,7 +162,7 @@ async function testComprehensiveCleanup() {
 
     // Try to access events for deleted website
     const deletedEventsResponse = await fetch(
-      `http://localhost:3000/api/websites/${createdWebsiteId}/events`,
+      `${BASE_URL}/api/websites/${createdWebsiteId}/events`,
       {
         method: 'GET',
         headers,
@@ -209,7 +200,7 @@ async function testComprehensiveCleanup() {
     if (createdWebsiteId) {
       console.log('\n🧹 Attempting cleanup of test website...');
       try {
-        await fetch(`http://localhost:3000/api/websites/${createdWebsiteId}`, {
+        await fetch(`${BASE_URL}/api/websites/${createdWebsiteId}`, {
           method: 'DELETE',
           headers,
         });

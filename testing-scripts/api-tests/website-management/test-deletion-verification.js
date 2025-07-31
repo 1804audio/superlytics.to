@@ -1,4 +1,4 @@
-const API_KEY = 'sly_bb5f9889f804da5e6c4846a467d06779903d39b0';
+const { API_KEY, BASE_URL } = require('../config.js');
 
 async function testDeletionVerification() {
   console.log('🔍 Testing Website Deletion Verification');
@@ -11,7 +11,7 @@ async function testDeletionVerification() {
 
   // First, get the current list of websites
   console.log('\n📋 Getting current websites list...');
-  const listResponse = await fetch('http://localhost:3000/api/websites', {
+  const listResponse = await fetch(`${BASE_URL}/api/websites`, {
     method: 'GET',
     headers,
   });
@@ -30,7 +30,7 @@ async function testDeletionVerification() {
       const testWebsiteId = websites[0].id;
       console.log(`\n🔍 Testing access to existing website: ${testWebsiteId}`);
 
-      const accessResponse = await fetch(`http://localhost:3000/api/websites/${testWebsiteId}`, {
+      const accessResponse = await fetch(`${BASE_URL}/api/websites/${testWebsiteId}`, {
         method: 'GET',
         headers,
       });
@@ -53,7 +53,7 @@ async function testDeletionVerification() {
   // Test accessing a non-existent website
   console.log('\n❌ Testing access to non-existent website...');
   const fakeId = '00000000-0000-0000-0000-000000000000';
-  const fakeResponse = await fetch(`http://localhost:3000/api/websites/${fakeId}`, {
+  const fakeResponse = await fetch(`${BASE_URL}/api/websites/${fakeId}`, {
     method: 'GET',
     headers,
   });

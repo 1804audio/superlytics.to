@@ -1,5 +1,4 @@
-const API_KEY = 'sly_bb5f9889f804da5e6c4846a467d06779903d39b0';
-const WEBSITE_ID = '77b5aae8-8e1c-4604-a4cc-a4de2b9e3b7e';
+const { API_KEY, WEBSITE_ID, BASE_URL } = require('../config.js');
 
 async function testAnalyticsAPIs() {
   console.log('🔍 Testing analytics API endpoints with API key...');

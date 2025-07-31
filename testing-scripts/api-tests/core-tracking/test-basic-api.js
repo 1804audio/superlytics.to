@@ -1,11 +1,10 @@
-const API_KEY = 'sly_bb5f9889f804da5e6c4846a467d06779903d39b0';
-const WEBSITE_ID = '77b5aae8-8e1c-4604-a4cc-a4de2b9e3b7e';
+const { API_KEY, WEBSITE_ID, BASE_URL } = require('../config.js');
 
 async function testBasicTracking() {
   console.log('🔍 Testing basic API key functionality...');
 
   // Test 1: Basic page view
-  const response1 = await fetch('http://localhost:3000/api/send', {
+  const response1 = await fetch(`${BASE_URL}/api/send`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -29,7 +28,7 @@ async function testBasicTracking() {
   }
 
   // Test 2: Custom event
-  const response2 = await fetch('http://localhost:3000/api/send', {
+  const response2 = await fetch(`${BASE_URL}/api/send`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -54,7 +53,7 @@ async function testBasicTracking() {
   }
 
   // Test 3: User identification
-  const response3 = await fetch('http://localhost:3000/api/send', {
+  const response3 = await fetch(`${BASE_URL}/api/send`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

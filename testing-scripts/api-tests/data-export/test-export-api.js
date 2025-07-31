@@ -1,4 +1,4 @@
-const API_KEY = 'sly_bb5f9889f804da5e6c4846a467d06779903d39b0';
+const { API_KEY, BASE_URL } = require('../config.js');
 
 async function testDataExportAPI() {
   console.log('🔍 Testing data export API with API key...');
@@ -10,7 +10,7 @@ async function testDataExportAPI() {
 
   // Test data export
   console.log('\n📤 Testing data export...');
-  const exportResponse = await fetch('http://localhost:3000/api/me/data-export', {
+  const exportResponse = await fetch(`${BASE_URL}/api/me/data-export`, {
     method: 'POST',
     headers,
     body: JSON.stringify({
