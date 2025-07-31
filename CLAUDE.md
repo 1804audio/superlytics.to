@@ -6,7 +6,7 @@
 - **NEVER** disable ESLint rules (`eslint-disable-next-line`)
 - **NEVER** take shortcuts or use placeholders
 - **ALWAYS** fix issues properly, not work around them
-- **ALWAYS** run `npm run lint` before considering work complete
+- **ALWAYS** run `pnpm run lint` before considering work complete
 
 ### **Production-Grade Code Only**
 - No experimental or temporary code
@@ -190,12 +190,12 @@ CREATE INDEX "new_table_name_idx" ON "new_table"("name");
 #### **Testing Workflow**
 ```bash
 # 1. Test your migration in development
-npm run build-db        # Copy files and generate client
-npm run check-db        # Apply migrations and verify
+pnpm run build-db        # Copy files and generate client
+pnpm run check-db        # Apply migrations and verify
 
 # 2. Verify everything works
-npm run lint           # Must pass with zero errors
-npm run build          # Complete build must succeed
+pnpm run lint           # Must pass with zero errors
+pnpm run build          # Complete build must succeed
 
 # 3. Test feature functionality
 # 4. Test rollback scenarios if needed
@@ -204,7 +204,7 @@ npm run build          # Complete build must succeed
 #### **Production Deployment**
 ```bash
 # The existing build process handles everything automatically:
-npm run build
+pnpm run build
 # This runs: check-env → build-db → check-db → build-tracker → build-geo → build-app
 
 # ✅ Migration system ensures:
@@ -387,8 +387,8 @@ apiKeys.set(userId, [...userKeys, { id: keyId, name, key: apiKey, maskedKey }]);
 - [ ] Uses debug logging
 
 ### **Post-Implementation Checklist**
-- [ ] `npm run lint` passes with zero errors
-- [ ] `npm run build` completes successfully
+- [ ] `pnpm run lint` passes with zero errors
+- [ ] `pnpm run build` completes successfully
 - [ ] All TypeScript errors resolved
 - [ ] No console errors in browser
 - [ ] Responsive design works
@@ -396,7 +396,7 @@ apiKeys.set(userId, [...userKeys, { id: keyId, name, key: apiKey, maskedKey }]);
 - [ ] Accessibility standards met
 - [ ] **Database migrations tested and working** (if applicable)
 - [ ] **Migration files created for both PostgreSQL and MySQL** (if schema changes)
-- [ ] **`npm run check-db` passes without errors** (if database changes)
+- [ ] **`pnpm run check-db` passes without errors** (if database changes)
 
 ---
 
@@ -483,14 +483,14 @@ CREATE INDEX "user_notification_preferences_idx" ON "user" USING GIN ("notificat
 # ✅ CORRECT: Database Workflow Commands
 
 # Test migration in development
-npm run build-db && npm run check-db
+pnpm run build-db && pnpm run check-db
 
 # Create migration files for both databases
 mkdir -p db/postgresql/migrations/02_new_feature
 mkdir -p db/mysql/migrations/02_new_feature
 
 # Always test complete build process
-npm run build
+pnpm run build
 ```
 
 ---
@@ -513,12 +513,12 @@ npm run build
 - **Test migrations in development** before coding features
 
 ### **3. Quality Assurance Phase**
-- Run `npm run lint` and fix ALL issues
+- Run `pnpm run lint` and fix ALL issues
 - Test in both light and dark modes
 - Verify responsive behavior
 - Check accessibility
 - **Verify database migrations work correctly**
-- **Test complete build process** (`npm run build`)
+- **Test complete build process** (`pnpm run build`)
 
 ### **4. Final Review**
 - Ensure zero linting errors
