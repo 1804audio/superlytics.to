@@ -541,3 +541,61 @@ A successful implementation should have:
 - ✅ **Security implemented**
 - ✅ **Usage tracking in place**
 - ✅ **Responsive and accessible**
+
+---
+
+## 🧪 **Test Script Standards**
+
+### **Test File Location**
+All test scripts belong in: `testing-scripts/api-tests/[category]/`
+
+**Categories:**
+- `core-tracking/` - Event tracking APIs
+- `analytics/` - Analytics & reporting 
+- `data-export/` - Export functionality
+- `website-management/` - CRUD & cleanup
+- `authentication/` - Security tests
+- `v1-api/` - Legacy API endpoints
+
+### **Test Script Template**
+```javascript
+const API_KEY = 'sly_your_api_key_here';
+const BASE_URL = 'http://localhost:3000';
+
+async function testFunctionality() {
+  console.log('🔍 Testing [Feature Name]...');
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'x-api-key': API_KEY,
+  };
+  
+  try {
+    const response = await fetch(`${BASE_URL}/api/endpoint`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(testData)
+    });
+    
+    if (response.ok) {
+      console.log('✅ PASS: Test Name');
+    } else {
+      console.log('❌ FAIL: Test Name');
+    }
+  } catch (error) {
+    console.log('❌ ERROR:', error.message);
+  }
+  
+  console.log('🎉 Test complete!');
+}
+
+testFunctionality().catch(console.error);
+```
+
+### **Test Principles**
+- **Use real API calls** - No mocking, test actual endpoints
+- **Console output allowed** - Testing scripts exempt from no-console rule
+- **Clear pass/fail indicators** - Use ✅/❌ emojis for visibility
+- **Descriptive names** - File names should explain what's being tested
+- **Error handling** - Always wrap tests in try/catch blocks
+- **Cleanup** - Remove test data when possible
