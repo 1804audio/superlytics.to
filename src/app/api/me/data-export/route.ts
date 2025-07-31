@@ -28,6 +28,27 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if user has exportable data
+    const dataStatusResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/me/data-status`,
+      {
+        headers: {
+          Authorization: request.headers.get('Authorization') || '',
+          Cookie: request.headers.get('Cookie') || '',
+        },
+      },
+    );
+
+    if (dataStatusResponse.ok) {
+      const dataStatus = await dataStatusResponse.json();
+      if (!dataStatus.hasExportableData) {
+        return forbidden(
+          dataStatus.message ||
+            'No data available for export. Create a website and start collecting data first.',
+        );
+      }
+    }
+
     // Track data export usage
     await usageTracker.trackDataExport(userId, 'full_export', 0);
 
