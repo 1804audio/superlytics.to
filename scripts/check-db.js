@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, @typescript-eslint/no-require-imports */
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
 // Chalk v5 is ES modules only, use simple colors
@@ -57,11 +57,16 @@ async function checkDatabaseVersion() {
   const version = semver.valid(semver.coerce(query[0].version));
 
   const databaseType = getDatabaseType();
-  const minVersion = databaseType === 'postgresql' ? '9.4.0' : '5.7.0';
+
+  if (databaseType !== 'postgresql') {
+    throw new Error('Only PostgreSQL is supported. Please use a PostgreSQL database.');
+  }
+
+  const minVersion = '9.4.0';
 
   if (semver.lt(version, minVersion)) {
     throw new Error(
-      `Database version is not compatible. Please upgrade ${databaseType} version to ${minVersion} or greater`,
+      `Database version is not compatible. Please upgrade PostgreSQL to version ${minVersion} or greater`,
     );
   }
 
@@ -80,7 +85,7 @@ async function checkV1Tables() {
       );
       process.exit(1);
     }
-  } catch (e) {
+  } catch {
     // Ignore
   }
 }

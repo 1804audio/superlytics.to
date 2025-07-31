@@ -1,8 +1,7 @@
 import debug from 'debug';
 import { PrismaClient } from '@prisma/client';
 import { readReplicas } from '@prisma/extension-read-replicas';
-import { formatInTimeZone } from 'date-fns-tz';
-import { MYSQL, POSTGRESQL, getDatabaseType } from '@/lib/db';
+import { POSTGRESQL, getDatabaseType } from '@/lib/db';
 import { SESSION_COLUMNS, OPERATORS, DEFAULT_PAGE_SIZE } from './constants';
 import { fetchWebsite } from './load';
 import { maxDate } from './date';
@@ -21,14 +20,6 @@ const PRISMA_LOG_OPTIONS = {
   ],
 };
 
-const MYSQL_DATE_FORMATS = {
-  minute: '%Y-%m-%dT%H:%i:00',
-  hour: '%Y-%m-%d %H:00:00',
-  day: '%Y-%m-%d 00:00:00',
-  month: '%Y-%m-01 00:00:00',
-  year: '%Y-01-01 00:00:00',
-};
-
 const POSTGRESQL_DATE_FORMATS = {
   minute: 'YYYY-MM-DD HH24:MI:00',
   hour: 'YYYY-MM-DD HH24:00:00',
@@ -44,9 +35,7 @@ function getAddIntervalQuery(field: string, interval: string): string {
     return `${field} + interval '${interval}'`;
   }
 
-  if (db === MYSQL) {
-    return `DATE_ADD(${field}, interval ${interval})`;
-  }
+  throw new Error('Only PostgreSQL is supported');
 }
 
 function getDayDiffQuery(field1: string, field2: string): string {
@@ -56,9 +45,7 @@ function getDayDiffQuery(field1: string, field2: string): string {
     return `${field1}::date - ${field2}::date`;
   }
 
-  if (db === MYSQL) {
-    return `DATEDIFF(${field1}, ${field2})`;
-  }
+  throw new Error('Only PostgreSQL is supported');
 }
 
 function getCastColumnQuery(field: string, type: string): string {
@@ -68,9 +55,7 @@ function getCastColumnQuery(field: string, type: string): string {
     return `${field}::${type}`;
   }
 
-  if (db === MYSQL) {
-    return `${field}`;
-  }
+  throw new Error('Only PostgreSQL is supported');
 }
 
 function getDateSQL(field: string, unit: string, timezone?: string): string {
@@ -83,13 +68,7 @@ function getDateSQL(field: string, unit: string, timezone?: string): string {
     return `to_char(date_trunc('${unit}', ${field}), '${POSTGRESQL_DATE_FORMATS[unit]}')`;
   }
 
-  if (db === MYSQL) {
-    if (timezone) {
-      const tz = formatInTimeZone(new Date(), timezone, 'xxx');
-      return `date_format(convert_tz(${field},'+00:00','${tz}'), '${MYSQL_DATE_FORMATS[unit]}')`;
-    }
-    return `date_format(${field}, '${MYSQL_DATE_FORMATS[unit]}')`;
-  }
+  throw new Error('Only PostgreSQL is supported');
 }
 
 function getDateWeeklySQL(field: string, timezone?: string) {
@@ -99,10 +78,7 @@ function getDateWeeklySQL(field: string, timezone?: string) {
     return `concat(extract(dow from (${field} at time zone '${timezone}')), ':', to_char((${field} at time zone '${timezone}'), 'HH24'))`;
   }
 
-  if (db === MYSQL) {
-    const tz = formatInTimeZone(new Date(), timezone, 'xxx');
-    return `date_format(convert_tz(${field},'+00:00','${tz}'), '%w:%H')`;
-  }
+  throw new Error('Only PostgreSQL is supported');
 }
 
 export function getTimestampSQL(field: string) {
@@ -112,9 +88,7 @@ export function getTimestampSQL(field: string) {
     return `floor(extract(epoch from ${field}))`;
   }
 
-  if (db === MYSQL) {
-    return `UNIX_TIMESTAMP(${field})`;
-  }
+  throw new Error('Only PostgreSQL is supported');
 }
 
 function getTimestampDiffSQL(field1: string, field2: string): string {
@@ -124,9 +98,7 @@ function getTimestampDiffSQL(field1: string, field2: string): string {
     return `floor(extract(epoch from (${field2} - ${field1})))`;
   }
 
-  if (db === MYSQL) {
-    return `timestampdiff(second, ${field1}, ${field2})`;
-  }
+  throw new Error('Only PostgreSQL is supported');
 }
 
 function getSearchSQL(column: string, param: string = 'search'): string {
@@ -231,8 +203,8 @@ async function rawQuery(sql: string, data: object): Promise<any> {
   const db = getDatabaseType();
   const params = [];
 
-  if (db !== POSTGRESQL && db !== MYSQL) {
-    return Promise.reject(new Error('Unknown database.'));
+  if (db !== POSTGRESQL) {
+    return Promise.reject(new Error('Only PostgreSQL is supported'));
   }
 
   const query = sql?.replaceAll(/\{\{\s*(\w+)(::\w+)?\s*}}/g, (...args) => {
@@ -242,7 +214,7 @@ async function rawQuery(sql: string, data: object): Promise<any> {
 
     params.push(value);
 
-    return db === MYSQL ? '?' : `$${params.length}${type ?? ''}`;
+    return `$${params.length}${type ?? ''}`;
   });
 
   return process.env.DATABASE_REPLICA_URL

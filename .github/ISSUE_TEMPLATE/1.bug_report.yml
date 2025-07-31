@@ -13,8 +13,8 @@ body:
       description: What database are you using?
       options:
         - PostgreSQL
-        - MySQL
-        - Umami Cloud
+        - PostgreSQL + ClickHouse
+        - SuperLytics Cloud
     validations:
       required: true
   - type: textarea

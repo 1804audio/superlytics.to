@@ -12,7 +12,7 @@ Superlytics is a privacy-focused web analytics SaaS platform that serves as a mo
 - **Analytics Tracking**: Page views, custom events, user sessions, and visitor behavior
 - **Privacy-Focused**: GDPR-compliant analytics without compromising user privacy
 - **Real-time Data**: Live visitor tracking and real-time analytics updates
-- **Multi-Database**: Supports PostgreSQL, MySQL, and ClickHouse for different data needs
+- **High-Performance Database**: PostgreSQL for core data + ClickHouse for high-performance analytics
 - **Internationalization**: Support for 50+ languages
 - **Team Management**: Multi-user workspaces with role-based permissions
 - **Custom Reports**: Funnel analysis, retention, UTM tracking, and revenue analytics

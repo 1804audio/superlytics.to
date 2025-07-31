@@ -21,7 +21,7 @@
 ### **Tech Stack**
 - **Frontend**: Next.js 15 + React + TypeScript
 - **Backend**: Next.js API Routes + Prisma ORM
-- **Database**: PostgreSQL/MySQL (dual support)
+- **Database**: PostgreSQL + ClickHouse (high-performance analytics)
 - **UI**: react-basics component library
 - **Auth**: Session-based + API key authentication
 - **Payments**: Stripe integration

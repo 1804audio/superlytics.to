@@ -34,7 +34,6 @@
 - **`tracker/`** - Client-side tracking script
 
 ## Database Structure (`db/`)
-- **`mysql/`** - MySQL/MariaDB schema and migrations
 - **`postgresql/`** - PostgreSQL schema and migrations  
 - **`clickhouse/`** - ClickHouse analytics schema and migrations
 - Each database has its own migration system and schema files

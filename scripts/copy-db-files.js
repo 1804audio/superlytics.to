@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, @typescript-eslint/no-require-imports */
 require('dotenv').config();
 const fse = require('fs-extra');
 const path = require('path');
@@ -16,8 +16,10 @@ function getDatabaseType(url = process.env.DATABASE_URL) {
 
 const databaseType = getDatabaseType();
 
-if (!databaseType || !['mysql', 'postgresql'].includes(databaseType)) {
-  throw new Error('Missing or invalid database');
+if (!databaseType || databaseType !== 'postgresql') {
+  throw new Error(
+    'Only PostgreSQL is supported. Please set DATABASE_URL to a PostgreSQL connection string.',
+  );
 }
 
 console.log(`Database type detected: ${databaseType}`);

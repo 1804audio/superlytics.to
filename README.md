@@ -36,7 +36,7 @@ A detailed getting started guide can be found at [superlytics.to/docs](https://s
 ### Requirements
 
 - A server with Node.js version 18.18 or newer
-- A database. Superlytics supports [MariaDB](https://www.mariadb.org/) (minimum v10.5), [MySQL](https://www.mysql.com/) (minimum v8.0) and [PostgreSQL](https://www.postgresql.org/) (minimum v12.14) databases.
+- A database. Superlytics requires [PostgreSQL](https://www.postgresql.org/) (minimum v12.14) for user data and configurations. [ClickHouse](https://clickhouse.com/) (optional) for high-performance analytics data.
 
 ### Get the Source Code and Install Packages
 
@@ -58,7 +58,11 @@ The connection URL format:
 
 ```bash
 postgresql://username:mypassword@localhost:5432/mydb
-mysql://username:mypassword@localhost:3306/mydb
+```
+
+Optionally, add ClickHouse for analytics data:
+```bash
+CLICKHOUSE_URL=clickhouse://username:password@localhost:8123/analytics
 ```
 
 ### Build the Application
@@ -93,11 +97,7 @@ Alternatively, to pull just the Superlytics Docker image with PostgreSQL support
 docker pull docker.superlytics.to/1804-audio/superlytics:postgresql-latest
 ```
 
-Or with MySQL support:
-
-```bash
-docker pull docker.superlytics.to/1804-audio/superlytics:mysql-latest
-```
+Superlytics now uses PostgreSQL + ClickHouse architecture for optimal performance.
 
 ---
 

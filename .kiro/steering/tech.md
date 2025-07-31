@@ -4,7 +4,7 @@
 - **Framework**: Next.js 15.4.2 with App Router
 - **Runtime**: React 19.1.0 with TypeScript 5.8.3
 - **Package Manager**: pnpm (workspace configuration)
-- **Database**: Multi-database support (PostgreSQL, MySQL, ClickHouse)
+- **Database**: PostgreSQL + ClickHouse (high-performance analytics)
 - **ORM**: Prisma 6.12.0 with read replicas extension
 - **State Management**: Zustand 5.0.6
 - **Styling**: CSS Modules with PostCSS
@@ -66,11 +66,11 @@ npm run lint           # ESLint check
 
 ## Environment Requirements
 - Node.js 18.18+ 
-- Database: PostgreSQL 12.14+, MySQL 8.0+, or MariaDB 10.5+
+- Database: PostgreSQL 12.14+
 - Redis (optional, for caching)
 - ClickHouse (optional, for analytics data)
 
 ## Docker Support
-- Multi-stage Dockerfile with database-specific variants
+- Multi-stage Dockerfile optimized for PostgreSQL
 - Docker Compose with PostgreSQL setup
-- Separate images for PostgreSQL and MySQL support
+- Single image with PostgreSQL support

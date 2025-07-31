@@ -6,7 +6,7 @@
 - **Version**: 1.0
 - **Date**: July 2025
 - **Project**: Superlytics - Privacy-Focused Web Analytics SaaS
-- **Technology Stack**: Next.js 15.4.2, TypeScript, Prisma, PostgreSQL/MySQL/ClickHouse
+- **Technology Stack**: Next.js 15.4.2, TypeScript, Prisma, PostgreSQL/ClickHouse
 
 ---
 
@@ -39,7 +39,7 @@ Superlytics implements a sophisticated JWT-based authentication system with mult
 - **Dual Authentication Modes**: Redis-backed sessions and direct JWT
 - **Share Token System** for public analytics access
 - **Enterprise-grade Security** with AES-256-GCM encryption
-- **Multi-database Support** across PostgreSQL, MySQL, and ClickHouse
+- **Database Architecture** with PostgreSQL and ClickHouse for analytics
 
 ---
 
@@ -662,7 +662,6 @@ if (process.env.NODE_ENV === 'development') {
 
 #### Supported Databases
 - **PostgreSQL**: Primary production database
-- **MySQL**: Alternative relational database
 - **ClickHouse**: Analytics-optimized database
 
 #### Schema Consistency
@@ -679,9 +678,6 @@ export function getDatabaseType() {
   
   if (url?.startsWith('postgresql://') || url?.startsWith('postgres://')) {
     return 'postgresql';
-  }
-  if (url?.startsWith('mysql://')) {
-    return 'mysql';
   }
   if (url?.includes('clickhouse')) {
     return 'clickhouse';
@@ -844,7 +840,6 @@ const redis = {
 ### Database Schema Files
 - `prisma/schema.prisma` - Main Prisma schema with user models
 - `db/postgresql/schema.prisma` - PostgreSQL-specific schema
-- `db/mysql/schema.prisma` - MySQL-specific schema
 
 ### API Route Files
 - `src/app/api/auth/login/route.ts` - Login endpoint

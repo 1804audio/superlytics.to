@@ -159,7 +159,6 @@ if (name.length > 100) {
 
 # Create numbered migration folder (sequential)
 mkdir db/postgresql/migrations/03_your_feature_name
-mkdir db/mysql/migrations/03_your_feature_name
 
 # Write ONLY incremental SQL changes
 # Example: db/postgresql/migrations/03_your_feature_name/migration.sql
@@ -208,7 +207,7 @@ pnpm run build
 # This runs: check-env → build-db → check-db → build-tracker → build-geo → build-app
 
 # ✅ Migration system ensures:
-# - Automatic database type detection (PostgreSQL/MySQL)
+# - PostgreSQL database support
 # - Safe incremental migrations
 # - Zero downtime deployments
 # - Rollback capability if needed
@@ -222,7 +221,7 @@ pnpm run build
 - Test thoroughly in development before production
 - Use proper SQL syntax for your database type
 - Add appropriate indexes for performance
-- Include both PostgreSQL and MySQL versions
+- Use PostgreSQL-specific SQL syntax
 
 **❌ DON'T:**
 - Edit existing migration files after they're applied
@@ -240,12 +239,9 @@ db/
 │   │   ├── 02_new_feature/migration.sql       # Your changes
 │   │   └── migration_lock.toml
 │   └── schema.prisma                          # Source of truth
-└── mysql/
+└── clickhouse/
     ├── migrations/
-    │   ├── 01_init/migration.sql              # Initial baseline  
-    │   ├── 02_new_feature/migration.sql       # Your changes
-    │   └── migration_lock.toml
-    └── schema.prisma                          # Source of truth
+    │   └── schema.sql                         # ClickHouse analytics schema
 ```
 
 #### **Emergency Procedures**
@@ -395,7 +391,7 @@ apiKeys.set(userId, [...userKeys, { id: keyId, name, key: apiKey, maskedKey }]);
 - [ ] Light/dark mode compatibility
 - [ ] Accessibility standards met
 - [ ] **Database migrations tested and working** (if applicable)
-- [ ] **Migration files created for both PostgreSQL and MySQL** (if schema changes)
+- [ ] **Migration files created for PostgreSQL** (if schema changes)
 - [ ] **`pnpm run check-db` passes without errors** (if database changes)
 
 ---
@@ -474,9 +470,8 @@ ALTER TABLE "user" ADD COLUMN "notification_preferences" JSONB DEFAULT '{}';
 -- Add appropriate indexes
 CREATE INDEX "user_notification_preferences_idx" ON "user" USING GIN ("notification_preferences");
 
--- Use proper SQL syntax for each database type
--- PostgreSQL: TIMESTAMPTZ(6), UUID, JSONB
--- MySQL: TIMESTAMP(0), VARCHAR(36), JSON
+-- Use PostgreSQL-specific SQL syntax
+-- PostgreSQL: TIMESTAMPTZ(6), UUID, JSONB, GIN indexes, ENUM types
 ```
 
 ```bash
@@ -485,9 +480,8 @@ CREATE INDEX "user_notification_preferences_idx" ON "user" USING GIN ("notificat
 # Test migration in development
 pnpm run build-db && pnpm run check-db
 
-# Create migration files for both databases
+# Create migration files
 mkdir -p db/postgresql/migrations/02_new_feature
-mkdir -p db/mysql/migrations/02_new_feature
 
 # Always test complete build process
 pnpm run build
@@ -525,7 +519,7 @@ pnpm run build
 - Verify build success
 - Test user flows
 - Document any new patterns
-- **Confirm migration files exist for both PostgreSQL and MySQL**
+- **Confirm migration files exist for PostgreSQL**
 - **Verify production deployment readiness**
 
 ---
