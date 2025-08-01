@@ -81,6 +81,16 @@ export interface MemberLeftData {
   appName: string;
 }
 
+export interface MemberRoleChangedData {
+  memberName: string;
+  memberEmail: string;
+  teamName: string;
+  oldRole: string;
+  newRole: string;
+  changedBy: string;
+  appName: string;
+}
+
 // Data export email data interfaces
 export interface DataExportFile {
   filename: string;
@@ -115,6 +125,7 @@ export interface TeamEmailTemplates {
   welcomeToTeam: EmailTemplate<WelcomeToTeamData>;
   memberJoined: EmailTemplate<MemberJoinedData>;
   memberLeft: EmailTemplate<MemberLeftData>;
+  memberRoleChanged: EmailTemplate<MemberRoleChangedData>;
 }
 
 export interface DataEmailTemplates {
@@ -165,6 +176,14 @@ export interface IEmailService {
     memberEmail: string,
     teamName: string,
     teamSize: number,
+  ): Promise<boolean>;
+  sendMemberRoleChanged(
+    memberEmail: string,
+    memberName: string,
+    teamName: string,
+    oldRole: string,
+    newRole: string,
+    changedBy: string,
   ): Promise<boolean>;
 
   // Data export emails

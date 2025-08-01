@@ -11,6 +11,7 @@ export type {
   WelcomeToTeamData,
   MemberJoinedData,
   MemberLeftData,
+  MemberRoleChangedData,
   PasswordResetData,
   EmailVerificationData,
   WelcomeEmailData,

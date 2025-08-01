@@ -14,6 +14,7 @@ export const emailTemplates: EmailTemplates = {
     welcomeToTeam: teamTemplates.welcomeToTeamTemplate,
     memberJoined: teamTemplates.memberJoinedTemplate,
     memberLeft: teamTemplates.memberLeftTemplate,
+    memberRoleChanged: teamTemplates.memberRoleChangedTemplate,
   },
   data: {
     exportReady: dataTemplates.dataExportReadyTemplate,

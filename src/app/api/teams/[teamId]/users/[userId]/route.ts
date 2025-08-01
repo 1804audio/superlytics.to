@@ -4,10 +4,11 @@ import { badRequest, json, ok, unauthorized } from '@/lib/response';
 import { deleteTeamUser, getTeamUser, updateTeamUser, getTeam } from '@/queries';
 import { emailService } from '@/lib/email';
 import { ROLES } from '@/lib/constants';
+import prisma from '@/lib/prisma';
 import debug from 'debug';
 import { z } from 'zod';
 
-const log = debug('superlytics:team-member-remove');
+const log = debug('superlytics:team-role-change');
 
 export async function GET(
   request: Request,
@@ -56,7 +57,46 @@ export async function POST(
     return badRequest('The User does not exists on this team.');
   }
 
+  // Store old role for email notification
+  const oldRole = teamUser.role;
+  const newRole = body.role;
+
+  log('Role change request:', { oldRole, newRole, userId });
+
   const user = await updateTeamUser(teamUser.id, body);
+
+  // Send email notification if role actually changed
+  if (oldRole !== newRole) {
+    log('Role changed, sending email notification');
+
+    // Get team and user details
+    try {
+      const team = await getTeam(teamId);
+      const userDetails = await prisma.client.user.findUnique({
+        where: { id: userId },
+        select: { email: true, username: true },
+      });
+
+      if (team && userDetails) {
+        await emailService.sendMemberRoleChanged(
+          userDetails.email,
+          userDetails.username,
+          team.name,
+          oldRole,
+          newRole,
+          auth.user.username,
+        );
+        log('✅ Role change email sent successfully');
+      } else {
+        log('❌ Missing team or user details for email notification');
+      }
+    } catch (error) {
+      log('❌ Error sending role change email:', error);
+      // Don't fail the role update if email fails
+    }
+  } else {
+    log('Role unchanged, skipping email notification');
+  }
 
   return json(user);
 }

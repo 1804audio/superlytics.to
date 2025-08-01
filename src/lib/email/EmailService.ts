@@ -8,6 +8,7 @@ import {
   WelcomeToTeamData,
   MemberJoinedData,
   MemberLeftData,
+  MemberRoleChangedData,
   PasswordResetData,
   EmailVerificationData,
   WelcomeEmailData,
@@ -280,6 +281,34 @@ export class EmailService implements IEmailService {
 
     // Return true if at least one email was sent successfully
     return results.some(result => result === true);
+  }
+
+  async sendMemberRoleChanged(
+    memberEmail: string,
+    memberName: string,
+    teamName: string,
+    oldRole: string,
+    newRole: string,
+    changedBy: string,
+  ): Promise<boolean> {
+    const data: MemberRoleChangedData = {
+      memberName,
+      memberEmail,
+      teamName,
+      oldRole,
+      newRole,
+      changedBy,
+      appName: this.config.appName,
+    };
+
+    const template = emailTemplates.team.memberRoleChanged;
+
+    return this.sendEmail({
+      to: memberEmail,
+      subject: template.subject(data),
+      html: template.html(data),
+      text: template.text(data),
+    });
   }
 
   // Data export emails
