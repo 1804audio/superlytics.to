@@ -1,4 +1,7 @@
+import debug from 'debug';
 import { EmailConfig } from './types';
+
+const log = debug('superlytics:email-utils');
 
 /**
  * Utility functions for email processing

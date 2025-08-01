@@ -1,18 +1,20 @@
 import { globalEmailStyles } from './styles';
 import { emailComponents } from './components';
+import { emailTheme } from './theme';
 
 export interface EmailLayoutOptions {
   title: string;
   appName?: string;
   preheader?: string;
+  footerText?: string;
 }
 
 export const emailLayouts = {
   /**
-   * Standard email layout with container, logo, and footer
+   * Standard email layout - Clean & Minimal
    */
   standard: (content: string, options: EmailLayoutOptions) => {
-    const { title, appName = 'SuperLytics', preheader } = options;
+    const { title, appName = 'SuperLytics', preheader, footerText } = options;
 
     return `
       <!DOCTYPE html>
@@ -39,7 +41,7 @@ export const emailLayouts = {
           <div class="container">
             ${emailComponents.logo(appName)}
             ${content}
-            ${emailComponents.footer(appName)}
+            ${emailComponents.footer(appName, footerText)}
           </div>
         </body>
       </html>
@@ -50,7 +52,7 @@ export const emailLayouts = {
    * Simple layout without logo for system emails
    */
   simple: (content: string, options: EmailLayoutOptions) => {
-    const { title, preheader } = options;
+    const { title, preheader, appName = 'SuperLytics', footerText } = options;
 
     return `
       <!DOCTYPE html>
@@ -76,6 +78,7 @@ export const emailLayouts = {
           }
           <div class="container">
             ${content}
+            ${emailComponents.footer(appName, footerText)}
           </div>
         </body>
       </html>
@@ -83,10 +86,10 @@ export const emailLayouts = {
   },
 
   /**
-   * Notification layout with emphasis styling
+   * Notification layout - Clean Design
    */
   notification: (content: string, options: EmailLayoutOptions) => {
-    const { title, appName = 'SuperLytics', preheader } = options;
+    const { title, appName = 'SuperLytics', preheader, footerText } = options;
 
     return `
       <!DOCTYPE html>
@@ -99,16 +102,16 @@ export const emailLayouts = {
           <style>
             ${globalEmailStyles}
             .notification-badge {
-              background: linear-gradient(135deg, #007bff, #0056b3);
+              background: ${emailTheme.colors.primary};
               color: white;
-              padding: 4px 12px;
-              border-radius: 12px;
-              font-size: 12px;
-              font-weight: 600;
+              padding: 6px 16px;
+              border-radius: 4px;
+              font-size: 11px;
+              font-weight: 500;
               text-transform: uppercase;
               letter-spacing: 0.5px;
               display: inline-block;
-              margin-bottom: 20px;
+              margin-bottom: 16px;
             }
           </style>
         </head>
@@ -128,7 +131,7 @@ export const emailLayouts = {
             ${emailComponents.logo(appName)}
             <div class="notification-badge">Notification</div>
             ${content}
-            ${emailComponents.footer(appName)}
+            ${emailComponents.footer(appName, footerText)}
           </div>
         </body>
       </html>
@@ -136,10 +139,10 @@ export const emailLayouts = {
   },
 
   /**
-   * Marketing layout with enhanced styling
+   * Marketing layout - Professional & Clean
    */
   marketing: (content: string, options: EmailLayoutOptions) => {
-    const { title, appName = 'SuperLytics', preheader } = options;
+    const { title, appName = 'SuperLytics', preheader, footerText } = options;
 
     return `
       <!DOCTYPE html>
@@ -152,16 +155,17 @@ export const emailLayouts = {
           <style>
             ${globalEmailStyles}
             .marketing-header {
-              background: linear-gradient(135deg, #007bff, #0056b3);
+              background: ${emailTheme.colors.primary};
               color: white;
-              padding: 40px;
+              padding: 32px;
               text-align: center;
-              margin: -40px -40px 40px -40px;
-              border-radius: 8px 8px 0 0;
+              margin: -32px -32px 32px -32px;
+              border-radius: 4px 4px 0 0;
             }
             .marketing-header .logo {
               color: white;
               margin-bottom: 0;
+              font-size: ${emailTheme.typography.sizes.h3};
             }
           </style>
         </head>
@@ -182,7 +186,7 @@ export const emailLayouts = {
               ${emailComponents.logo(appName)}
             </div>
             ${content}
-            ${emailComponents.footer(appName)}
+            ${emailComponents.footer(appName, footerText)}
           </div>
         </body>
       </html>

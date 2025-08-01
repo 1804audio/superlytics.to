@@ -38,17 +38,14 @@ export const memberJoinedTemplate: EmailTemplate<MemberJoinedData> = {
       ${emailComponents.buttonContainer([
         emailComponents.button('Manage Team', data.teamManageUrl, {
           variant: 'info',
-          size: 'large',
         }),
-      ])}
-
-      ${emailComponents.footer(data.appName, 'Your team is growing! 🚀')}
-    `;
+      ])}`;
 
     return emailLayouts.notification(content, {
       title: `New member joined ${data.teamName} - ${data.appName}`,
       appName: data.appName,
       preheader: memberJoinedTemplate.preheader!(data),
+      footerText: 'Your team is growing! 🚀',
     });
   },
 

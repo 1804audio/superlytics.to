@@ -49,8 +49,7 @@ export const teamInvitationTemplate: EmailTemplate<TeamInvitationData> = {
         </p>
       `,
         'small-text',
-      )}
-    `;
+      )}`;
 
     return emailLayouts.standard(content, {
       title: `You're invited to join ${data.teamName} - ${data.appName}`,
@@ -82,6 +81,6 @@ Quick Tip: After logging in or creating your account, go to Profile dropdown →
 This invitation was sent by ${data.inviterName}
 If you weren't expecting this invitation, you can safely ignore this email.
 
-© ${new Date().getFullYear()} ${data.appName}. All rights reserved.
+© ${new Date().getFullYear()} ${data.appName}
   `,
 };

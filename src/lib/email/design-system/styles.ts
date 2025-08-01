@@ -11,36 +11,36 @@ export const globalEmailStyles = `
     background-color: ${emailTheme.colors.background};
   }
   
-  /* Container */
+  /* Container - Ultra Clean Design */
   .container { 
-    max-width: 600px; 
+    max-width: 580px; 
     margin: 0 auto; 
     background: ${emailTheme.colors.surface}; 
-    padding: ${emailTheme.spacing['4xl']};
-    border-radius: ${emailTheme.borderRadius.lg};
-    box-shadow: ${emailTheme.shadows.md};
+    padding: 32px;
+    border-radius: 0;
   }
   
-  /* Typography */
+  /* Typography - Minimal Logo */
   .logo { 
-    font-size: ${emailTheme.typography.sizes.logo}; 
-    font-weight: ${emailTheme.typography.weights.bold}; 
+    font-size: 18px; 
+    font-weight: 600; 
     color: ${emailTheme.colors.textPrimary}; 
-    margin-bottom: ${emailTheme.spacing['4xl']};
-    text-align: center;
+    margin-bottom: 32px;
+    text-align: left;
+    letter-spacing: -0.3px;
   }
   
   .greeting {
     font-size: ${emailTheme.typography.sizes.h4};
     color: ${emailTheme.colors.textPrimary};
-    margin-bottom: ${emailTheme.spacing.xl};
+    margin-bottom: ${emailTheme.spacing.lg};
     font-weight: ${emailTheme.typography.weights.medium};
   }
   
   .message { 
     font-size: ${emailTheme.typography.sizes.body}; 
     color: ${emailTheme.colors.textPrimary}; 
-    margin-bottom: ${emailTheme.spacing['2xl']}; 
+    margin-bottom: ${emailTheme.spacing.xl}; 
     line-height: ${emailTheme.typography.lineHeight.relaxed};
   }
   
@@ -55,88 +55,107 @@ export const globalEmailStyles = `
     color: ${emailTheme.colors.textSecondary};
   }
   
-  /* Buttons */
+  /* Buttons - Ultra Minimal & Professional */
   .btn { 
     display: inline-block; 
-    padding: ${emailTheme.spacing.lg} ${emailTheme.spacing['2xl']}; 
-    color: ${emailTheme.colors.surface}; 
+    padding: 12px 24px; 
+    color: white; 
     text-decoration: none; 
-    border-radius: ${emailTheme.borderRadius.md}; 
-    font-weight: ${emailTheme.typography.weights.medium}; 
-    font-size: ${emailTheme.typography.sizes.body};
+    border-radius: 6px; 
+    font-weight: 500; 
+    font-size: 14px;
     text-align: center;
-    margin: ${emailTheme.spacing.sm};
-    min-width: 160px;
+    margin: 4px;
+    min-width: 100px;
     transition: all 0.2s ease;
+    line-height: 1.4;
+    border: none;
   }
   
-  .btn-primary { background-color: ${emailTheme.colors.primary}; }
-  .btn-success { background-color: ${emailTheme.colors.success}; }
-  .btn-warning { background-color: ${emailTheme.colors.warning}; color: ${emailTheme.colors.textPrimary}; }
-  .btn-danger { background-color: ${emailTheme.colors.danger}; }
-  .btn-info { background-color: ${emailTheme.colors.info}; }
+  .btn-primary { 
+    background-color: ${emailTheme.colors.primary};
+    border: 1px solid ${emailTheme.colors.primary};
+  }
+  .btn-success { 
+    background-color: ${emailTheme.colors.success};
+    border: 1px solid ${emailTheme.colors.success};
+  }
+  .btn-warning { 
+    background-color: ${emailTheme.colors.warning}; 
+    color: ${emailTheme.colors.textPrimary};
+    border: 1px solid ${emailTheme.colors.warning};
+  }
+  .btn-danger { 
+    background-color: ${emailTheme.colors.danger};
+    border: 1px solid ${emailTheme.colors.danger};
+  }
+  .btn-info { 
+    background-color: ${emailTheme.colors.info};
+    border: 1px solid ${emailTheme.colors.info};
+  }
   
   .btn-large {
-    padding: ${emailTheme.spacing.xl} ${emailTheme.spacing['3xl']};
-    font-size: ${emailTheme.typography.sizes.h4};
-    font-weight: ${emailTheme.typography.weights.semibold};
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 120px;
   }
   
   .button-container {
     text-align: center;
-    margin: ${emailTheme.spacing['3xl']} 0;
+    margin: 24px 0;
   }
   
-  /* Cards and boxes */
+  /* Cards and boxes - Cleaner Design */
   .card {
     background: ${emailTheme.colors.surface};
-    border: 1px solid ${emailTheme.colors.border};
-    border-radius: ${emailTheme.borderRadius.md};
-    padding: ${emailTheme.spacing.xl};
-    margin: ${emailTheme.spacing['2xl']} 0;
+    border: 1px solid ${emailTheme.colors.borderLight};
+    border-radius: ${emailTheme.borderRadius.sm};
+    padding: ${emailTheme.spacing.lg};
+    margin: ${emailTheme.spacing.xl} 0;
   }
   
   .highlight-box {
     background: ${emailTheme.colors.teamSuccess};
-    border: 1px solid ${emailTheme.colors.teamSuccessBorder};
-    padding: ${emailTheme.spacing.xl};
-    border-radius: ${emailTheme.borderRadius.md};
-    margin: ${emailTheme.spacing['3xl']} 0;
+    border-left: 3px solid ${emailTheme.colors.teamSuccessBorder};
+    padding: ${emailTheme.spacing.lg};
+    border-radius: ${emailTheme.borderRadius.sm};
+    margin: ${emailTheme.spacing['2xl']} 0;
     text-align: center;
   }
   
   .info-box {
     background: ${emailTheme.colors.teamInfo};
-    border: 1px solid ${emailTheme.colors.teamInfoBorder};
-    padding: ${emailTheme.spacing.xl};
-    border-radius: ${emailTheme.borderRadius.md};
-    margin: ${emailTheme.spacing['3xl']} 0;
+    border-left: 3px solid ${emailTheme.colors.teamInfoBorder};
+    padding: ${emailTheme.spacing.lg};
+    border-radius: ${emailTheme.borderRadius.sm};
+    margin: ${emailTheme.spacing['2xl']} 0;
   }
   
   .warning-box {
     background: ${emailTheme.colors.warningBg};
-    border: 1px solid ${emailTheme.colors.warningBorder};
-    padding: ${emailTheme.spacing.xl};
+    border-left: 3px solid ${emailTheme.colors.warningBorder};
+    padding: ${emailTheme.spacing.lg};
     border-radius: ${emailTheme.borderRadius.sm};
-    margin: ${emailTheme.spacing['3xl']} 0;
+    margin: ${emailTheme.spacing['2xl']} 0;
   }
   
   .error-box {
     background: ${emailTheme.colors.errorBg};
-    border: 1px solid ${emailTheme.colors.errorBorder};
-    padding: ${emailTheme.spacing.xl};
-    border-radius: ${emailTheme.borderRadius.md};
-    margin: ${emailTheme.spacing['3xl']} 0;
+    border-left: 3px solid ${emailTheme.colors.errorBorder};
+    padding: ${emailTheme.spacing.lg};
+    border-radius: ${emailTheme.borderRadius.sm};
+    margin: ${emailTheme.spacing['2xl']} 0;
   }
   
-  /* Access code styling */
+  /* Access code styling - Minimal */
   .access-code {
     background: ${emailTheme.colors.background};
-    border: 2px dashed ${emailTheme.colors.borderDashed};
-    border-radius: ${emailTheme.borderRadius.lg};
-    padding: ${emailTheme.spacing.xl};
+    border: 1px solid ${emailTheme.colors.borderLight};
+    border-radius: ${emailTheme.borderRadius.sm};
+    padding: ${emailTheme.spacing.lg};
     text-align: center;
-    margin: ${emailTheme.spacing['3xl']} 0;
+    margin: ${emailTheme.spacing['2xl']} 0;
     font-family: ${emailTheme.typography.fontFamilyMono};
   }
   
@@ -148,13 +167,13 @@ export const globalEmailStyles = `
     margin: ${emailTheme.spacing.sm} 0;
   }
   
-  /* Instructions */
+  /* Instructions - Cleaner */
   .instructions {
     background: ${emailTheme.colors.teamInfo};
-    border-left: 4px solid ${emailTheme.colors.primary};
-    padding: ${emailTheme.spacing.xl};
-    margin: ${emailTheme.spacing['3xl']} 0;
-    border-radius: 0 ${emailTheme.borderRadius.md} ${emailTheme.borderRadius.md} 0;
+    border-left: 3px solid ${emailTheme.colors.primary};
+    padding: ${emailTheme.spacing.lg};
+    margin: ${emailTheme.spacing['2xl']} 0;
+    border-radius: 0 ${emailTheme.borderRadius.sm} ${emailTheme.borderRadius.sm} 0;
   }
   
   .instructions h3 {
@@ -234,13 +253,12 @@ export const globalEmailStyles = `
     margin-bottom: ${emailTheme.spacing.lg};
   }
   
-  /* Footer */
+  /* Footer - Clean & Minimal */
   .footer { 
     font-size: ${emailTheme.typography.sizes.small};
     color: ${emailTheme.colors.textSecondary}; 
     margin-top: ${emailTheme.spacing['4xl']}; 
-    padding-top: ${emailTheme.spacing.xl};
-    border-top: 1px solid ${emailTheme.colors.borderLight};
+    padding-top: ${emailTheme.spacing.lg};
     text-align: center;
     line-height: ${emailTheme.typography.lineHeight.normal};
   }

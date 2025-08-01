@@ -18,17 +18,16 @@ export const welcomeTemplate: EmailTemplate<WelcomeEmailData> = {
       ${emailComponents.buttonContainer([
         emailComponents.button('Go to Dashboard', data.dashboardUrl, {
           variant: 'success',
-          size: 'large',
         }),
       ])}
 
-      ${emailComponents.footer(data.appName, 'Happy analyzing! 📊')}
     `;
 
     return emailLayouts.marketing(content, {
       title: `Welcome to ${data.appName} - You're all set!`,
       appName: data.appName,
       preheader: welcomeTemplate.preheader!(data),
+      footerText: 'Happy analyzing! 📊',
     });
   },
 

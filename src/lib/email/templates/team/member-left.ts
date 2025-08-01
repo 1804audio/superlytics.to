@@ -35,17 +35,14 @@ export const memberLeftTemplate: EmailTemplate<MemberLeftData> = {
       ${emailComponents.buttonContainer([
         emailComponents.button('Manage Team', data.teamManageUrl, {
           variant: 'info',
-          size: 'large',
         }),
-      ])}
-
-      ${emailComponents.footer(data.appName, 'Need to invite new members? You can do that from your team settings.')}
-    `;
+      ])}`;
 
     return emailLayouts.notification(content, {
       title: `Member left ${data.teamName} - ${data.appName}`,
       appName: data.appName,
       preheader: memberLeftTemplate.preheader!(data),
+      footerText: 'Need to invite new members? You can do that from your team settings.',
     });
   },
 

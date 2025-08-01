@@ -223,12 +223,12 @@ export const emailComponents = {
   `,
 
   /**
-   * Footer component
+   * Footer component - Ultra Minimal
    */
   footer: (appName = 'SuperLytics', additionalText?: string) => `
     <div class="footer">
-      ${additionalText ? `${additionalText}<br><br>` : ''}
-      © ${new Date().getFullYear()} ${appName}. All rights reserved.
+      ${additionalText ? `<div style="margin-bottom: 16px; font-size: 12px; color: #666;">${additionalText}</div>` : ''}
+      <div style="font-size: 12px; color: #999;">© ${new Date().getFullYear()} ${appName}</div>
     </div>
   `,
 

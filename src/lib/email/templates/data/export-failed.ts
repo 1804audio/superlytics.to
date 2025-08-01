@@ -34,17 +34,16 @@ export const dataExportFailedTemplate: EmailTemplate<DataExportFailedData> = {
       ${emailComponents.buttonContainer([
         emailComponents.button('Try Export Again', data.retryUrl, {
           variant: 'primary',
-          size: 'large',
         }),
       ])}
 
-      ${emailComponents.footer(data.appName, `Need help? Contact us at ${data.supportEmail}`)}
     `;
 
     return emailLayouts.standard(content, {
       title: `Data Export Failed - ${data.appName}`,
       appName: data.appName,
       preheader: dataExportFailedTemplate.preheader!(data),
+      footerText: `Need help? Contact us at ${data.supportEmail}`,
     });
   },
 

@@ -49,24 +49,12 @@ export const memberRoleChangedTemplate: EmailTemplate<MemberRoleChangedData> = {
       `)}
       
       ${emailComponents.infoBox(`
-        <div style="text-align: center; padding: 20px;">
-          <div style="font-size: 18px; font-weight: 600; color: #1565c0; margin-bottom: 20px;">
+        <div style="text-align: center;">
+          <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">
             ${changeIcon} Role Update
           </div>
-          <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
-            <div style="text-align: center;">
-              <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Previous Role</div>
-              <div style="font-size: 16px; font-weight: 600; color: #666; padding: 8px 16px; background: #f8f9fa; border-radius: 4px;">
-                ${formattedOldRole}
-              </div>
-            </div>
-            <div style="font-size: 24px; color: #1565c0;">→</div>
-            <div style="text-align: center;">
-              <div style="font-size: 14px; color: #1565c0; margin-bottom: 5px;">New Role</div>
-              <div style="font-size: 16px; font-weight: 600; color: #1565c0; padding: 8px 16px; background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 4px;">
-                ${formattedNewRole}
-              </div>
-            </div>
+          <div>
+            <strong>Previous:</strong> ${formattedOldRole} → <strong>New:</strong> ${formattedNewRole}
           </div>
         </div>
       `)}
@@ -93,18 +81,17 @@ export const memberRoleChangedTemplate: EmailTemplate<MemberRoleChangedData> = {
           `${process.env.NEXT_PUBLIC_APP_URL}/settings/teams`,
           {
             variant: 'primary',
-            size: 'large',
           },
         ),
       ])}
 
-      ${emailComponents.footer(data.appName, 'Questions about your new role? Contact your team owner or our support team.')}
     `;
 
     return emailLayouts.standard(content, {
       title: `Role Updated in ${data.teamName} - ${data.appName}`,
       appName: data.appName,
       preheader: memberRoleChangedTemplate.preheader!(data),
+      footerText: 'Questions about your new role? Contact your team owner or our support team.',
     });
   },
 

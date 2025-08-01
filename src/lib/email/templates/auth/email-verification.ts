@@ -18,48 +18,28 @@ export const emailVerificationTemplate: EmailTemplate<EmailVerificationData> = {
       ${emailComponents.buttonContainer([
         emailComponents.button('Verify Email Address', data.verificationUrl, {
           variant: 'success',
-          size: 'large',
         }),
       ])}
       
-      ${emailComponents.message(
-        `
-        <div style="font-size: 14px; color: #666; margin: 30px 0 15px 0;">
-          If the button doesn't work, you can copy and paste this link into your browser:
-        </div>
-        <div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; border-radius: 4px; 
-                    word-break: break-all; font-size: 14px; color: #007bff; margin-bottom: 30px;">
-          ${data.verificationUrl}
-        </div>
-      `,
-        'small-text',
-      )}
+      ${emailComponents.message(`
+        <p style="font-size: 12px; color: #666;">If the button doesn't work, copy this link:</p>
+        <p style="font-size: 12px; word-break: break-all;"><a href="${data.verificationUrl}">${data.verificationUrl}</a></p>
+      `)}
       
       ${emailComponents.infoBox(`
-        <div style="font-size: 16px; font-weight: 600; color: #1565c0; margin-bottom: 15px;">
-          🚀 What's next?
-        </div>
-        <div style="font-size: 14px; color: #1565c0; margin-bottom: 10px;">
-          Once you verify your email, you'll be able to:
-        </div>
-        <ul style="margin: 0; padding-left: 20px;">
-          <li style="color: #1565c0; margin-bottom: 8px; font-size: 14px;">Set up your first website for tracking</li>
-          <li style="color: #1565c0; margin-bottom: 8px; font-size: 14px;">Access your analytics dashboard</li>
-          <li style="color: #1565c0; margin-bottom: 8px; font-size: 14px;">Configure privacy-focused analytics</li>
-        </ul>
+        <strong>🚀 What's next?</strong><br>
+        Once verified, you can set up tracking, access your dashboard, and configure analytics.
       `)}
       
       ${emailComponents.warningBox(`
         <strong>Note:</strong> This verification link will expire in 24 hours.
-      `)}
-
-      ${emailComponents.footer(data.appName, 'If you have questions, reply to this email or contact our support team.')}
-    `;
+      `)}`;
 
     return emailLayouts.standard(content, {
       title: `Verify Your Email - ${data.appName}`,
       appName: data.appName,
       preheader: emailVerificationTemplate.preheader!(data),
+      footerText: 'If you have questions, reply to this email or contact our support team.',
     });
   },
 

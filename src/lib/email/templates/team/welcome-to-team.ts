@@ -37,17 +37,14 @@ export const welcomeToTeamTemplate: EmailTemplate<WelcomeToTeamData> = {
       ${emailComponents.buttonContainer([
         emailComponents.button('Go to Team Dashboard', data.teamDashboardUrl, {
           variant: 'success',
-          size: 'large',
         }),
-      ])}
-
-      ${emailComponents.footer(data.appName, "Ready to explore your team's analytics! 📊")}
-    `;
+      ])}`;
 
     return emailLayouts.standard(content, {
       title: `Welcome to ${data.teamName} - ${data.appName}`,
       appName: data.appName,
       preheader: welcomeToTeamTemplate.preheader!(data),
+      footerText: "Ready to explore your team's analytics! 📊",
     });
   },
 

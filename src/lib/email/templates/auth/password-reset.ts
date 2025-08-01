@@ -18,15 +18,13 @@ export const passwordResetTemplate: EmailTemplate<PasswordResetData> = {
       ${emailComponents.buttonContainer([
         emailComponents.button('Reset Password', data.resetUrl, {
           variant: 'danger',
-          size: 'large',
         }),
       ])}
       
       ${emailComponents.warningBox(`
         <strong>Important:</strong> This link will expire in 1 hour for security reasons.<br><br>
         If you didn't request this password reset, please ignore this email.
-      `)}
-    `;
+      `)}`;
 
     return emailLayouts.standard(content, {
       title: `Reset Your Password - ${data.appName}`,

@@ -44,15 +44,13 @@ export const dataExportReadyTemplate: EmailTemplate<DataExportReadyData> = {
       ${emailComponents.warningBox(`
         <strong>⏰ Important:</strong> These download links will expire in ${data.expiryHours} hours for security reasons.<br><br>
         <strong>🔒 Privacy:</strong> Your data files are securely stored and will be automatically deleted after ${data.expiryHours} hours.
-      `)}
-
-      ${emailComponents.footer(data.appName, "Need help with your export? Reply to this email and we'll assist you.")}
-    `;
+      `)}`;
 
     return emailLayouts.standard(content, {
       title: `Your Data Export is Ready - ${data.appName}`,
       appName: data.appName,
       preheader: dataExportReadyTemplate.preheader!(data),
+      footerText: "Need help with your export? Reply to this email and we'll assist you.",
     });
   },
 
