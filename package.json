@@ -5,6 +5,7 @@
   "author": "1804 Audio",
   "scripts": {
     "dev": "next dev",
+    "dev-clean": "rm -rf .next && next dev",
     "dev-turbo": "next dev -p 3001 --turbopack",
     "build": "npm-run-all check-env build-db check-db build-tracker build-geo build-app",
     "start": "next start",

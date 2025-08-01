@@ -878,6 +878,732 @@ Happy analyzing! 📊
       text,
     });
   }
+
+  async sendTeamInvitation(
+    email: string,
+    teamName: string,
+    inviterName: string,
+    accessCode: string,
+  ): Promise<boolean> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>You're invited to join ${teamName} - SuperLytics</title>
+          <style>
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+              line-height: 1.6; 
+              color: #333;
+              margin: 0;
+              padding: 20px;
+              background-color: #f8f9fa;
+            }
+            .container { 
+              max-width: 600px; 
+              margin: 0 auto; 
+              background: #ffffff; 
+              padding: 40px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .logo { 
+              font-size: 32px; 
+              font-weight: bold; 
+              color: #333; 
+              margin-bottom: 40px;
+              text-align: center;
+            }
+            .greeting {
+              font-size: 18px;
+              color: #333;
+              margin-bottom: 20px;
+            }
+            .message { 
+              font-size: 16px; 
+              color: #333; 
+              margin-bottom: 30px; 
+            }
+            .access-code {
+              background: #f8f9fa;
+              border: 2px dashed #dee2e6;
+              border-radius: 8px;
+              padding: 20px;
+              text-align: center;
+              margin: 30px 0;
+              font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            }
+            .code {
+              font-size: 24px;
+              font-weight: bold;
+              color: #007bff;
+              letter-spacing: 2px;
+              margin: 10px 0;
+            }
+            .instructions {
+              background: #e3f2fd;
+              border-left: 4px solid #2196f3;
+              padding: 20px;
+              margin: 30px 0;
+              border-radius: 0 6px 6px 0;
+            }
+            .instructions h3 {
+              margin-top: 0;
+              color: #1976d2;
+              font-size: 18px;
+            }
+            .instructions ol {
+              margin: 10px 0;
+              padding-left: 20px;
+            }
+            .instructions li {
+              margin: 8px 0;
+              color: #333;
+            }
+            .button-container {
+              text-align: center;
+              margin: 30px 0;
+            }
+            .cta-button { 
+              display: inline-block; 
+              padding: 14px 28px; 
+              color: #ffffff; 
+              text-decoration: none; 
+              border-radius: 6px; 
+              font-weight: 600;
+              font-size: 16px;
+              text-align: center;
+              margin: 10px;
+              min-width: 160px;
+            }
+            .btn-login {
+              background-color: #28a745;
+            }
+            .btn-signup {
+              background-color: #007bff;
+            }
+            .tip-box {
+              text-align: center; 
+              margin: 30px 0; 
+              padding: 20px; 
+              background: #fff3cd; 
+              border: 1px solid #ffeaa7; 
+              border-radius: 6px;
+            }
+            .footer { 
+              margin-top: 40px; 
+              padding-top: 20px; 
+              border-top: 1px solid #dee2e6; 
+              color: #6c757d; 
+              font-size: 14px; 
+              text-align: center; 
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="logo">SuperLytics</div>
+            
+            <div class="greeting">Hi there! 👋</div>
+            
+            <div class="message">
+              <strong>${inviterName}</strong> has invited you to join the <strong>${teamName}</strong> team on SuperLytics.
+            </div>
+
+            <div class="access-code">
+              <div>Your Team Access Code:</div>
+              <div class="code">${accessCode}</div>
+              <div style="font-size: 14px; color: #6c757d; margin-top: 10px;">
+                Copy this code - you'll need it to join the team
+              </div>
+            </div>
+
+            <div class="instructions">
+              <h3>📋 How to Join:</h3>
+              <ol>
+                <li><strong>Choose an option below:</strong> Login if you have an account, or Create Account if you're new</li>
+                <li><strong>After logging in:</strong> Click Profile dropdown → Teams → Join Team</li>
+                <li><strong>Paste the access code</strong> shown above when prompted</li>
+                <li><strong>That's it!</strong> You'll be part of the ${teamName} team</li>
+              </ol>
+            </div>
+
+            <div class="button-container">
+              <a href="${this.appUrl}/login?email=${encodeURIComponent(email)}" class="cta-button btn-login">
+                🔑 Login to SuperLytics
+              </a>
+              <a href="${this.appUrl}/signup?email=${encodeURIComponent(email)}" class="cta-button btn-signup">
+                ✨ Create Account
+              </a>
+            </div>
+
+            <div class="tip-box">
+              <strong>💡 Quick Tip:</strong> After logging in or creating your account, 
+              go to <strong>Profile dropdown → Teams → Join Team</strong> and paste the access code above.
+            </div>
+
+            <div class="footer">
+              <p>This invitation was sent by ${inviterName}</p>
+              <p>If you weren't expecting this invitation, you can safely ignore this email.</p>
+              <p>&copy; ${new Date().getFullYear()} SuperLytics. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const text = `
+You're invited to join ${teamName} on SuperLytics!
+
+Hi there,
+
+${inviterName} has invited you to join the "${teamName}" team on SuperLytics.
+
+Your Team Access Code: ${accessCode}
+
+How to Join:
+1. Choose an option: Login if you have an account, or Create Account if you're new
+2. After logging in: Click Profile dropdown → Teams → Join Team
+3. Paste the access code shown above when prompted
+4. That's it! You'll be part of the ${teamName} team
+
+Login: ${this.appUrl}/login?email=${encodeURIComponent(email)}
+Create Account: ${this.appUrl}/signup?email=${encodeURIComponent(email)}
+
+Quick Tip: After logging in or creating your account, go to Profile dropdown → Teams → Join Team and paste the access code above.
+
+This invitation was sent by ${inviterName}
+If you weren't expecting this invitation, you can safely ignore this email.
+
+© ${new Date().getFullYear()} SuperLytics. All rights reserved.
+    `;
+
+    return this.sendEmail({
+      to: email,
+      subject: `🎉 You're invited to join ${teamName} on ${this.appName}`,
+      html,
+      text,
+    });
+  }
+
+  async sendWelcomeToTeam(
+    email: string,
+    username: string,
+    teamName: string,
+    websiteCount: number = 0,
+  ): Promise<boolean> {
+    const teamDashboardUrl = `${this.appUrl}/dashboard`;
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Welcome to ${teamName} - SuperLytics</title>
+          <style>
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+              line-height: 1.6; 
+              color: #333;
+              margin: 0;
+              padding: 20px;
+              background-color: #f8f9fa;
+            }
+            .container { 
+              max-width: 600px; 
+              margin: 0 auto; 
+              background: #ffffff; 
+              padding: 40px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .logo { 
+              font-size: 32px; 
+              font-weight: bold; 
+              color: #333; 
+              margin-bottom: 40px;
+              text-align: center;
+            }
+            .greeting {
+              font-size: 18px;
+              color: #333;
+              margin-bottom: 20px;
+            }
+            .message { 
+              font-size: 16px; 
+              color: #333; 
+              margin-bottom: 30px; 
+              line-height: 1.6;
+            }
+            .team-highlight {
+              background: #e8f5e8;
+              border: 1px solid #c3e6c3;
+              padding: 20px;
+              border-radius: 6px;
+              margin: 30px 0;
+              text-align: center;
+            }
+            .team-name {
+              font-size: 24px;
+              font-weight: 600;
+              color: #155724;
+            }
+            .cta-button { 
+              display: inline-block; 
+              background: #28a745;
+              color: #ffffff; 
+              text-decoration: none; 
+              padding: 15px 30px; 
+              border-radius: 6px; 
+              font-weight: 500; 
+              font-size: 16px;
+              margin: 20px 0;
+            }
+            .team-access {
+              background: #e3f2fd;
+              border: 1px solid #bbdefb;
+              padding: 20px;
+              border-radius: 6px;
+              margin: 30px 0;
+            }
+            .team-access-title {
+              font-size: 16px;
+              font-weight: 600;
+              color: #1565c0;
+              margin-bottom: 15px;
+            }
+            .team-access ul {
+              margin: 0;
+              padding-left: 20px;
+            }
+            .team-access li {
+              color: #1565c0;
+              margin-bottom: 8px;
+              font-size: 14px;
+            }
+            .footer { 
+              font-size: 14px;
+              color: #666; 
+              margin-top: 40px; 
+              padding-top: 20px;
+              border-top: 1px solid #eee;
+              text-align: center;
+              line-height: 1.5;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="logo">SuperLytics</div>
+            
+            <div class="greeting">Hi ${username},</div>
+            
+            <div class="message">
+              Congratulations! You&apos;ve successfully joined the team and now have access to collaborative analytics.
+            </div>
+            
+            <div class="team-highlight">
+              <div class="team-name">Welcome to ${teamName}! 🎉</div>
+            </div>
+            
+            <div class="team-access">
+              <div class="team-access-title">You now have access to:</div>
+              <ul>
+                <li><strong>${websiteCount} ${websiteCount === 1 ? 'website' : 'websites'}</strong> with analytics data</li>
+                <li>Team analytics dashboard</li>
+                <li>Shared reports and insights</li>
+                <li>Collaborative workspace</li>
+              </ul>
+            </div>
+            
+            <div style="text-align: center;">
+              <a href="${teamDashboardUrl}" class="cta-button">Go to Team Dashboard</a>
+            </div>
+            
+            <div class="footer">
+              © ${new Date().getFullYear()} SuperLytics. All rights reserved.<br><br>
+              Ready to explore your team&apos;s analytics! 📊
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const text = `
+Welcome to ${teamName}!
+
+Hi ${username},
+
+Congratulations! You've successfully joined the ${teamName} team on ${this.appName}.
+
+You now have access to:
+• ${websiteCount} ${websiteCount === 1 ? 'website' : 'websites'} with analytics data
+• Team analytics dashboard
+• Shared reports and insights
+• Collaborative workspace
+
+Visit your team dashboard: ${teamDashboardUrl}
+
+Ready to explore your team's analytics! 📊
+
+© ${new Date().getFullYear()} ${this.appName}
+    `;
+
+    return this.sendEmail({
+      to: email,
+      subject: `🎉 Welcome to ${teamName} on ${this.appName}`,
+      html,
+      text,
+    });
+  }
+
+  async sendNewMemberJoined(
+    emails: string[],
+    memberName: string,
+    memberEmail: string,
+    teamName: string,
+    teamSize: number,
+  ): Promise<boolean> {
+    const teamManageUrl = `${this.appUrl}/settings/teams`;
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>New member joined ${teamName} - SuperLytics</title>
+          <style>
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+              line-height: 1.6; 
+              color: #333;
+              margin: 0;
+              padding: 20px;
+              background-color: #f8f9fa;
+            }
+            .container { 
+              max-width: 600px; 
+              margin: 0 auto; 
+              background: #ffffff; 
+              padding: 40px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .logo { 
+              font-size: 32px; 
+              font-weight: bold; 
+              color: #333; 
+              margin-bottom: 40px;
+              text-align: center;
+            }
+            .greeting {
+              font-size: 18px;
+              color: #333;
+              margin-bottom: 20px;
+            }
+            .message { 
+              font-size: 16px; 
+              color: #333; 
+              margin-bottom: 30px; 
+              line-height: 1.6;
+            }
+            .member-highlight {
+              background: #e8f5e8;
+              border: 1px solid #c3e6c3;
+              padding: 20px;
+              border-radius: 6px;
+              margin: 30px 0;
+              text-align: center;
+            }
+            .member-name {
+              font-size: 20px;
+              font-weight: 600;
+              color: #155724;
+              margin-bottom: 8px;
+            }
+            .member-email {
+              font-size: 14px;
+              color: #155724;
+              margin-bottom: 15px;
+            }
+            .team-stats {
+              background: #e3f2fd;
+              border: 1px solid #bbdefb;
+              padding: 15px;
+              border-radius: 6px;
+              display: inline-block;
+            }
+            .team-stats-label {
+              font-size: 14px;
+              color: #1565c0;
+            }
+            .team-stats-value {
+              font-size: 18px;
+              font-weight: 600;
+              color: #1565c0;
+            }
+            .cta-button { 
+              display: inline-block; 
+              background: #007bff;
+              color: #ffffff; 
+              text-decoration: none; 
+              padding: 15px 30px; 
+              border-radius: 6px; 
+              font-weight: 500; 
+              font-size: 16px;
+              margin: 20px 0;
+            }
+            .footer { 
+              font-size: 14px;
+              color: #666; 
+              margin-top: 40px; 
+              padding-top: 20px;
+              border-top: 1px solid #eee;
+              text-align: center;
+              line-height: 1.5;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="logo">SuperLytics</div>
+            
+            <div class="greeting">Good news!</div>
+            
+            <div class="message">
+              A new member has joined your <strong>${teamName}</strong> team.
+            </div>
+            
+            <div class="member-highlight">
+              <div class="member-name">${memberName}</div>
+              <div class="member-email">${memberEmail}</div>
+              <div class="team-stats">
+                <div class="team-stats-label">Team size:</div>
+                <div class="team-stats-value">${teamSize} ${teamSize === 1 ? 'member' : 'members'}</div>
+              </div>
+            </div>
+            
+            <div style="text-align: center;">
+              <a href="${teamManageUrl}" class="cta-button">Manage Team</a>
+            </div>
+            
+            <div class="footer">
+              © ${new Date().getFullYear()} SuperLytics. All rights reserved.<br><br>
+              Your team is growing! 🚀
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const text = `
+Good news! New member joined ${teamName}
+
+A new member has joined your ${teamName} team on ${this.appName}.
+
+New Member: ${memberName} (${memberEmail})
+Team size: ${teamSize} ${teamSize === 1 ? 'member' : 'members'}
+
+Manage your team: ${teamManageUrl}
+
+Your team is growing! 🚀
+
+© ${new Date().getFullYear()} ${this.appName}
+    `;
+
+    // Send email to all provided email addresses
+    const results = await Promise.all(
+      emails.map(email =>
+        this.sendEmail({
+          to: email,
+          subject: `🎉 ${memberName} joined your ${teamName} team`,
+          html,
+          text,
+        }),
+      ),
+    );
+
+    // Return true if at least one email was sent successfully
+    return results.some(result => result === true);
+  }
+
+  async sendMemberLeftTeam(
+    emails: string[],
+    memberName: string,
+    memberEmail: string,
+    teamName: string,
+    teamSize: number,
+  ): Promise<boolean> {
+    const teamManageUrl = `${this.appUrl}/dashboard`;
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Member left ${teamName} - SuperLytics</title>
+          <style>
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+              line-height: 1.6; 
+              color: #333;
+              margin: 0;
+              padding: 20px;
+              background-color: #f8f9fa;
+            }
+            .container { 
+              max-width: 600px; 
+              margin: 0 auto; 
+              background: #ffffff; 
+              padding: 40px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .logo { 
+              font-size: 32px; 
+              font-weight: bold; 
+              color: #333; 
+              margin-bottom: 40px;
+              text-align: center;
+            }
+            .greeting {
+              font-size: 18px;
+              color: #333;
+              margin-bottom: 20px;
+            }
+            .message { 
+              font-size: 16px; 
+              color: #333; 
+              margin-bottom: 30px; 
+              line-height: 1.6;
+            }
+            .member-highlight {
+              background: #fff3cd;
+              border: 1px solid #ffeaa7;
+              padding: 20px;
+              border-radius: 6px;
+              margin: 30px 0;
+              text-align: center;
+            }
+            .member-name {
+              font-size: 20px;
+              font-weight: 600;
+              color: #856404;
+              margin-bottom: 5px;
+            }
+            .member-email {
+              font-size: 14px;
+              color: #6c5700;
+            }
+            .team-stats {
+              background: #e3f2fd;
+              border: 1px solid #bbdefb;
+              padding: 20px;
+              border-radius: 6px;
+              margin: 30px 0;
+              text-align: center;
+            }
+            .team-stats-title {
+              font-size: 16px;
+              font-weight: 600;
+              color: #1565c0;
+              margin-bottom: 10px;
+            }
+            .team-size {
+              font-size: 24px;
+              font-weight: bold;
+              color: #1565c0;
+            }
+            .cta-button { 
+              display: inline-block; 
+              background: #007bff;
+              color: #ffffff; 
+              text-decoration: none; 
+              padding: 15px 30px; 
+              border-radius: 6px; 
+              font-weight: 500; 
+              font-size: 16px;
+              margin: 20px 0;
+            }
+            .footer { 
+              font-size: 14px;
+              color: #666; 
+              margin-top: 40px; 
+              padding-top: 20px;
+              border-top: 1px solid #eee;
+              text-align: center;
+              line-height: 1.5;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="logo">SuperLytics</div>
+            
+            <div class="greeting">Hi there,</div>
+            
+            <div class="message">
+              A member has left your <strong>${teamName}</strong> team on SuperLytics.
+            </div>
+            
+            <div class="member-highlight">
+              <div class="member-name">${memberName}</div>
+              <div class="member-email">${memberEmail}</div>
+            </div>
+            
+            <div class="team-stats">
+              <div class="team-stats-title">Current Team Size</div>
+              <div class="team-size">${teamSize} ${teamSize === 1 ? 'member' : 'members'}</div>
+            </div>
+            
+            <div style="text-align: center;">
+              <a href="${teamManageUrl}" class="cta-button">Manage Team</a>
+            </div>
+            
+            <div class="footer">
+              © ${new Date().getFullYear()} SuperLytics. All rights reserved.<br><br>
+              Need to invite new members? You can do that from your team settings.
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const text = `
+Member left ${teamName}
+
+A member has left your ${teamName} team on ${this.appName}.
+
+Member who left: ${memberName} (${memberEmail})
+Current team size: ${teamSize} ${teamSize === 1 ? 'member' : 'members'}
+
+Manage your team: ${teamManageUrl}
+
+Need to invite new members? You can do that from your team settings.
+
+© ${new Date().getFullYear()} ${this.appName}
+    `;
+
+    // Send email to all provided email addresses
+    const results = await Promise.all(
+      emails.map(email =>
+        this.sendEmail({
+          to: email,
+          subject: `📤 ${memberName} left your ${teamName} team`,
+          html,
+          text,
+        }),
+      ),
+    );
+
+    // Return true if at least one email was sent successfully
+    return results.some(result => result === true);
+  }
 }
 
 export const emailService = new EmailService();

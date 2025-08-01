@@ -1,6 +1,7 @@
 'use client';
 import { TeamContext } from '@/app/(main)/teams/[teamId]/TeamProvider';
 import TeamMembersDataTable from './TeamMembersDataTable';
+import TeamInviteButton from './TeamInviteButton';
 import PageHeader from '@/components/layout/PageHeader';
 import { useLogin, useMessages } from '@/components/hooks';
 import { ROLES } from '@/lib/constants';
@@ -19,7 +20,9 @@ export function TeamMembersPage({ teamId }: { teamId: string }) {
 
   return (
     <>
-      <PageHeader title={formatMessage(labels.members)} />
+      <PageHeader title={formatMessage(labels.members)}>
+        {canEdit && <TeamInviteButton teamId={teamId} />}
+      </PageHeader>
       <TeamMembersDataTable teamId={teamId} allowEdit={canEdit} />
     </>
   );

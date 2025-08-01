@@ -1,0 +1,58 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.banner {
+  margin-bottom: 30px;
+}
+
+.authPrompt {
+  text-align: center;
+  padding: 40px;
+  background: var(--base50);
+  border-radius: 8px;
+  border: 1px solid var(--base200);
+}
+
+.authPrompt p {
+  font-size: 16px;
+  color: var(--font-color200);
+  margin-bottom: 30px;
+}
+
+.authButtons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.loadingState {
+  text-align: center;
+  padding: 60px 40px;
+  background: var(--base50);
+  border-radius: 8px;
+  border: 1px solid var(--base200);
+}
+
+.loadingState p {
+  font-size: 16px;
+  color: var(--font-color200);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 16px;
+  }
+
+  .authButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .authButtons button {
+    width: 100%;
+    max-width: 200px;
+  }
+}

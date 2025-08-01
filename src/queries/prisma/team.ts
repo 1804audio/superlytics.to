@@ -16,7 +16,28 @@ export async function getTeam(teamId: string, options: { includeMembers?: boolea
     where: {
       id: teamId,
     },
-    ...(includeMembers && { include: { teamUser: true } }),
+    include: {
+      ...(includeMembers && {
+        teamUser: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+              },
+            },
+          },
+        },
+      }),
+      website: {
+        where: { deletedAt: null },
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
   });
 }
 
