@@ -89,7 +89,7 @@ export default function EmailVerificationPage() {
     <div className={styles.container}>
       <div className={styles.content}>
         <div className={styles.header}>
-          <icons.Mail className={styles.icon} />
+          <icons.Profile className={styles.icon} />
           <h1>Verify Your Email</h1>
         </div>
 

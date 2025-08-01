@@ -40,7 +40,7 @@ export async function parseRequest(
     if (!result.success) {
       error = () => badRequest(getErrorMessages(result.error));
     } else if (isGet) {
-      query = result.data;
+      query = result.data as { [k: string]: string };
     } else {
       body = result.data;
     }

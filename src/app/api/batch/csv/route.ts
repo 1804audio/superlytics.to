@@ -10,10 +10,8 @@ import { checkRateLimit } from '@/lib/rate-limit';
 const csvImportSchema = z.object({
   csvData: z.string().min(1, 'CSV data is required'),
   websiteId: z.string().uuid('Invalid website ID format'),
-  platform: z.enum(['google_analytics', 'plausible', 'custom'], {
-    errorMap: () => ({ message: 'Platform must be google_analytics, plausible, or custom' }),
-  }),
-  columnMapping: z.record(z.string()).optional(), // For custom mapping
+  platform: z.enum(['google_analytics', 'plausible', 'custom']),
+  columnMapping: z.record(z.string(), z.string()).optional(), // For custom mapping
   preview: z.boolean().optional().default(false), // For preview mode
   filename: z.string().optional(), // For Plausible table type detection
 });

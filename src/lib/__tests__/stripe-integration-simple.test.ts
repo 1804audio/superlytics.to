@@ -57,7 +57,7 @@ describe('Stripe Integration (Environment-Based)', () => {
 
           // Should have at least one valid price ID
           const hasValidPriceId = Object.values(priceConfig).some(
-            id => id && id.startsWith('price_') && id.length > 10,
+            id => typeof id === 'string' && id.startsWith('price_') && id.length > 10,
           );
 
           expect(hasValidPriceId).toBe(true);

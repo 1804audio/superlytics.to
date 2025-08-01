@@ -16,7 +16,7 @@ import {
 import { startOfMonth, endOfMonth } from 'date-fns';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-06-30.basil',
+  apiVersion: '2025-07-30.basil',
   typescript: true,
 });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -143,6 +143,7 @@ const handleCheckoutCompleted: CheckoutSessionCompletedHandler = async (
         data: {
           id: crypto.randomUUID(),
           username: customer.email,
+          email: customer.email,
           password: '', // Will need to set password later
           role: 'user',
           displayName: customer.name || undefined,

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { Button, Form, FormRow, FormInput, Banner } from 'react-basics';
 import { useApi, useLogin } from '@/components/hooks';
 import PageHeader from '@/components/layout/PageHeader';
@@ -51,7 +52,7 @@ export default function TeamJoinForm() {
         <PageHeader title="Join Team" />
 
         {inviteEmail && (
-          <Banner variant="info" className={styles.banner}>
+          <Banner variant="none" className={styles.banner}>
             You&apos;ve been invited to join a team! Please log in or create an account to continue.
           </Banner>
         )}
@@ -59,18 +60,12 @@ export default function TeamJoinForm() {
         <div className={styles.authPrompt}>
           <p>To join a team, you need to be logged in.</p>
           <div className={styles.authButtons}>
-            <Button
-              href={`/login${inviteEmail ? `?email=${encodeURIComponent(inviteEmail)}` : ''}`}
-              variant="primary"
-            >
-              Log In
-            </Button>
-            <Button
-              href={`/signup${inviteEmail ? `?email=${encodeURIComponent(inviteEmail)}` : ''}`}
-              variant="secondary"
-            >
-              Create Account
-            </Button>
+            <Link href={`/login${inviteEmail ? `?email=${encodeURIComponent(inviteEmail)}` : ''}`}>
+              <Button variant="primary">Log In</Button>
+            </Link>
+            <Link href={`/signup${inviteEmail ? `?email=${encodeURIComponent(inviteEmail)}` : ''}`}>
+              <Button variant="secondary">Create Account</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -112,7 +107,7 @@ export default function TeamJoinForm() {
       )}
 
       {inviteEmail && (
-        <Banner variant="info" className={styles.banner}>
+        <Banner variant="none" className={styles.banner}>
           You&apos;ve been invited to join a team! Enter the access code below to continue.
         </Banner>
       )}
@@ -129,7 +124,7 @@ export default function TeamJoinForm() {
         </FormRow>
 
         <FormRow>
-          <Button type="submit" variant="primary" loading={loading}>
+          <Button type="submit" variant="primary" disabled={loading}>
             {loading ? 'Joining...' : 'Join Team'}
           </Button>
         </FormRow>

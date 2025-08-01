@@ -453,7 +453,6 @@ class DataExportService {
       for (const file of exportFiles) {
         archive.append(file.content, {
           name: file.filename,
-          comment: `${file.size} - Generated ${new Date().toISOString()}`,
         });
       }
 
@@ -461,7 +460,6 @@ class DataExportService {
       const readmeContent = this.generateExportReadme(exportId, exportFiles);
       archive.append(readmeContent, {
         name: 'README.txt',
-        comment: 'Export information and file descriptions',
       });
 
       // Finalize the archive

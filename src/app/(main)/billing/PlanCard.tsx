@@ -32,7 +32,7 @@ export default function PlanCard({ plan, currentPlanId, isLifetime }: PlanCardPr
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: plan.stripeIds.monthly,
+          priceId: (plan as any).stripeIds.monthly,
           mode: getPlanMode(plan),
           successUrl: window.location.origin + '/billing?success=true',
           cancelUrl: window.location.href,

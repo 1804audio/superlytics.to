@@ -36,7 +36,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ tea
   // Check if user is already invited (already has account and is member)
   const existingUser = await getUserByUsernameOrEmail(email);
   if (existingUser) {
-    const isAlreadyMember = team.teamUser?.some(tu => tu.userId === existingUser.id);
+    const isAlreadyMember = (team as any).teamUser?.some(tu => tu.userId === existingUser.id);
     if (isAlreadyMember) {
       return badRequest('User is already a member of this team.');
     }

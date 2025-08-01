@@ -32,7 +32,7 @@ export async function checkAuth(request: Request) {
       if (validation) {
         const user = await getUser(validation.userId);
         if (user) {
-          user.isAdmin = user.role === ROLES.admin;
+          (user as any).isAdmin = user.role === ROLES.admin;
           log('API key authentication successful for user:', user.id);
           return {
             user,

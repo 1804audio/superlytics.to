@@ -8,14 +8,27 @@ const log = debug('superlytics:csv-import-service');
 export interface PlatformMapping {
   name: string;
   description: string;
-  columns: {
+  columns?: {
     [key: string]: {
       required: boolean;
       transform?: (value: string) => any;
       default?: any;
     };
   };
-  eventTransform: (row: any, websiteId: string) => ImportEvent[];
+  tableTypes?: {
+    [key: string]: {
+      columns: {
+        [key: string]: {
+          required: boolean;
+          transform?: (value: string) => any;
+          default?: any;
+        };
+      };
+      eventTransform?: (row: any, websiteId: string, tableType?: string) => ImportEvent[];
+    };
+  };
+  detectTableType?: (filename: string, headers: string[]) => string | null;
+  eventTransform?: (row: any, websiteId: string, tableType?: string) => ImportEvent[];
 }
 
 export interface ImportEvent {
@@ -166,7 +179,7 @@ export const PLATFORM_MAPPINGS: Record<string, PlatformMapping> = {
       },
     },
     // Auto-detect table type from CSV content or filename
-    detectTableType: (csvContent: string, filename?: string) => {
+    detectTableType: (filename: string, headers: string[]) => {
       // Try to detect from filename first (e.g., "imported_visitors_20240101_20240131.csv")
       if (filename) {
         const match = filename.match(/^(imported_\w+)_\d{8}_\d{8}\.csv$/);
@@ -176,27 +189,30 @@ export const PLATFORM_MAPPINGS: Record<string, PlatformMapping> = {
       }
 
       // Fallback: detect from column headers
-      const lines = csvContent.split('\n');
-      if (lines.length > 0) {
-        const headers = lines[0]
-          .toLowerCase()
-          .split(',')
-          .map(h => h.trim());
+      if (headers.length > 0) {
+        const normalizedHeaders = headers.map(h => h.toLowerCase().trim());
 
         // Check for specific column combinations
-        if (headers.includes('page') && headers.includes('pageviews')) return 'imported_pages';
-        if (headers.includes('entry_page') && headers.includes('entrances'))
+        if (normalizedHeaders.includes('page') && normalizedHeaders.includes('pageviews'))
+          return 'imported_pages';
+        if (normalizedHeaders.includes('entry_page') && normalizedHeaders.includes('entrances'))
           return 'imported_entry_pages';
-        if (headers.includes('exit_page') && headers.includes('exits'))
+        if (normalizedHeaders.includes('exit_page') && normalizedHeaders.includes('exits'))
           return 'imported_exit_pages';
-        if (headers.includes('source') && !headers.includes('page')) return 'imported_sources';
-        if (headers.includes('country')) return 'imported_locations';
-        if (headers.includes('device')) return 'imported_devices';
-        if (headers.includes('browser')) return 'imported_browsers';
-        if (headers.includes('operating_system')) return 'imported_operating_systems';
-        if (headers.includes('name') && headers.includes('visitors') && !headers.includes('page'))
+        if (normalizedHeaders.includes('source') && !normalizedHeaders.includes('page'))
+          return 'imported_sources';
+        if (normalizedHeaders.includes('country')) return 'imported_locations';
+        if (normalizedHeaders.includes('device')) return 'imported_devices';
+        if (normalizedHeaders.includes('browser')) return 'imported_browsers';
+        if (normalizedHeaders.includes('operating_system')) return 'imported_operating_systems';
+        if (
+          normalizedHeaders.includes('name') &&
+          normalizedHeaders.includes('visitors') &&
+          !normalizedHeaders.includes('page')
+        )
           return 'imported_custom_events';
-        if (headers.includes('visitors') && headers.length === 2) return 'imported_visitors';
+        if (normalizedHeaders.includes('visitors') && normalizedHeaders.length === 2)
+          return 'imported_visitors';
       }
 
       // Default fallback
@@ -360,7 +376,9 @@ class CsvImportService {
       // For Plausible, detect the table type
       let plausibleTableType: string | undefined;
       if (platformType === 'plausible' && platform.detectTableType) {
-        plausibleTableType = platform.detectTableType(csvContent, filename);
+        const firstLine = csvContent.split('\n')[0];
+        const headers = firstLine.split(',').map(h => h.trim());
+        plausibleTableType = platform.detectTableType(filename || '', headers);
         log(`Detected Plausible table type: ${plausibleTableType}`);
       }
 

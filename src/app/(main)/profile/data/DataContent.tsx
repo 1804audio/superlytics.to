@@ -1,17 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import {
-  Button,
-  LoadingButton,
-  Icon,
-  Text,
-  useToasts,
-  Form,
-  FormRow,
-  Banner,
-  Dropdown,
-  Item,
-} from 'react-basics';
+import { Button, LoadingButton, Icon, Text, useToasts, Form, FormRow, Banner } from 'react-basics';
 import { useApi, useLogin } from '@/components/hooks';
 import Icons from '@/components/icons';
 import debug from 'debug';
@@ -504,27 +493,24 @@ export default function DataContent() {
               >
                 Choose which website the imported data will be added to
               </Text>
-              <Dropdown
-                items={
-                  websites.length === 0 ? [{ id: '', name: 'No websites available' }] : websites
-                }
+              <select
                 value={selectedWebsiteId}
-                renderValue={value => {
-                  const website = websites.find(w => w.id === value);
-                  return website ? website.name : 'Select website';
-                }}
-                onChange={(value: string) => {
-                  log('Dropdown onChange triggered with value:', value);
-                  setSelectedWebsiteId(value);
+                onChange={e => {
+                  log('Website selection changed to:', e.target.value);
+                  setSelectedWebsiteId(e.target.value);
                 }}
                 disabled={!hasDataImport || websites.length === 0}
               >
-                {({ id, name }) => (
-                  <Item key={id} value={id}>
-                    {name}
-                  </Item>
+                {websites.length === 0 ? (
+                  <option value="">No websites available</option>
+                ) : (
+                  websites.map(({ id, name }) => (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  ))
                 )}
-              </Dropdown>
+              </select>
             </div>
           </FormRow>
 
@@ -716,7 +702,7 @@ export default function DataContent() {
           )}
 
           {hasDataExport && !hasExportableData && (
-            <Banner variant="info">
+            <Banner variant="none">
               {dataStatusMessage ||
                 'No data available for export. Create a website and start collecting analytics data to enable export.'}
             </Banner>

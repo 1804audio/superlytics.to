@@ -59,7 +59,8 @@ export async function POST(request: NextRequest) {
         });
       } catch (error) {
         log('Error listing exports:', error);
-        return json({ success: false, error: error.message }, 500);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return json({ success: false, error: errorMessage }, { status: 500 });
       }
     }
 
@@ -84,18 +85,19 @@ export async function POST(request: NextRequest) {
               message: `Failed to cleanup export ${exportId}`,
               exportId,
             },
-            500,
+            { status: 500 },
           );
         }
       } catch (error) {
         log(`Error cleaning up export ${exportId}:`, error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         return json(
           {
             success: false,
-            error: error.message,
+            error: errorMessage,
             exportId,
           },
-          500,
+          { status: 500 },
         );
       }
     }
@@ -130,12 +132,13 @@ export async function POST(request: NextRequest) {
         const cleanupResults = [];
         for (const exportId of expiredExports) {
           try {
-            const success = await r2StorageService.cleanupExport(exportId);
+            const success = await r2StorageService.cleanupExport(exportId as string);
             cleanupResults.push({ exportId, success });
             log(`Cleanup ${exportId}: ${success ? 'SUCCESS' : 'FAILED'}`);
           } catch (error) {
-            cleanupResults.push({ exportId, success: false, error: error.message });
-            log(`Cleanup ${exportId}: ERROR - ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            cleanupResults.push({ exportId, success: false, error: errorMessage });
+            log(`Cleanup ${exportId}: ERROR - ${errorMessage}`);
           }
         }
 
@@ -151,7 +154,8 @@ export async function POST(request: NextRequest) {
         });
       } catch (error) {
         log('Error during bulk cleanup:', error);
-        return json({ success: false, error: error.message }, 500);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return json({ success: false, error: errorMessage }, { status: 500 });
       }
     }
 
@@ -160,7 +164,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     log('Cleanup test endpoint error:', error);
-    return json({ success: false, error: 'Internal server error' }, 500);
+    return json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -216,10 +220,11 @@ export async function GET(request: NextRequest) {
       });
     } catch (error) {
       log('Error listing exports:', error);
-      return json({ success: false, error: error.message }, 500);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return json({ success: false, error: errorMessage }, { status: 500 });
     }
   } catch (error) {
     log('GET cleanup test endpoint error:', error);
-    return json({ success: false, error: 'Internal server error' }, 500);
+    return json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

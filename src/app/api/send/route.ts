@@ -87,14 +87,14 @@ export async function POST(request: Request) {
     // Determine the owner for plan checking
     if (website.userId) {
       websiteOwnerUserId = website.userId;
-    } else if (website.team?.teamUser?.[0]?.user) {
-      websiteOwnerUserId = website.team.teamUser[0].user.id;
+    } else if ((website as any).team?.teamUser?.[0]?.user) {
+      websiteOwnerUserId = (website as any).team.teamUser[0].user.id;
     }
 
     // Check if the website owner has access and their event limits
     if (websiteOwnerUserId) {
       // Check if user has access
-      const ownerUser = website.user || website.team?.teamUser?.[0]?.user;
+      const ownerUser = (website as any).user || (website as any).team?.teamUser?.[0]?.user;
       if (!ownerUser?.hasAccess) {
         return forbidden();
       }

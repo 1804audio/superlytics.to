@@ -131,7 +131,7 @@ export async function DELETE(
   }
 
   // Find the member details from the team members list
-  const memberDetails = teamWithDetails.teamUser?.find(tu => tu.userId === userId);
+  const memberDetails = (teamWithDetails as any).teamUser?.find(tu => tu.userId === userId);
   const memberName = memberDetails?.user?.username || 'Unknown User';
   const memberEmail = memberDetails?.user?.email || 'No email';
 
@@ -141,7 +141,7 @@ export async function DELETE(
   // Send notification email to team owners and managers
   try {
     const ownerEmails =
-      teamWithDetails.teamUser
+      (teamWithDetails as any).teamUser
         ?.filter(
           tu =>
             tu.userId !== userId && (tu.role === ROLES.teamOwner || tu.role === ROLES.teamManager),
@@ -150,7 +150,7 @@ export async function DELETE(
         ?.filter(Boolean) || [];
 
     if (ownerEmails.length > 0) {
-      const newTeamSize = Math.max(0, (teamWithDetails.teamUser?.length || 1) - 1); // Subtract the removed member
+      const newTeamSize = Math.max(0, ((teamWithDetails as any).teamUser?.length || 1) - 1); // Subtract the removed member
 
       await emailService.sendMemberLeftTeam(
         ownerEmails,

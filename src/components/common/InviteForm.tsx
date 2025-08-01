@@ -57,7 +57,7 @@ export function InviteForm({ teamId, onSave, onClose }: InviteFormProps) {
             }}
           >
             <TextField
-              type="email"
+              type="text"
               placeholder="Enter email address"
               autoComplete="email"
               disabled={isPending || !!success}
@@ -86,10 +86,11 @@ export function InviteForm({ teamId, onSave, onClose }: InviteFormProps) {
       <div className={styles.info}>
         <div className={styles.infoTitle}>What happens next:</div>
         <ul className={styles.infoList}>
-          <li>Invitee receives an email with join link</li>
-          <li>They can join directly if they have an account</li>
-          <li>New users will create an account and auto-join</li>
-          <li>You&apos;ll be notified when they join</li>
+          <li>Invitee receives an email with team access code</li>
+          <li>They need to visit the Teams page and enter the access code</li>
+          <li>New users must create an account first, then enter the code</li>
+          <li>Remind them to check their spam/junk folder for the email</li>
+          <li>You&apos;ll be notified when they successfully join</li>
         </ul>
       </div>
     </div>

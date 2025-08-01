@@ -265,7 +265,6 @@ export default function ApiKeysContent() {
                     variant="quiet"
                     size="sm"
                     onClick={() => copyToClipboard(keyToCopy, apiKey.name)}
-                    title="Copy API key"
                   >
                     <Icon>
                       <Icons.Copy />
@@ -273,12 +272,7 @@ export default function ApiKeysContent() {
                   </Button>
 
                   {/* Show/Hide button */}
-                  <Button
-                    variant="quiet"
-                    size="sm"
-                    onClick={() => toggleKeyVisibility(apiKey.id)}
-                    title={isVisible ? 'Hide API key' : 'Show API key'}
-                  >
+                  <Button variant="quiet" size="sm" onClick={() => toggleKeyVisibility(apiKey.id)}>
                     <Icon>
                       <Icons.Eye />
                     </Icon>

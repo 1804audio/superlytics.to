@@ -49,8 +49,8 @@ export async function POST(request: Request) {
     log('User is already a team member:', auth.user.id, 'role:', teamUser.role);
     // Instead of returning an error, return success with team info
     const teamWithDetails = await getTeam(team.id, { includeMembers: true });
-    const websiteCount = teamWithDetails?.website?.length || 0;
-    const teamSize = teamWithDetails?.teamUser?.length || 1;
+    const websiteCount = (teamWithDetails as any)?.website?.length || 0;
+    const teamSize = (teamWithDetails as any)?.teamUser?.length || 1;
 
     return json({
       alreadyMember: true,
@@ -69,8 +69,8 @@ export async function POST(request: Request) {
 
   // Get team details for emails
   const teamWithDetails = await getTeam(team.id, { includeMembers: true });
-  const websiteCount = teamWithDetails?.website?.length || 0;
-  const teamSize = teamWithDetails?.teamUser?.length || 1;
+  const websiteCount = (teamWithDetails as any)?.website?.length || 0;
+  const teamSize = (teamWithDetails as any)?.teamUser?.length || 1;
 
   try {
     // Send welcome email to new member
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
 
     // Send notification to team owners and managers
     const ownerEmails =
-      teamWithDetails?.teamUser
+      (teamWithDetails as any)?.teamUser
         ?.filter(tu => tu.role === ROLES.teamOwner || tu.role === ROLES.teamManager)
         ?.map(tu => tu.user?.email)
         ?.filter(Boolean) || [];

@@ -9,16 +9,14 @@ import Stripe from 'stripe';
 const log = debug('superlytics:delete-account');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-06-30.basil',
+  apiVersion: '2025-07-30.basil',
   typescript: true,
 });
 
 export async function POST(request: Request) {
   const schema = z.object({
     password: z.string().min(1, 'Password is required'),
-    confirmDelete: z.literal(true, {
-      errorMap: () => ({ message: 'You must confirm account deletion' }),
-    }),
+    confirmDelete: z.literal(true),
   });
 
   const { auth, body, error } = await parseRequest(request, schema);

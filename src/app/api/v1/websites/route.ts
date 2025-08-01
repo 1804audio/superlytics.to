@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     const validation = schema.safeParse(body);
 
     if (!validation.success) {
-      return badRequest('Invalid input: ' + validation.error.errors.map(e => e.message).join(', '));
+      return badRequest('Invalid input: ' + validation.error.issues.map(e => e.message).join(', '));
     }
 
     const { name, domain } = validation.data;
